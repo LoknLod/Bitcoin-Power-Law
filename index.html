@@ -86,11 +86,7 @@
       font-variant-numeric: tabular-nums;
     }
     
-    .price-change {
-      font-size: 13px;
-      margin-top: 2px;
-    }
-    
+    .price-change { font-size: 13px; margin-top: 2px; }
     .positive { color: var(--green); }
     .negative { color: var(--red); }
     
@@ -107,19 +103,22 @@
       text-align: center;
     }
     
-    .metric-value {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 2px;
-    }
-    
-    .metric-label {
-      font-size: 10px;
-      color: var(--text-dim);
-      text-transform: uppercase;
-    }
-    
+    .metric-value { font-size: 18px; font-weight: 600; margin-bottom: 2px; }
+    .metric-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; }
     .power-law-value { color: var(--blue); }
+    
+    .chart-card { cursor: pointer; position: relative; }
+    .chart-card:active { opacity: 0.8; }
+    .tap-hint {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      font-size: 9px;
+      color: var(--text-dim);
+      background: rgba(0,0,0,0.4);
+      padding: 3px 6px;
+      border-radius: 4px;
+    }
     
     .chart-container {
       position: relative;
@@ -128,7 +127,7 @@
       margin-bottom: 4px;
     }
     
-    #chart { width: 100%; height: 100%; }
+    #chart, #modalChart { width: 100%; height: 100%; }
     
     .chart-title {
       font-size: 11px;
@@ -146,31 +145,12 @@
       margin-top: 6px;
     }
     
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 3px;
-    }
+    .legend-item { display: flex; align-items: center; gap: 3px; }
+    .legend-dot { width: 6px; height: 6px; border-radius: 50%; }
     
-    .legend-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-    }
-    
-    .gauge-section {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    
+    .gauge-section { display: flex; align-items: center; gap: 12px; }
     .gauge-wrap { flex: 1; }
-    
-    .gauge-label {
-      font-size: 10px;
-      color: var(--text-dim);
-      margin-bottom: 6px;
-    }
+    .gauge-label { font-size: 10px; color: var(--text-dim); margin-bottom: 6px; }
     
     .gauge {
       height: 6px;
@@ -207,20 +187,9 @@
       white-space: nowrap;
     }
     
-    .status-undervalued {
-      background: rgba(0, 211, 149, 0.15);
-      color: var(--green);
-    }
-    
-    .status-fair {
-      background: rgba(77, 166, 255, 0.15);
-      color: var(--blue);
-    }
-    
-    .status-overvalued {
-      background: rgba(255, 107, 107, 0.15);
-      color: var(--red);
-    }
+    .status-undervalued { background: rgba(0, 211, 149, 0.15); color: var(--green); }
+    .status-fair { background: rgba(77, 166, 255, 0.15); color: var(--blue); }
+    .status-overvalued { background: rgba(255, 107, 107, 0.15); color: var(--red); }
     
     .bands {
       display: grid;
@@ -236,34 +205,100 @@
       border-radius: 8px;
     }
     
-    .band-value {
-      font-size: 12px;
-      font-weight: 600;
-      font-variant-numeric: tabular-nums;
-    }
-    
-    .band-label {
-      font-size: 9px;
-      color: var(--text-dim);
-      margin-top: 1px;
-      text-transform: uppercase;
-    }
-    
+    .band-value { font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .band-label { font-size: 9px; color: var(--text-dim); margin-top: 1px; text-transform: uppercase; }
     .band.support .band-value { color: var(--green); }
     .band.fair .band-value { color: var(--blue); }
     .band.resist .band-value { color: var(--red); }
     
-    .footer {
-      text-align: center;
-      font-size: 10px;
-      color: var(--text-dim);
-      margin-top: 6px;
-    }
-    
+    .footer { text-align: center; font-size: 10px; color: var(--text-dim); margin-top: 6px; }
     .footer a { color: var(--btc); text-decoration: none; }
     
     .loading { text-align: center; padding: 40px; color: var(--text-dim); }
     .error { background: rgba(255,107,107,0.1); color: var(--red); padding: 16px; border-radius: 12px; text-align: center; }
+    
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--bg);
+      z-index: 1000;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+    
+    .modal.active { display: flex; flex-direction: column; }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+    }
+    
+    .modal-title { font-size: 18px; font-weight: 600; }
+    
+    .modal-close {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+    }
+    
+    .modal-body {
+      flex: 1;
+      padding: 0 16px 16px;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .modal-chart-container {
+      flex: 1;
+      min-height: 300px;
+      background: var(--card);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    
+    .modal-chart-wrap {
+      width: 100%;
+      height: 100%;
+    }
+    
+    .modal-info {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    
+    .modal-stat {
+      background: var(--card);
+      border-radius: 10px;
+      padding: 12px 8px;
+      text-align: center;
+    }
+    
+    .modal-stat-value { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+    .modal-stat-label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; }
+    
+    .modal-legend {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 12px;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
   </style>
 </head>
 <body>
@@ -275,11 +310,30 @@
         <div class="subtitle">Long-term valuation model</div>
       </div>
     </header>
-    
     <div id="app"><div class="loading">Loading...</div></div>
-    
     <div class="footer">
       <span id="lastUpdate">—</span> · <a href="#" onclick="location.reload()">Refresh</a>
+    </div>
+  </div>
+  
+  <div id="modal" class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Power Law Corridor</div>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-chart-container">
+        <div class="modal-chart-wrap">
+          <canvas id="modalChart"></canvas>
+        </div>
+      </div>
+      <div class="modal-info" id="modalInfo"></div>
+      <div class="modal-legend">
+        <div class="legend-item"><span class="legend-dot" style="background:#00d395"></span> Support</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#4da6ff"></span> Fair Value</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#ff6b6b"></span> Resistance</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#f7931a"></span> Current Price</div>
+      </div>
     </div>
   </div>
 
@@ -293,6 +347,8 @@
     
     const formatPrice = p => p >= 1e6 ? '$'+(p/1e6).toFixed(2)+'M' : p >= 1e3 ? '$'+Math.round(p).toLocaleString() : '$'+p.toFixed(2);
     const formatPct = v => (v >= 0 ? '+' : '') + (v * 100).toFixed(1) + '%';
+    
+    let currentData = null;
     
     async function fetchBTC() {
       try {
@@ -319,7 +375,7 @@
       return Math.max(0, Math.min(100, (lp - ls) / (lr - ls) * 100));
     }
     
-    function drawChart(canvas, currentPrice) {
+    function drawChart(canvas, currentPrice, isModal = false) {
       const ctx = canvas.getContext('2d');
       const dpr = window.devicePixelRatio || 1;
       const rect = canvas.getBoundingClientRect();
@@ -328,65 +384,151 @@
       ctx.scale(dpr, dpr);
       
       const W = rect.width, H = rect.height;
-      const pad = { t: 15, r: 10, b: 22, l: 40 };
+      const pad = isModal ? { t: 25, r: 15, b: 35, l: 55 } : { t: 15, r: 10, b: 22, l: 40 };
       const cW = W - pad.l - pad.r, cH = H - pad.t - pad.b;
       
-      const startD = daysSinceGenesis(new Date('2012-01-01'));
-      const endD = daysSinceGenesis(new Date('2034-01-01'));
+      const startD = daysSinceGenesis(new Date('2010-01-01'));
+      const endD = daysSinceGenesis(new Date('2036-01-01'));
       const curD = daysSinceGenesis();
-      const logMin = 0, logMax = 7;
+      const logMin = 0, logMax = 8;
       
       const xPos = d => pad.l + ((d - startD) / (endD - startD)) * cW;
-      const yPos = p => pad.t + (1 - (Math.log10(Math.max(1, Math.min(1e7, p))) - logMin) / (logMax - logMin)) * cH;
+      const yPos = p => pad.t + (1 - (Math.log10(Math.max(1, Math.min(1e8, p))) - logMin) / (logMax - logMin)) * cH;
       
-      ctx.fillStyle = '#1a1a1a';
+      ctx.fillStyle = isModal ? '#1a1a1a' : '#1a1a1a';
       ctx.fillRect(0, 0, W, H);
       
+      // Grid
       ctx.strokeStyle = 'rgba(255,255,255,0.05)';
       ctx.lineWidth = 1;
-      [10, 100, 1e3, 1e4, 1e5, 1e6].forEach(p => {
+      const gridPrices = isModal ? [10, 100, 1e3, 1e4, 1e5, 1e6, 1e7] : [10, 100, 1e3, 1e4, 1e5, 1e6];
+      gridPrices.forEach(p => {
         ctx.beginPath(); ctx.moveTo(pad.l, yPos(p)); ctx.lineTo(W - pad.r, yPos(p)); ctx.stroke();
       });
       
+      // Vertical grid (years)
+      if (isModal) {
+        const years = [2010, 2012, 2014, 2016, 2018, 2020, 2022, 2024, 2026, 2028, 2030, 2032, 2034, 2036];
+        years.forEach(y => {
+          const x = xPos(daysSinceGenesis(new Date(y + '-01-01')));
+          ctx.beginPath(); ctx.moveTo(x, pad.t); ctx.lineTo(x, H - pad.b); ctx.stroke();
+        });
+      }
+      
+      // Fill corridor
       ctx.fillStyle = 'rgba(77,166,255,0.08)';
       ctx.beginPath();
-      for (let d = startD; d <= endD; d += 60) { const x = xPos(d), y = yPos(powerLawPrice(d) * SUPPORT_MULT); d === startD ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
-      for (let d = endD; d >= startD; d -= 60) { ctx.lineTo(xPos(d), yPos(powerLawPrice(d) * RESIST_MULT)); }
+      for (let d = startD; d <= endD; d += 30) { const x = xPos(d), y = yPos(powerLawPrice(d) * SUPPORT_MULT); d === startD ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
+      for (let d = endD; d >= startD; d -= 30) { ctx.lineTo(xPos(d), yPos(powerLawPrice(d) * RESIST_MULT)); }
       ctx.closePath(); ctx.fill();
       
-      ctx.lineWidth = 2;
+      // Lines
+      ctx.lineWidth = isModal ? 2.5 : 2;
       [[SUPPORT_MULT, 'rgba(0,211,149,0.7)'], [1, 'rgba(77,166,255,0.9)'], [RESIST_MULT, 'rgba(255,107,107,0.7)']].forEach(([m, c]) => {
         ctx.strokeStyle = c; ctx.beginPath();
-        for (let d = startD; d <= endD; d += 60) { const x = xPos(d), y = yPos(powerLawPrice(d) * m); d === startD ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
+        for (let d = startD; d <= endD; d += 30) { const x = xPos(d), y = yPos(powerLawPrice(d) * m); d === startD ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
         ctx.stroke();
       });
       
-      ctx.strokeStyle = 'rgba(255,255,255,0.15)'; ctx.setLineDash([3, 3]);
+      // Current time line
+      ctx.strokeStyle = 'rgba(255,255,255,0.2)'; ctx.setLineDash([4, 4]);
       ctx.beginPath(); ctx.moveTo(xPos(curD), pad.t); ctx.lineTo(xPos(curD), H - pad.b); ctx.stroke();
       ctx.setLineDash([]);
       
+      // Price dot
+      const dotSize = isModal ? 8 : 5;
       ctx.fillStyle = '#f7931a';
-      ctx.beginPath(); ctx.arc(xPos(curD), yPos(currentPrice), 5, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke();
+      ctx.beginPath(); ctx.arc(xPos(curD), yPos(currentPrice), dotSize, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
       
-      ctx.fillStyle = 'rgba(255,255,255,0.4)';
-      ctx.font = '9px -apple-system, sans-serif';
+      // Labels
+      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      ctx.font = (isModal ? '11' : '9') + 'px -apple-system, sans-serif';
       ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
-      [1e3, 1e4, 1e5, 1e6].forEach(p => ctx.fillText(p >= 1e6 ? '$1M' : '$' + (p/1e3) + 'K', pad.l - 4, yPos(p)));
+      const labelPrices = isModal ? [100, 1e3, 1e4, 1e5, 1e6, 1e7] : [1e3, 1e4, 1e5, 1e6];
+      labelPrices.forEach(p => {
+        const label = p >= 1e6 ? '$' + (p/1e6) + 'M' : '$' + (p/1e3) + 'K';
+        ctx.fillText(label, pad.l - 5, yPos(p));
+      });
       
       ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-      [2012, 2018, 2024, 2030].forEach(y => ctx.fillText(y, xPos(daysSinceGenesis(new Date(y + '-01-01'))), H - pad.b + 5));
-      ctx.fillStyle = '#f7931a'; ctx.fillText('NOW', xPos(curD), H - pad.b + 5);
+      const yearLabels = isModal ? [2010, 2014, 2018, 2022, 2026, 2030, 2034] : [2012, 2018, 2024, 2030];
+      yearLabels.forEach(y => ctx.fillText(y, xPos(daysSinceGenesis(new Date(y + '-01-01'))), H - pad.b + 6));
+      
+      ctx.fillStyle = '#f7931a';
+      ctx.font = 'bold ' + (isModal ? '12' : '9') + 'px -apple-system, sans-serif';
+      ctx.fillText('NOW', xPos(curD), H - pad.b + 6);
+      
+      // Future projections (modal only)
+      if (isModal) {
+        ctx.fillStyle = 'rgba(255,255,255,0.3)';
+        ctx.font = '10px -apple-system, sans-serif';
+        
+        // 2028 halving projection
+        const d2028 = daysSinceGenesis(new Date('2028-04-01'));
+        const fair2028 = powerLawPrice(d2028);
+        ctx.fillText('2028: ' + formatPrice(fair2028), xPos(d2028), yPos(fair2028) - 15);
+        
+        // 2032 projection
+        const d2032 = daysSinceGenesis(new Date('2032-01-01'));
+        const fair2032 = powerLawPrice(d2032);
+        ctx.fillText('2032: ' + formatPrice(fair2032), xPos(d2032), yPos(fair2032) - 15);
+      }
     }
+    
+    function openModal() {
+      if (!currentData) return;
+      const modal = document.getElementById('modal');
+      modal.classList.add('active');
+      
+      const { price, fair, sup, res, days } = currentData;
+      
+      // Future projections
+      const d2025 = daysSinceGenesis(new Date('2025-12-31'));
+      const d2028 = daysSinceGenesis(new Date('2028-04-01'));
+      const d2030 = daysSinceGenesis(new Date('2030-01-01'));
+      
+      document.getElementById('modalInfo').innerHTML = `
+        <div class="modal-stat">
+          <div class="modal-stat-value" style="color: var(--btc)">${formatPrice(price)}</div>
+          <div class="modal-stat-label">Current</div>
+        </div>
+        <div class="modal-stat">
+          <div class="modal-stat-value" style="color: var(--blue)">${formatPrice(fair)}</div>
+          <div class="modal-stat-label">Fair 2026</div>
+        </div>
+        <div class="modal-stat">
+          <div class="modal-stat-value" style="color: var(--blue)">${formatPrice(powerLawPrice(d2028))}</div>
+          <div class="modal-stat-label">Fair 2028</div>
+        </div>
+        <div class="modal-stat">
+          <div class="modal-stat-value" style="color: var(--blue)">${formatPrice(powerLawPrice(d2030))}</div>
+          <div class="modal-stat-label">Fair 2030</div>
+        </div>
+      `;
+      
+      setTimeout(() => {
+        const canvas = document.getElementById('modalChart');
+        if (canvas) drawChart(canvas, price, true);
+      }, 50);
+    }
+    
+    function closeModal() {
+      document.getElementById('modal').classList.remove('active');
+    }
+    
+    // Close on escape
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
     
     async function render() {
       const app = document.getElementById('app');
       try {
         const { price, change } = await fetchBTC();
-        window.currentPrice = price;
         const days = daysSinceGenesis(), fair = powerLawPrice(days);
         const sup = fair * SUPPORT_MULT, res = fair * RESIST_MULT;
         const dev = (price - fair) / fair, status = getStatus(price, fair, sup, res);
+        
+        currentData = { price, fair, sup, res, days };
         
         app.innerHTML = `
           <div class="card">
@@ -400,7 +542,8 @@
               <div class="metric"><div class="metric-value ${dev >= 0 ? 'negative' : 'positive'}">${formatPct(dev)}</div><div class="metric-label">From Fair</div></div>
             </div>
           </div>
-          <div class="card">
+          <div class="card chart-card" onclick="openModal()">
+            <div class="tap-hint">Tap to expand</div>
             <div class="chart-title">Power Law Corridor (2012–2034)</div>
             <div class="chart-container"><canvas id="chart"></canvas></div>
             <div class="chart-legend">
@@ -427,7 +570,7 @@
           </div>`;
         
         const canvas = document.getElementById('chart');
-        if (canvas) drawChart(canvas, price);
+        if (canvas) drawChart(canvas, price, false);
         document.getElementById('lastUpdate').textContent = 'Updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       } catch (e) {
         app.innerHTML = `<div class="error">Failed to load. <a href="#" onclick="location.reload()">Retry</a></div>`;
