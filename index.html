@@ -8,7 +8,6 @@
   <meta name="apple-mobile-web-app-title" content="BTC Power Law">
   <meta name="theme-color" content="#0d0d0d">
   <title>BTC Power Law</title>
-  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23f7931a' width='100' height='100' rx='20'/><text x='50' y='68' font-size='50' text-anchor='middle' fill='white'>₿</text></svg>">
   <style>
     :root {
       --bg: #0d0d0d;
@@ -222,6 +221,46 @@
       color: var(--red);
     }
     
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 200px;
+      margin-bottom: 8px;
+    }
+    
+    #chart {
+      width: 100%;
+      height: 100%;
+    }
+    
+    .chart-title {
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    
+    .chart-legend {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 8px;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    
     .footer {
       text-align: center;
       font-size: 12px;
@@ -280,20 +319,18 @@
     const GENESIS = new Date('2009-01-03T18:15:05Z');
     
     // Power Law parameters (Giovanni Santostasi model)
-    // log10(price) = a + b * log10(days)
-    const PL_A = -17.01;  // intercept
-    const PL_B = 5.82;    // slope
+    const PL_A = -17.01;
+    const PL_B = 5.82;
     
-    // Band multipliers (approximate)
-    const SUPPORT_MULT = 0.35;   // -65% from fair
-    const RESIST_MULT = 3.5;    // +250% from fair
+    // Band multipliers
+    const SUPPORT_MULT = 0.35;
+    const RESIST_MULT = 3.5;
     
     function daysSinceGenesis(date = new Date()) {
       return (date - GENESIS) / (1000 * 60 * 60 * 24);
     }
     
     function powerLawPrice(days) {
-      // Fair value = 10^(a + b * log10(days))
       return Math.pow(10, PL_A + PL_B * Math.log10(days));
     }
     
@@ -309,7 +346,6 @@
     }
     
     async function fetchBTCPrice() {
-      // Try CoinGecko first
       try {
         const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true');
         const data = await res.json();
@@ -318,7 +354,6 @@
           change24h: data.bitcoin.usd_24h_change / 100
         };
       } catch (e) {
-        // Fallback to Coinbase
         const res = await fetch('https://api.coinbase.com/v2/prices/BTC-USD/spot');
         const data = await res.json();
         return {
@@ -337,12 +372,158 @@
     }
     
     function getGaugePosition(price, support, resist) {
-      // Log scale position between support and resistance
       const logPrice = Math.log10(price);
       const logSupport = Math.log10(support);
       const logResist = Math.log10(resist);
       const position = (logPrice - logSupport) / (logResist - logSupport);
       return Math.max(0, Math.min(100, position * 100));
+    }
+    
+    function drawChart(canvas, currentPrice) {
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+      
+      const width = rect.width;
+      const height = rect.height;
+      const padding = { top: 20, right: 15, bottom: 30, left: 50 };
+      const chartWidth = width - padding.left - padding.right;
+      const chartHeight = height - padding.top - padding.bottom;
+      
+      // Time range: 2012 to 2034
+      const startDate = new Date('2012-01-01');
+      const endDate = new Date('2034-01-01');
+      const startDays = daysSinceGenesis(startDate);
+      const endDays = daysSinceGenesis(endDate);
+      const currentDays = daysSinceGenesis();
+      
+      // Price range (log scale): $1 to $10M
+      const minPrice = 1;
+      const maxPrice = 10000000;
+      const logMin = Math.log10(minPrice);
+      const logMax = Math.log10(maxPrice);
+      
+      // Helper functions
+      function xPos(days) {
+        return padding.left + ((days - startDays) / (endDays - startDays)) * chartWidth;
+      }
+      
+      function yPos(price) {
+        const logP = Math.log10(Math.max(minPrice, Math.min(maxPrice, price)));
+        return padding.top + (1 - (logP - logMin) / (logMax - logMin)) * chartHeight;
+      }
+      
+      // Clear
+      ctx.fillStyle = '#1a1a1a';
+      ctx.fillRect(0, 0, width, height);
+      
+      // Grid lines (horizontal - price levels)
+      ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+      ctx.lineWidth = 1;
+      [10, 100, 1000, 10000, 100000, 1000000].forEach(p => {
+        const y = yPos(p);
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(width - padding.right, y);
+        ctx.stroke();
+      });
+      
+      // Draw Power Law bands
+      ctx.lineWidth = 2;
+      
+      // Support band (green)
+      ctx.strokeStyle = 'rgba(0, 211, 149, 0.6)';
+      ctx.beginPath();
+      for (let d = startDays; d <= endDays; d += 30) {
+        const x = xPos(d);
+        const y = yPos(powerLawPrice(d) * SUPPORT_MULT);
+        d === startDays ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      
+      // Fair value (blue)
+      ctx.strokeStyle = 'rgba(77, 166, 255, 0.8)';
+      ctx.beginPath();
+      for (let d = startDays; d <= endDays; d += 30) {
+        const x = xPos(d);
+        const y = yPos(powerLawPrice(d));
+        d === startDays ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      
+      // Resistance band (red)
+      ctx.strokeStyle = 'rgba(255, 107, 107, 0.6)';
+      ctx.beginPath();
+      for (let d = startDays; d <= endDays; d += 30) {
+        const x = xPos(d);
+        const y = yPos(powerLawPrice(d) * RESIST_MULT);
+        d === startDays ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      
+      // Fill between support and resistance
+      ctx.fillStyle = 'rgba(77, 166, 255, 0.08)';
+      ctx.beginPath();
+      for (let d = startDays; d <= endDays; d += 30) {
+        const x = xPos(d);
+        const y = yPos(powerLawPrice(d) * SUPPORT_MULT);
+        d === startDays ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      for (let d = endDays; d >= startDays; d -= 30) {
+        const x = xPos(d);
+        const y = yPos(powerLawPrice(d) * RESIST_MULT);
+        ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.fill();
+      
+      // Current price marker
+      const currentX = xPos(currentDays);
+      const currentY = yPos(currentPrice);
+      
+      // Vertical line at current time
+      ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(currentX, padding.top);
+      ctx.lineTo(currentX, height - padding.bottom);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      
+      // Price dot
+      ctx.fillStyle = '#f7931a';
+      ctx.beginPath();
+      ctx.arc(currentX, currentY, 6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      
+      // Y-axis labels
+      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      ctx.font = '10px -apple-system, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      [100, 1000, 10000, 100000, 1000000].forEach(p => {
+        const label = p >= 1000000 ? '$1M' : p >= 1000 ? '$' + (p/1000) + 'K' : '$' + p;
+        ctx.fillText(label, padding.left - 5, yPos(p));
+      });
+      
+      // X-axis labels
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      [2012, 2016, 2020, 2024, 2028, 2032].forEach(year => {
+        const d = daysSinceGenesis(new Date(year + '-01-01'));
+        ctx.fillText(year.toString(), xPos(d), height - padding.bottom + 8);
+      });
+      
+      // "Now" label
+      ctx.fillStyle = '#f7931a';
+      ctx.fillText('NOW', currentX, height - padding.bottom + 8);
     }
     
     async function render() {
@@ -375,6 +556,19 @@
                 <div class="metric-value ${deviation >= 0 ? 'negative' : 'positive'}">${formatPercent(deviation)}</div>
                 <div class="metric-label">From Fair Value</div>
               </div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="chart-title">Power Law Corridor (2012-2034)</div>
+            <div class="chart-container">
+              <canvas id="chart"></canvas>
+            </div>
+            <div class="chart-legend">
+              <div class="legend-item"><span class="legend-dot" style="background: #00d395"></span> Support</div>
+              <div class="legend-item"><span class="legend-dot" style="background: #4da6ff"></span> Fair Value</div>
+              <div class="legend-item"><span class="legend-dot" style="background: #ff6b6b"></span> Resistance</div>
+              <div class="legend-item"><span class="legend-dot" style="background: #f7931a"></span> Current</div>
             </div>
           </div>
           
@@ -412,6 +606,12 @@
           </div>
         `;
         
+        // Draw the chart
+        const canvas = document.getElementById('chart');
+        if (canvas) {
+          drawChart(canvas, price);
+        }
+        
         document.getElementById('lastUpdate').textContent = 
           'Updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         
@@ -427,9 +627,17 @@
     // Auto-refresh every 60 seconds
     setInterval(render, 60000);
     
-    // Refresh on visibility change (when app comes back to foreground)
+    // Refresh on visibility change
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') render();
+    });
+    
+    // Redraw chart on resize
+    window.addEventListener('resize', () => {
+      const canvas = document.getElementById('chart');
+      if (canvas && window.currentPrice) {
+        drawChart(canvas, window.currentPrice);
+      }
     });
   </script>
 </body>
