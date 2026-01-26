@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="BTC Power Law">
+  <meta name="theme-color" content="#0d0d0d">
+  <title>BTC Power Law</title>
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23f7931a' width='100' height='100' rx='20'/><text x='50' y='68' font-size='50' text-anchor='middle' fill='white'>₿</text></svg>">
+  <style>
+    :root {
+      --bg: #0d0d0d;
+      --card: #1a1a1a;
+      --border: #2a2a2a;
+      --text: #ffffff;
+      --text-dim: #888888;
+      --btc: #f7931a;
+      --green: #00d395;
+      --red: #ff6b6b;
+      --blue: #4da6ff;
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+    
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 20px 16px;
+    }
+    
+    header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    
+    .logo {
+      width: 44px;
+      height: 44px;
+      background: var(--btc);
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+      font-weight: 700;
+    }
+    
+    h1 {
+      font-size: 22px;
+      font-weight: 600;
+    }
+    
+    .subtitle {
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+    
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    
+    .price-section {
+      text-align: center;
+      padding: 8px 0 16px;
+    }
+    
+    .price-label {
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .price {
+      font-size: 48px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    
+    .price-change {
+      font-size: 15px;
+      margin-top: 4px;
+    }
+    
+    .positive { color: var(--green); }
+    .negative { color: var(--red); }
+    
+    .metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    
+    .metric {
+      background: rgba(255,255,255,0.03);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+    
+    .metric-value {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    
+    .metric-label {
+      font-size: 12px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    
+    .power-law-value { color: var(--blue); }
+    
+    .gauge-container {
+      margin: 20px 0;
+    }
+    
+    .gauge-label {
+      font-size: 13px;
+      color: var(--text-dim);
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    
+    .gauge {
+      height: 8px;
+      background: linear-gradient(to right, var(--green), var(--blue), var(--red));
+      border-radius: 4px;
+      position: relative;
+    }
+    
+    .gauge-marker {
+      position: absolute;
+      top: -6px;
+      width: 20px;
+      height: 20px;
+      background: var(--text);
+      border-radius: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      transition: left 0.5s ease;
+    }
+    
+    .gauge-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 8px;
+    }
+    
+    .bands {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    
+    .band {
+      text-align: center;
+      padding: 12px 8px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 10px;
+    }
+    
+    .band-value {
+      font-size: 14px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+    
+    .band-label {
+      font-size: 10px;
+      color: var(--text-dim);
+      margin-top: 2px;
+      text-transform: uppercase;
+    }
+    
+    .band.support .band-value { color: var(--green); }
+    .band.fair .band-value { color: var(--blue); }
+    .band.resist .band-value { color: var(--red); }
+    
+    .status-bar {
+      text-align: center;
+      padding: 16px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 15px;
+    }
+    
+    .status-undervalued {
+      background: rgba(0, 211, 149, 0.15);
+      color: var(--green);
+    }
+    
+    .status-fair {
+      background: rgba(77, 166, 255, 0.15);
+      color: var(--blue);
+    }
+    
+    .status-overvalued {
+      background: rgba(255, 107, 107, 0.15);
+      color: var(--red);
+    }
+    
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 8px;
+    }
+    
+    .footer a {
+      color: var(--btc);
+      text-decoration: none;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-dim);
+    }
+    
+    .error {
+      background: rgba(255, 107, 107, 0.1);
+      color: var(--red);
+      padding: 16px;
+      border-radius: 12px;
+      text-align: center;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .updating { animation: pulse 1s infinite; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">₿</div>
+      <div>
+        <h1>Bitcoin Power Law</h1>
+        <div class="subtitle">Long-term valuation model</div>
+      </div>
+    </header>
+    
+    <div id="app">
+      <div class="loading">Loading BTC data...</div>
+    </div>
+    
+    <div class="footer">
+      <span id="lastUpdate">—</span> · <a href="#" onclick="location.reload()">Refresh</a>
+    </div>
+  </div>
+
+  <script>
+    // Bitcoin genesis block: January 3, 2009
+    const GENESIS = new Date('2009-01-03T18:15:05Z');
+    
+    // Power Law parameters (Giovanni Santostasi model)
+    // log10(price) = a + b * log10(days)
+    const PL_A = -17.01;  // intercept
+    const PL_B = 5.82;    // slope
+    
+    // Band multipliers (approximate)
+    const SUPPORT_MULT = 0.35;   // -65% from fair
+    const RESIST_MULT = 3.5;    // +250% from fair
+    
+    function daysSinceGenesis(date = new Date()) {
+      return (date - GENESIS) / (1000 * 60 * 60 * 24);
+    }
+    
+    function powerLawPrice(days) {
+      // Fair value = 10^(a + b * log10(days))
+      return Math.pow(10, PL_A + PL_B * Math.log10(days));
+    }
+    
+    function formatPrice(price) {
+      if (price >= 1000000) return '$' + (price / 1000000).toFixed(2) + 'M';
+      if (price >= 1000) return '$' + Math.round(price).toLocaleString();
+      return '$' + price.toFixed(2);
+    }
+    
+    function formatPercent(value) {
+      const sign = value >= 0 ? '+' : '';
+      return sign + (value * 100).toFixed(1) + '%';
+    }
+    
+    async function fetchBTCPrice() {
+      // Try CoinGecko first
+      try {
+        const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true');
+        const data = await res.json();
+        return {
+          price: data.bitcoin.usd,
+          change24h: data.bitcoin.usd_24h_change / 100
+        };
+      } catch (e) {
+        // Fallback to Coinbase
+        const res = await fetch('https://api.coinbase.com/v2/prices/BTC-USD/spot');
+        const data = await res.json();
+        return {
+          price: parseFloat(data.data.amount),
+          change24h: null
+        };
+      }
+    }
+    
+    function getStatus(price, fairValue, support, resist) {
+      if (price < support) return { text: '🟢 Deeply Undervalued', class: 'status-undervalued' };
+      if (price < fairValue * 0.7) return { text: '🟢 Undervalued', class: 'status-undervalued' };
+      if (price < fairValue * 1.3) return { text: '🔵 Fair Value Zone', class: 'status-fair' };
+      if (price < resist) return { text: '🟠 Above Fair Value', class: 'status-overvalued' };
+      return { text: '🔴 Overvalued', class: 'status-overvalued' };
+    }
+    
+    function getGaugePosition(price, support, resist) {
+      // Log scale position between support and resistance
+      const logPrice = Math.log10(price);
+      const logSupport = Math.log10(support);
+      const logResist = Math.log10(resist);
+      const position = (logPrice - logSupport) / (logResist - logSupport);
+      return Math.max(0, Math.min(100, position * 100));
+    }
+    
+    async function render() {
+      const app = document.getElementById('app');
+      
+      try {
+        const { price, change24h } = await fetchBTCPrice();
+        const days = daysSinceGenesis();
+        const fairValue = powerLawPrice(days);
+        const support = fairValue * SUPPORT_MULT;
+        const resist = fairValue * RESIST_MULT;
+        const deviation = (price - fairValue) / fairValue;
+        const status = getStatus(price, fairValue, support, resist);
+        const gaugePos = getGaugePosition(price, support, resist);
+        
+        app.innerHTML = `
+          <div class="card">
+            <div class="price-section">
+              <div class="price-label">Bitcoin Price</div>
+              <div class="price">${formatPrice(price)}</div>
+              ${change24h !== null ? `<div class="price-change ${change24h >= 0 ? 'positive' : 'negative'}">${formatPercent(change24h)} (24h)</div>` : ''}
+            </div>
+            
+            <div class="metrics">
+              <div class="metric">
+                <div class="metric-value power-law-value">${formatPrice(fairValue)}</div>
+                <div class="metric-label">Power Law Fair Value</div>
+              </div>
+              <div class="metric">
+                <div class="metric-value ${deviation >= 0 ? 'negative' : 'positive'}">${formatPercent(deviation)}</div>
+                <div class="metric-label">From Fair Value</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="gauge-container">
+              <div class="gauge-label">Position in Power Law Channel</div>
+              <div class="gauge">
+                <div class="gauge-marker" style="left: ${gaugePos}%"></div>
+              </div>
+              <div class="gauge-labels">
+                <span>Support</span>
+                <span>Fair</span>
+                <span>Resistance</span>
+              </div>
+            </div>
+            
+            <div class="bands">
+              <div class="band support">
+                <div class="band-value">${formatPrice(support)}</div>
+                <div class="band-label">Support</div>
+              </div>
+              <div class="band fair">
+                <div class="band-value">${formatPrice(fairValue)}</div>
+                <div class="band-label">Fair</div>
+              </div>
+              <div class="band resist">
+                <div class="band-value">${formatPrice(resist)}</div>
+                <div class="band-label">Resist</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="status-bar ${status.class}">
+            ${status.text}
+          </div>
+        `;
+        
+        document.getElementById('lastUpdate').textContent = 
+          'Updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
+      } catch (e) {
+        app.innerHTML = `<div class="error">Failed to load data. <a href="#" onclick="location.reload()">Retry</a></div>`;
+        console.error(e);
+      }
+    }
+    
+    // Initial render
+    render();
+    
+    // Auto-refresh every 60 seconds
+    setInterval(render, 60000);
+    
+    // Refresh on visibility change (when app comes back to foreground)
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') render();
+    });
+  </script>
+</body>
+</html>
