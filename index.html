@@ -24,7 +24,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
@@ -35,67 +35,60 @@
     .container {
       max-width: 500px;
       margin: 0 auto;
-      padding: 20px 16px;
+      padding: 12px 12px 8px;
     }
     
     header {
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 24px;
+      gap: 10px;
+      margin-bottom: 12px;
     }
     
     .logo {
-      width: 44px;
-      height: 44px;
+      width: 36px;
+      height: 36px;
       background: var(--btc);
-      border-radius: 12px;
+      border-radius: 10px;
       display: grid;
       place-items: center;
-      font-size: 24px;
+      font-size: 20px;
       font-weight: 700;
     }
     
-    h1 {
-      font-size: 22px;
-      font-weight: 600;
-    }
-    
-    .subtitle {
-      font-size: 13px;
-      color: var(--text-dim);
-    }
+    h1 { font-size: 18px; font-weight: 600; }
+    .subtitle { font-size: 11px; color: var(--text-dim); }
     
     .card {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 16px;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 10px;
     }
     
     .price-section {
       text-align: center;
-      padding: 8px 0 16px;
+      padding: 4px 0 10px;
     }
     
     .price-label {
-      font-size: 13px;
+      font-size: 11px;
       color: var(--text-dim);
-      margin-bottom: 4px;
+      margin-bottom: 2px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
     
     .price {
-      font-size: 48px;
+      font-size: 38px;
       font-weight: 700;
       font-variant-numeric: tabular-nums;
     }
     
     .price-change {
-      font-size: 15px;
-      margin-top: 4px;
+      font-size: 13px;
+      margin-top: 2px;
     }
     
     .positive { color: var(--green); }
@@ -104,106 +97,114 @@
     .metrics {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 10px;
     }
     
     .metric {
       background: rgba(255,255,255,0.03);
-      border-radius: 12px;
-      padding: 16px;
+      border-radius: 10px;
+      padding: 10px;
       text-align: center;
     }
     
     .metric-value {
-      font-size: 24px;
+      font-size: 18px;
       font-weight: 600;
-      margin-bottom: 4px;
+      margin-bottom: 2px;
     }
     
     .metric-label {
-      font-size: 12px;
+      font-size: 10px;
       color: var(--text-dim);
       text-transform: uppercase;
-      letter-spacing: 0.3px;
     }
     
     .power-law-value { color: var(--blue); }
     
-    .gauge-container {
-      margin: 20px 0;
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 150px;
+      margin-bottom: 4px;
     }
     
-    .gauge-label {
-      font-size: 13px;
+    #chart { width: 100%; height: 100%; }
+    
+    .chart-title {
+      font-size: 11px;
       color: var(--text-dim);
+      margin-bottom: 8px;
       text-align: center;
-      margin-bottom: 12px;
+    }
+    
+    .chart-legend {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      font-size: 9px;
+      color: var(--text-dim);
+      margin-top: 6px;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    
+    .legend-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+    
+    .gauge-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .gauge-wrap { flex: 1; }
+    
+    .gauge-label {
+      font-size: 10px;
+      color: var(--text-dim);
+      margin-bottom: 6px;
     }
     
     .gauge {
-      height: 8px;
+      height: 6px;
       background: linear-gradient(to right, var(--green), var(--blue), var(--red));
-      border-radius: 4px;
+      border-radius: 3px;
       position: relative;
     }
     
     .gauge-marker {
       position: absolute;
-      top: -6px;
-      width: 20px;
-      height: 20px;
+      top: -5px;
+      width: 16px;
+      height: 16px;
       background: var(--text);
       border-radius: 50%;
       transform: translateX(-50%);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-      transition: left 0.5s ease;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
     }
     
     .gauge-labels {
       display: flex;
       justify-content: space-between;
-      font-size: 11px;
+      font-size: 9px;
       color: var(--text-dim);
-      margin-top: 8px;
+      margin-top: 4px;
     }
     
-    .bands {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 8px;
-      margin-top: 16px;
-    }
-    
-    .band {
+    .status-badge {
       text-align: center;
-      padding: 12px 8px;
-      background: rgba(255,255,255,0.03);
-      border-radius: 10px;
-    }
-    
-    .band-value {
-      font-size: 14px;
+      padding: 8px 12px;
+      border-radius: 8px;
       font-weight: 600;
-      font-variant-numeric: tabular-nums;
-    }
-    
-    .band-label {
-      font-size: 10px;
-      color: var(--text-dim);
-      margin-top: 2px;
-      text-transform: uppercase;
-    }
-    
-    .band.support .band-value { color: var(--green); }
-    .band.fair .band-value { color: var(--blue); }
-    .band.resist .band-value { color: var(--red); }
-    
-    .status-bar {
-      text-align: center;
-      padding: 16px;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 15px;
+      font-size: 12px;
+      white-space: nowrap;
     }
     
     .status-undervalued {
@@ -221,78 +222,48 @@
       color: var(--red);
     }
     
-    .chart-container {
-      position: relative;
-      width: 100%;
-      height: 200px;
-      margin-bottom: 8px;
+    .bands {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 6px;
+      margin-top: 10px;
     }
     
-    #chart {
-      width: 100%;
-      height: 100%;
-    }
-    
-    .chart-title {
-      font-size: 13px;
-      color: var(--text-dim);
-      margin-bottom: 12px;
+    .band {
       text-align: center;
+      padding: 8px 4px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 8px;
     }
     
-    .chart-legend {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      font-size: 11px;
+    .band-value {
+      font-size: 12px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+    
+    .band-label {
+      font-size: 9px;
       color: var(--text-dim);
-      margin-top: 8px;
+      margin-top: 1px;
+      text-transform: uppercase;
     }
     
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    
-    .legend-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-    }
+    .band.support .band-value { color: var(--green); }
+    .band.fair .band-value { color: var(--blue); }
+    .band.resist .band-value { color: var(--red); }
     
     .footer {
       text-align: center;
-      font-size: 12px;
+      font-size: 10px;
       color: var(--text-dim);
-      margin-top: 8px;
+      margin-top: 6px;
     }
     
-    .footer a {
-      color: var(--btc);
-      text-decoration: none;
-    }
+    .footer a { color: var(--btc); text-decoration: none; }
     
-    .loading {
-      text-align: center;
-      padding: 40px;
-      color: var(--text-dim);
-    }
-    
-    .error {
-      background: rgba(255, 107, 107, 0.1);
-      color: var(--red);
-      padding: 16px;
-      border-radius: 12px;
-      text-align: center;
-    }
-    
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-    
-    .updating { animation: pulse 1s infinite; }
+    .loading { text-align: center; padding: 40px; color: var(--text-dim); }
+    .error { background: rgba(255,107,107,0.1); color: var(--red); padding: 16px; border-radius: 12px; text-align: center; }
   </style>
 </head>
 <body>
@@ -305,9 +276,7 @@
       </div>
     </header>
     
-    <div id="app">
-      <div class="loading">Loading BTC data...</div>
-    </div>
+    <div id="app"><div class="loading">Loading...</div></div>
     
     <div class="footer">
       <span id="lastUpdate">—</span> · <a href="#" onclick="location.reload()">Refresh</a>
@@ -315,330 +284,159 @@
   </div>
 
   <script>
-    // Bitcoin genesis block: January 3, 2009
     const GENESIS = new Date('2009-01-03T18:15:05Z');
+    const PL_A = -17.01, PL_B = 5.82;
+    const SUPPORT_MULT = 0.35, RESIST_MULT = 3.5;
     
-    // Power Law parameters (Giovanni Santostasi model)
-    const PL_A = -17.01;
-    const PL_B = 5.82;
+    const daysSinceGenesis = (d = new Date()) => (d - GENESIS) / 864e5;
+    const powerLawPrice = days => Math.pow(10, PL_A + PL_B * Math.log10(days));
     
-    // Band multipliers
-    const SUPPORT_MULT = 0.35;
-    const RESIST_MULT = 3.5;
+    const formatPrice = p => p >= 1e6 ? '$'+(p/1e6).toFixed(2)+'M' : p >= 1e3 ? '$'+Math.round(p).toLocaleString() : '$'+p.toFixed(2);
+    const formatPct = v => (v >= 0 ? '+' : '') + (v * 100).toFixed(1) + '%';
     
-    function daysSinceGenesis(date = new Date()) {
-      return (date - GENESIS) / (1000 * 60 * 60 * 24);
-    }
-    
-    function powerLawPrice(days) {
-      return Math.pow(10, PL_A + PL_B * Math.log10(days));
-    }
-    
-    function formatPrice(price) {
-      if (price >= 1000000) return '$' + (price / 1000000).toFixed(2) + 'M';
-      if (price >= 1000) return '$' + Math.round(price).toLocaleString();
-      return '$' + price.toFixed(2);
-    }
-    
-    function formatPercent(value) {
-      const sign = value >= 0 ? '+' : '';
-      return sign + (value * 100).toFixed(1) + '%';
-    }
-    
-    async function fetchBTCPrice() {
+    async function fetchBTC() {
       try {
-        const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true');
-        const data = await res.json();
-        return {
-          price: data.bitcoin.usd,
-          change24h: data.bitcoin.usd_24h_change / 100
-        };
-      } catch (e) {
-        const res = await fetch('https://api.coinbase.com/v2/prices/BTC-USD/spot');
-        const data = await res.json();
-        return {
-          price: parseFloat(data.data.amount),
-          change24h: null
-        };
+        const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true');
+        const d = await r.json();
+        return { price: d.bitcoin.usd, change: d.bitcoin.usd_24h_change / 100 };
+      } catch {
+        const r = await fetch('https://api.coinbase.com/v2/prices/BTC-USD/spot');
+        const d = await r.json();
+        return { price: parseFloat(d.data.amount), change: null };
       }
     }
     
-    function getStatus(price, fairValue, support, resist) {
-      if (price < support) return { text: '🟢 Deeply Undervalued', class: 'status-undervalued' };
-      if (price < fairValue * 0.7) return { text: '🟢 Undervalued', class: 'status-undervalued' };
-      if (price < fairValue * 1.3) return { text: '🔵 Fair Value Zone', class: 'status-fair' };
-      if (price < resist) return { text: '🟠 Above Fair Value', class: 'status-overvalued' };
-      return { text: '🔴 Overvalued', class: 'status-overvalued' };
+    function getStatus(price, fair, sup, res) {
+      if (price < sup) return { text: '🟢 Deeply Undervalued', cls: 'status-undervalued' };
+      if (price < fair * 0.7) return { text: '🟢 Undervalued', cls: 'status-undervalued' };
+      if (price < fair * 1.3) return { text: '🔵 Fair Value Zone', cls: 'status-fair' };
+      if (price < res) return { text: '🟠 Above Fair Value', cls: 'status-overvalued' };
+      return { text: '🔴 Overvalued', cls: 'status-overvalued' };
     }
     
-    function getGaugePosition(price, support, resist) {
-      const logPrice = Math.log10(price);
-      const logSupport = Math.log10(support);
-      const logResist = Math.log10(resist);
-      const position = (logPrice - logSupport) / (logResist - logSupport);
-      return Math.max(0, Math.min(100, position * 100));
+    function gaugePos(price, sup, res) {
+      const lp = Math.log10(price), ls = Math.log10(sup), lr = Math.log10(res);
+      return Math.max(0, Math.min(100, (lp - ls) / (lr - ls) * 100));
     }
     
     function drawChart(canvas, currentPrice) {
       const ctx = canvas.getContext('2d');
       const dpr = window.devicePixelRatio || 1;
       const rect = canvas.getBoundingClientRect();
-      
       canvas.width = rect.width * dpr;
       canvas.height = rect.height * dpr;
       ctx.scale(dpr, dpr);
       
-      const width = rect.width;
-      const height = rect.height;
-      const padding = { top: 20, right: 15, bottom: 30, left: 50 };
-      const chartWidth = width - padding.left - padding.right;
-      const chartHeight = height - padding.top - padding.bottom;
+      const W = rect.width, H = rect.height;
+      const pad = { t: 15, r: 10, b: 22, l: 40 };
+      const cW = W - pad.l - pad.r, cH = H - pad.t - pad.b;
       
-      // Time range: 2012 to 2034
-      const startDate = new Date('2012-01-01');
-      const endDate = new Date('2034-01-01');
-      const startDays = daysSinceGenesis(startDate);
-      const endDays = daysSinceGenesis(endDate);
-      const currentDays = daysSinceGenesis();
+      const startD = daysSinceGenesis(new Date('2012-01-01'));
+      const endD = daysSinceGenesis(new Date('2034-01-01'));
+      const curD = daysSinceGenesis();
+      const logMin = 0, logMax = 7;
       
-      // Price range (log scale): $1 to $10M
-      const minPrice = 1;
-      const maxPrice = 10000000;
-      const logMin = Math.log10(minPrice);
-      const logMax = Math.log10(maxPrice);
+      const xPos = d => pad.l + ((d - startD) / (endD - startD)) * cW;
+      const yPos = p => pad.t + (1 - (Math.log10(Math.max(1, Math.min(1e7, p))) - logMin) / (logMax - logMin)) * cH;
       
-      // Helper functions
-      function xPos(days) {
-        return padding.left + ((days - startDays) / (endDays - startDays)) * chartWidth;
-      }
-      
-      function yPos(price) {
-        const logP = Math.log10(Math.max(minPrice, Math.min(maxPrice, price)));
-        return padding.top + (1 - (logP - logMin) / (logMax - logMin)) * chartHeight;
-      }
-      
-      // Clear
       ctx.fillStyle = '#1a1a1a';
-      ctx.fillRect(0, 0, width, height);
+      ctx.fillRect(0, 0, W, H);
       
-      // Grid lines (horizontal - price levels)
-      ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+      ctx.strokeStyle = 'rgba(255,255,255,0.05)';
       ctx.lineWidth = 1;
-      [10, 100, 1000, 10000, 100000, 1000000].forEach(p => {
-        const y = yPos(p);
-        ctx.beginPath();
-        ctx.moveTo(padding.left, y);
-        ctx.lineTo(width - padding.right, y);
+      [10, 100, 1e3, 1e4, 1e5, 1e6].forEach(p => {
+        ctx.beginPath(); ctx.moveTo(pad.l, yPos(p)); ctx.lineTo(W - pad.r, yPos(p)); ctx.stroke();
+      });
+      
+      ctx.fillStyle = 'rgba(77,166,255,0.08)';
+      ctx.beginPath();
+      for (let d = startD; d <= endD; d += 60) { const x = xPos(d), y = yPos(powerLawPrice(d) * SUPPORT_MULT); d === startD ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
+      for (let d = endD; d >= startD; d -= 60) { ctx.lineTo(xPos(d), yPos(powerLawPrice(d) * RESIST_MULT)); }
+      ctx.closePath(); ctx.fill();
+      
+      ctx.lineWidth = 2;
+      [[SUPPORT_MULT, 'rgba(0,211,149,0.7)'], [1, 'rgba(77,166,255,0.9)'], [RESIST_MULT, 'rgba(255,107,107,0.7)']].forEach(([m, c]) => {
+        ctx.strokeStyle = c; ctx.beginPath();
+        for (let d = startD; d <= endD; d += 60) { const x = xPos(d), y = yPos(powerLawPrice(d) * m); d === startD ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
         ctx.stroke();
       });
       
-      // Draw Power Law bands
-      ctx.lineWidth = 2;
-      
-      // Support band (green)
-      ctx.strokeStyle = 'rgba(0, 211, 149, 0.6)';
-      ctx.beginPath();
-      for (let d = startDays; d <= endDays; d += 30) {
-        const x = xPos(d);
-        const y = yPos(powerLawPrice(d) * SUPPORT_MULT);
-        d === startDays ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-      }
-      ctx.stroke();
-      
-      // Fair value (blue)
-      ctx.strokeStyle = 'rgba(77, 166, 255, 0.8)';
-      ctx.beginPath();
-      for (let d = startDays; d <= endDays; d += 30) {
-        const x = xPos(d);
-        const y = yPos(powerLawPrice(d));
-        d === startDays ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-      }
-      ctx.stroke();
-      
-      // Resistance band (red)
-      ctx.strokeStyle = 'rgba(255, 107, 107, 0.6)';
-      ctx.beginPath();
-      for (let d = startDays; d <= endDays; d += 30) {
-        const x = xPos(d);
-        const y = yPos(powerLawPrice(d) * RESIST_MULT);
-        d === startDays ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-      }
-      ctx.stroke();
-      
-      // Fill between support and resistance
-      ctx.fillStyle = 'rgba(77, 166, 255, 0.08)';
-      ctx.beginPath();
-      for (let d = startDays; d <= endDays; d += 30) {
-        const x = xPos(d);
-        const y = yPos(powerLawPrice(d) * SUPPORT_MULT);
-        d === startDays ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-      }
-      for (let d = endDays; d >= startDays; d -= 30) {
-        const x = xPos(d);
-        const y = yPos(powerLawPrice(d) * RESIST_MULT);
-        ctx.lineTo(x, y);
-      }
-      ctx.closePath();
-      ctx.fill();
-      
-      // Current price marker
-      const currentX = xPos(currentDays);
-      const currentY = yPos(currentPrice);
-      
-      // Vertical line at current time
-      ctx.strokeStyle = 'rgba(255,255,255,0.2)';
-      ctx.setLineDash([4, 4]);
-      ctx.beginPath();
-      ctx.moveTo(currentX, padding.top);
-      ctx.lineTo(currentX, height - padding.bottom);
-      ctx.stroke();
+      ctx.strokeStyle = 'rgba(255,255,255,0.15)'; ctx.setLineDash([3, 3]);
+      ctx.beginPath(); ctx.moveTo(xPos(curD), pad.t); ctx.lineTo(xPos(curD), H - pad.b); ctx.stroke();
       ctx.setLineDash([]);
       
-      // Price dot
       ctx.fillStyle = '#f7931a';
-      ctx.beginPath();
-      ctx.arc(currentX, currentY, 6, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = '#fff';
-      ctx.lineWidth = 2;
-      ctx.stroke();
+      ctx.beginPath(); ctx.arc(xPos(curD), yPos(currentPrice), 5, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke();
       
-      // Y-axis labels
-      ctx.fillStyle = 'rgba(255,255,255,0.5)';
-      ctx.font = '10px -apple-system, sans-serif';
-      ctx.textAlign = 'right';
-      ctx.textBaseline = 'middle';
-      [100, 1000, 10000, 100000, 1000000].forEach(p => {
-        const label = p >= 1000000 ? '$1M' : p >= 1000 ? '$' + (p/1000) + 'K' : '$' + p;
-        ctx.fillText(label, padding.left - 5, yPos(p));
-      });
+      ctx.fillStyle = 'rgba(255,255,255,0.4)';
+      ctx.font = '9px -apple-system, sans-serif';
+      ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+      [1e3, 1e4, 1e5, 1e6].forEach(p => ctx.fillText(p >= 1e6 ? '$1M' : '$' + (p/1e3) + 'K', pad.l - 4, yPos(p)));
       
-      // X-axis labels
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'top';
-      [2012, 2016, 2020, 2024, 2028, 2032].forEach(year => {
-        const d = daysSinceGenesis(new Date(year + '-01-01'));
-        ctx.fillText(year.toString(), xPos(d), height - padding.bottom + 8);
-      });
-      
-      // "Now" label
-      ctx.fillStyle = '#f7931a';
-      ctx.fillText('NOW', currentX, height - padding.bottom + 8);
+      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+      [2012, 2018, 2024, 2030].forEach(y => ctx.fillText(y, xPos(daysSinceGenesis(new Date(y + '-01-01'))), H - pad.b + 5));
+      ctx.fillStyle = '#f7931a'; ctx.fillText('NOW', xPos(curD), H - pad.b + 5);
     }
     
     async function render() {
       const app = document.getElementById('app');
-      
       try {
-        const { price, change24h } = await fetchBTCPrice();
-        const days = daysSinceGenesis();
-        const fairValue = powerLawPrice(days);
-        const support = fairValue * SUPPORT_MULT;
-        const resist = fairValue * RESIST_MULT;
-        const deviation = (price - fairValue) / fairValue;
-        const status = getStatus(price, fairValue, support, resist);
-        const gaugePos = getGaugePosition(price, support, resist);
+        const { price, change } = await fetchBTC();
+        window.currentPrice = price;
+        const days = daysSinceGenesis(), fair = powerLawPrice(days);
+        const sup = fair * SUPPORT_MULT, res = fair * RESIST_MULT;
+        const dev = (price - fair) / fair, status = getStatus(price, fair, sup, res);
         
         app.innerHTML = `
           <div class="card">
             <div class="price-section">
               <div class="price-label">Bitcoin Price</div>
               <div class="price">${formatPrice(price)}</div>
-              ${change24h !== null ? `<div class="price-change ${change24h >= 0 ? 'positive' : 'negative'}">${formatPercent(change24h)} (24h)</div>` : ''}
+              ${change !== null ? `<div class="price-change ${change >= 0 ? 'positive' : 'negative'}">${formatPct(change)} (24h)</div>` : ''}
             </div>
-            
             <div class="metrics">
-              <div class="metric">
-                <div class="metric-value power-law-value">${formatPrice(fairValue)}</div>
-                <div class="metric-label">Power Law Fair Value</div>
-              </div>
-              <div class="metric">
-                <div class="metric-value ${deviation >= 0 ? 'negative' : 'positive'}">${formatPercent(deviation)}</div>
-                <div class="metric-label">From Fair Value</div>
-              </div>
+              <div class="metric"><div class="metric-value power-law-value">${formatPrice(fair)}</div><div class="metric-label">Fair Value</div></div>
+              <div class="metric"><div class="metric-value ${dev >= 0 ? 'negative' : 'positive'}">${formatPct(dev)}</div><div class="metric-label">From Fair</div></div>
             </div>
           </div>
-          
           <div class="card">
-            <div class="chart-title">Power Law Corridor (2012-2034)</div>
-            <div class="chart-container">
-              <canvas id="chart"></canvas>
-            </div>
+            <div class="chart-title">Power Law Corridor (2012–2034)</div>
+            <div class="chart-container"><canvas id="chart"></canvas></div>
             <div class="chart-legend">
-              <div class="legend-item"><span class="legend-dot" style="background: #00d395"></span> Support</div>
-              <div class="legend-item"><span class="legend-dot" style="background: #4da6ff"></span> Fair Value</div>
-              <div class="legend-item"><span class="legend-dot" style="background: #ff6b6b"></span> Resistance</div>
-              <div class="legend-item"><span class="legend-dot" style="background: #f7931a"></span> Current</div>
+              <div class="legend-item"><span class="legend-dot" style="background:#00d395"></span>Support</div>
+              <div class="legend-item"><span class="legend-dot" style="background:#4da6ff"></span>Fair</div>
+              <div class="legend-item"><span class="legend-dot" style="background:#ff6b6b"></span>Resist</div>
+              <div class="legend-item"><span class="legend-dot" style="background:#f7931a"></span>Now</div>
             </div>
           </div>
-          
           <div class="card">
-            <div class="gauge-container">
-              <div class="gauge-label">Position in Power Law Channel</div>
-              <div class="gauge">
-                <div class="gauge-marker" style="left: ${gaugePos}%"></div>
+            <div class="gauge-section">
+              <div class="gauge-wrap">
+                <div class="gauge-label">Position in Channel</div>
+                <div class="gauge"><div class="gauge-marker" style="left:${gaugePos(price, sup, res)}%"></div></div>
+                <div class="gauge-labels"><span>Support</span><span>Fair</span><span>Resist</span></div>
               </div>
-              <div class="gauge-labels">
-                <span>Support</span>
-                <span>Fair</span>
-                <span>Resistance</span>
-              </div>
+              <div class="status-badge ${status.cls}">${status.text}</div>
             </div>
-            
             <div class="bands">
-              <div class="band support">
-                <div class="band-value">${formatPrice(support)}</div>
-                <div class="band-label">Support</div>
-              </div>
-              <div class="band fair">
-                <div class="band-value">${formatPrice(fairValue)}</div>
-                <div class="band-label">Fair</div>
-              </div>
-              <div class="band resist">
-                <div class="band-value">${formatPrice(resist)}</div>
-                <div class="band-label">Resist</div>
-              </div>
+              <div class="band support"><div class="band-value">${formatPrice(sup)}</div><div class="band-label">Support</div></div>
+              <div class="band fair"><div class="band-value">${formatPrice(fair)}</div><div class="band-label">Fair</div></div>
+              <div class="band resist"><div class="band-value">${formatPrice(res)}</div><div class="band-label">Resist</div></div>
             </div>
-          </div>
-          
-          <div class="status-bar ${status.class}">
-            ${status.text}
-          </div>
-        `;
+          </div>`;
         
-        // Draw the chart
         const canvas = document.getElementById('chart');
-        if (canvas) {
-          drawChart(canvas, price);
-        }
-        
-        document.getElementById('lastUpdate').textContent = 
-          'Updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        
+        if (canvas) drawChart(canvas, price);
+        document.getElementById('lastUpdate').textContent = 'Updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       } catch (e) {
-        app.innerHTML = `<div class="error">Failed to load data. <a href="#" onclick="location.reload()">Retry</a></div>`;
-        console.error(e);
+        app.innerHTML = `<div class="error">Failed to load. <a href="#" onclick="location.reload()">Retry</a></div>`;
       }
     }
     
-    // Initial render
     render();
-    
-    // Auto-refresh every 60 seconds
     setInterval(render, 60000);
-    
-    // Refresh on visibility change
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible') render();
-    });
-    
-    // Redraw chart on resize
-    window.addEventListener('resize', () => {
-      const canvas = document.getElementById('chart');
-      if (canvas && window.currentPrice) {
-        drawChart(canvas, window.currentPrice);
-      }
-    });
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') render(); });
   </script>
 </body>
 </html>
