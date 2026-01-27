@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitcoin Energy Security</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%);
+            min-height: 100vh;
+            color: white;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #f7931a, #ffab40);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #888;
+            font-size: 0.9em;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .card-title {
+            font-size: 0.85em;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+        
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 15px;
+        }
+        
+        .metric:last-child {
+            margin-bottom: 0;
+        }
+        
+        .metric-label {
+            color: #aaa;
+            font-size: 0.95em;
+        }
+        
+        .metric-value {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .metric-value.highlight {
+            color: #f7931a;
+        }
+        
+        .metric-value.green {
+            color: #4ade80;
+        }
+        
+        .metric-value.blue {
+            color: #60a5fa;
+        }
+        
+        .attack-cost {
+            background: linear-gradient(135deg, rgba(239,68,68,0.2) 0%, rgba(239,68,68,0.05) 100%);
+            border-color: rgba(239,68,68,0.3);
+        }
+        
+        .attack-cost .metric-value {
+            color: #ef4444;
+        }
+        
+        .efficiency {
+            background: linear-gradient(135deg, rgba(74,222,128,0.2) 0%, rgba(74,222,128,0.05) 100%);
+            border-color: rgba(74,222,128,0.3);
+        }
+        
+        .quote {
+            background: rgba(247,147,26,0.1);
+            border-left: 3px solid #f7931a;
+            padding: 15px;
+            margin-top: 20px;
+            font-style: italic;
+            color: #ccc;
+            font-size: 0.9em;
+        }
+        
+        .quote-author {
+            color: #f7931a;
+            font-style: normal;
+            margin-top: 10px;
+            font-size: 0.85em;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .hashrate-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .hashrate-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f7931a, #ff6b00);
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+        
+        .update-time {
+            text-align: center;
+            color: #555;
+            font-size: 0.75em;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ Bitcoin Energy Security</h1>
+        <p class="subtitle">Proof of Work = Proof of Energy</p>
+        
+        <div class="card attack-cost">
+            <div class="card-title">🛡️ Cost to Attack (51%)</div>
+            <div class="metric">
+                <span class="metric-label">Hardware Required</span>
+                <span class="metric-value" id="hardware-cost">Loading...</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Energy (1 hour)</span>
+                <span class="metric-value" id="energy-cost">...</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Total Attack Cost</span>
+                <span class="metric-value" id="total-attack">...</span>
+            </div>
+        </div>
+        
+        <div class="card efficiency">
+            <div class="card-title">📊 Energy Efficiency</div>
+            <div class="metric">
+                <span class="metric-label">Energy per $1B Secured</span>
+                <span class="metric-value green" id="energy-per-billion">Loading...</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Security per kWh</span>
+                <span class="metric-value green" id="security-per-kwh">...</span>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-title">⛏️ Network Stats</div>
+            <div class="metric">
+                <span class="metric-label">Hashrate</span>
+                <span class="metric-value highlight" id="hashrate">Loading...</span>
+            </div>
+            <div class="hashrate-bar">
+                <div class="hashrate-fill" id="hashrate-bar" style="width: 0%"></div>
+            </div>
+            <div class="metric" style="margin-top: 15px;">
+                <span class="metric-label">Est. Network Power</span>
+                <span class="metric-value blue" id="network-power">...</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">BTC Price</span>
+                <span class="metric-value" id="btc-price">...</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Market Cap</span>
+                <span class="metric-value" id="market-cap">...</span>
+            </div>
+        </div>
+        
+        <div class="quote">
+            "Bitcoin is the most secure computing network in human history, protected by more energy than some countries consume."
+            <div class="quote-author">— Proof of Work Thesis</div>
+        </div>
+        
+        <div class="update-time" id="update-time"></div>
+    </div>
+    
+    <script>
+        // Constants for calculations
+        const ASIC_HASHRATE = 230; // TH/s (Antminer S21 Pro)
+        const ASIC_POWER = 3000; // Watts
+        const ASIC_COST = 8000; // USD
+        const ELECTRICITY_COST = 0.05; // $/kWh
+        const NETWORK_EFFICIENCY = 25; // J/TH (average network)
+        const MAX_HASHRATE = 1500; // EH/s for bar visualization
+        
+        async function fetchData() {
+            try {
+                // Fetch hashrate from mempool.space
+                const hashrateRes = await fetch('https://mempool.space/api/v1/mining/hashrate/3d');
+                const hashrateData = await hashrateRes.json();
+                const currentHashrate = hashrateData.currentHashrate / 1e18; // Convert to EH/s
+                
+                // Fetch price from CoinGecko
+                const priceRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_market_cap=true');
+                const priceData = await priceRes.json();
+                const btcPrice = priceData.bitcoin.usd;
+                const marketCap = priceData.bitcoin.usd_market_cap;
+                
+                // Calculate metrics
+                calculateAndDisplay(currentHashrate, btcPrice, marketCap);
+                
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                document.getElementById('hardware-cost').textContent = 'Error loading';
+            }
+        }
+        
+        function calculateAndDisplay(hashrate, price, marketCap) {
+            // Hashrate in EH/s, convert to TH/s for calculations
+            const hashrateTH = hashrate * 1e6; // EH to TH
+            const attackHashrateTH = hashrateTH * 0.51; // 51% needed
+            
+            // Hardware cost
+            const asicsNeeded = Math.ceil(attackHashrateTH / ASIC_HASHRATE);
+            const hardwareCost = asicsNeeded * ASIC_COST;
+            
+            // Energy cost for 1 hour attack
+            const attackPowerMW = (asicsNeeded * ASIC_POWER) / 1e6; // MW
+            const attackEnergyMWh = attackPowerMW * 1; // 1 hour
+            const energyCost = attackEnergyMWh * 1000 * ELECTRICITY_COST; // Convert to kWh
+            
+            // Total attack cost
+            const totalAttackCost = hardwareCost + energyCost;
+            
+            // Network power consumption
+            const networkPowerGW = (hashrateTH * NETWORK_EFFICIENCY) / 1e9; // GW
+            const annualEnergyTWh = networkPowerGW * 8760 / 1000; // TWh/year
+            
+            // Energy per billion secured
+            const marketCapBillions = marketCap / 1e9;
+            const energyPerBillion = annualEnergyTWh / marketCapBillions; // TWh per $1B
+            const energyPerBillionGWh = energyPerBillion * 1000; // GWh per $1B
+            
+            // Security per kWh
+            const totalAnnualKWh = annualEnergyTWh * 1e9;
+            const securityPerKWh = marketCap / totalAnnualKWh;
+            
+            // Update DOM
+            document.getElementById('hardware-cost').textContent = '$' + formatBillions(hardwareCost);
+            document.getElementById('energy-cost').textContent = formatMWh(attackEnergyMWh) + ' (~$' + formatMillions(energyCost) + ')';
+            document.getElementById('total-attack').textContent = '$' + formatBillions(totalAttackCost);
+            
+            document.getElementById('energy-per-billion').textContent = energyPerBillionGWh.toFixed(1) + ' GWh';
+            document.getElementById('security-per-kwh').textContent = '$' + securityPerKWh.toFixed(2);
+            
+            document.getElementById('hashrate').textContent = hashrate.toFixed(1) + ' EH/s';
+            document.getElementById('hashrate-bar').style.width = Math.min((hashrate / MAX_HASHRATE) * 100, 100) + '%';
+            document.getElementById('network-power').textContent = networkPowerGW.toFixed(1) + ' GW';
+            document.getElementById('btc-price').textContent = '$' + price.toLocaleString();
+            document.getElementById('market-cap').textContent = '$' + formatTrillions(marketCap);
+            
+            document.getElementById('update-time').textContent = 'Updated: ' + new Date().toLocaleTimeString();
+        }
+        
+        function formatBillions(num) {
+            if (num >= 1e9) return (num / 1e9).toFixed(1) + 'B';
+            if (num >= 1e6) return (num / 1e6).toFixed(0) + 'M';
+            return num.toLocaleString();
+        }
+        
+        function formatMillions(num) {
+            if (num >= 1e6) return (num / 1e6).toFixed(0) + 'M';
+            if (num >= 1e3) return (num / 1e3).toFixed(0) + 'K';
+            return num.toFixed(0);
+        }
+        
+        function formatTrillions(num) {
+            return (num / 1e12).toFixed(2) + 'T';
+        }
+        
+        function formatMWh(num) {
+            if (num >= 1000) return (num / 1000).toFixed(1) + ' GWh';
+            return num.toFixed(0) + ' MWh';
+        }
+        
+        // Initial load
+        fetchData();
+        
+        // Refresh every 5 minutes
+        setInterval(fetchData, 5 * 60 * 1000);
+    </script>
+</body>
+</html>
