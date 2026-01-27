@@ -279,20 +279,52 @@
             </div>
         </div>
         
-        <!-- Global Liquidity Placeholder -->
+        <!-- Fed Net Liquidity -->
         <div class="card">
-            <div class="card-title">🌊 Global Liquidity (M2)</div>
+            <div class="card-title">🌊 Fed Net Liquidity</div>
             <div class="price-row">
-                <span class="price-label">Global M2 (4 Major CBs)</span>
-                <span class="price-value liquidity">~$90T</span>
+                <span class="price-label">Fed Balance Sheet</span>
+                <span class="price-value liquidity" id="fed-balance">$--</span>
             </div>
             <div class="price-row">
-                <span class="price-label">YoY Change</span>
-                <span class="price-value liquidity">+4.2%</span>
+                <span class="price-label">− Reverse Repo (RRP)</span>
+                <span class="price-value neutral" id="rrp">$--</span>
+            </div>
+            <div class="price-row">
+                <span class="price-label">− Treasury (TGA)</span>
+                <span class="price-value neutral" id="tga">$--</span>
+            </div>
+            <div class="section-divider"></div>
+            <div class="price-row">
+                <span class="price-label"><strong>= Net Liquidity</strong></span>
+                <span class="price-value liquidity" id="net-liquidity" style="font-size: 1.5em;">$--</span>
+            </div>
+            <div class="info-text" id="liquidity-info">
+                💡 Net Liquidity = Fed Balance Sheet − RRP − TGA<br>
+                Bitcoin correlates strongly with Fed liquidity flows.
+            </div>
+        </div>
+        
+        <!-- ISM PMI -->
+        <div class="card">
+            <div class="card-title">🏭 ISM Manufacturing PMI</div>
+            <div class="metrics-grid">
+                <div class="metric-box">
+                    <a href="https://www.investing.com/economic-calendar/ism-manufacturing-pmi-173" target="_blank" style="color: #60a5fa; text-decoration: none;">
+                        <div class="metric-value">📊</div>
+                        <div class="metric-label">Latest PMI</div>
+                    </a>
+                </div>
+                <div class="metric-box">
+                    <a href="https://tradingview.com/symbols/ECONOMICS-USBCOI/" target="_blank" style="color: #ffd700; text-decoration: none;">
+                        <div class="metric-value">📈</div>
+                        <div class="metric-label">Chart History</div>
+                    </a>
+                </div>
             </div>
             <div class="info-text">
-                💡 Bitcoin historically correlates with global M2 expansion.
-                When central banks print, hard assets rise.
+                💡 PMI > 50 = expansion, < 50 = contraction<br>
+                ISM data is proprietary — links to free sources above
             </div>
         </div>
         
@@ -319,6 +351,12 @@
     </div>
     
     <script>
+        // ============================================
+        // FRED API KEY - Get free key at:
+        // https://fred.stlouisfed.org/docs/api/api_key.html
+        // ============================================
+        const FRED_API_KEY = ''; // Paste your key here
+        
         // Power Law calculation (same as main app)
         function getPowerLawFairValue() {
             const genesisDate = new Date('2009-01-03');
@@ -328,6 +366,79 @@
             const a = -17.01;
             const b = 5.82;
             return Math.pow(10, a + b * Math.log10(daysSinceGenesis));
+        }
+        
+        // Format trillions
+        function formatT(billions) {
+            return '$' + (billions / 1000).toFixed(2) + 'T';
+        }
+        
+        // Fetch FRED series (returns latest value in billions)
+        async function fetchFRED(series) {
+            if (!FRED_API_KEY) return null;
+            try {
+                const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${series}&api_key=${FRED_API_KEY}&file_type=json&sort_order=desc&limit=1`;
+                const res = await fetch(url);
+                const data = await res.json();
+                if (data.observations && data.observations.length > 0) {
+                    const val = parseFloat(data.observations[0].value);
+                    return isNaN(val) ? null : val / 1000; // Convert millions to billions
+                }
+            } catch (e) {
+                console.error('FRED fetch error:', series, e);
+            }
+            return null;
+        }
+        
+        // Fetch Fed Liquidity data
+        async function fetchLiquidity() {
+            if (!FRED_API_KEY) {
+                document.getElementById('liquidity-info').innerHTML = 
+                    '⚠️ Add FRED API key for live data<br>' +
+                    '<a href="https://fred.stlouisfed.org/docs/api/api_key.html" target="_blank" style="color: #60a5fa;">Get free key (30 sec) →</a>';
+                return;
+            }
+            
+            try {
+                // Fetch all three in parallel
+                const [balance, rrp, tga] = await Promise.all([
+                    fetchFRED('WALCL'),    // Fed Balance Sheet (millions, weekly)
+                    fetchFRED('RRPONTSYD'), // Reverse Repo (billions, daily)
+                    fetchFRED('WTREGEN')    // TGA (millions, weekly)
+                ]);
+                
+                if (balance !== null) {
+                    document.getElementById('fed-balance').textContent = formatT(balance);
+                }
+                if (rrp !== null) {
+                    // RRP is already in billions
+                    document.getElementById('rrp').textContent = formatT(rrp * 1000);
+                }
+                if (tga !== null) {
+                    document.getElementById('tga').textContent = formatT(tga);
+                }
+                
+                // Calculate Net Liquidity
+                if (balance !== null && rrp !== null && tga !== null) {
+                    const netLiq = balance - (rrp * 1000) - tga; // All in billions
+                    document.getElementById('net-liquidity').textContent = formatT(netLiq);
+                    document.getElementById('liquidity-info').innerHTML = 
+                        '💡 Net Liquidity = Fed Balance Sheet − RRP − TGA<br>' +
+                        'Bitcoin correlates strongly with Fed liquidity flows.';
+                }
+            } catch (e) {
+                console.error('Liquidity fetch error:', e);
+            }
+        }
+        
+        // PMI - ISM data is proprietary, show link to free sources
+        async function fetchPMI() {
+            // Note: ISM PMI is proprietary data - no free real-time API
+            // Best free sources: TradingView, Investing.com economic calendar
+            document.getElementById('pmi-value').textContent = '→';
+            document.getElementById('pmi-value').style.fontSize = '1em';
+            document.getElementById('pmi-status').innerHTML = 
+                '<a href="https://www.investing.com/economic-calendar/ism-manufacturing-pmi-173" target="_blank" style="color: #60a5fa; text-decoration: none;">📊 View Latest PMI</a>';
         }
         
         async function fetchData() {
@@ -388,9 +499,13 @@
         
         // Initial load
         fetchData();
+        fetchLiquidity();
+        fetchPMI();
         
         // Refresh every 2 minutes
         setInterval(fetchData, 2 * 60 * 1000);
+        setInterval(fetchLiquidity, 5 * 60 * 1000); // FRED data less frequent
+        setInterval(fetchPMI, 5 * 60 * 1000);
     </script>
 </body>
 </html>
