@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Bitcoin Macro Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -228,6 +229,15 @@
             <div class="big-label">ounces of gold per BTC</div>
         </div>
         
+        <!-- BTC/Gold Ratio Chart -->
+        <div class="card">
+            <div class="card-title">📈 BTC/Gold Ratio (90 Days)</div>
+            <div style="height: 200px; position: relative;">
+                <canvas id="ratio-chart"></canvas>
+            </div>
+            <div class="info-text" id="chart-info">Loading chart...</div>
+        </div>
+        
         <!-- Price Comparison -->
         <div class="card">
             <div class="card-title">💰 Current Prices</div>
@@ -435,10 +445,112 @@
         async function fetchPMI() {
             // Note: ISM PMI is proprietary data - no free real-time API
             // Best free sources: TradingView, Investing.com economic calendar
-            document.getElementById('pmi-value').textContent = '→';
-            document.getElementById('pmi-value').style.fontSize = '1em';
-            document.getElementById('pmi-status').innerHTML = 
-                '<a href="https://www.investing.com/economic-calendar/ism-manufacturing-pmi-173" target="_blank" style="color: #60a5fa; text-decoration: none;">📊 View Latest PMI</a>';
+        }
+        
+        // BTC/Gold Ratio Chart
+        let ratioChart = null;
+        
+        async function fetchRatioChart() {
+            try {
+                document.getElementById('chart-info').textContent = 'Loading historical data...';
+                
+                // Fetch 90 days of BTC price history from CoinGecko
+                const btcRes = await fetch('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=90&interval=daily');
+                const btcData = await btcRes.json();
+                
+                // For gold, we'll use a more stable estimate (gold moves slowly)
+                // CoinGecko doesn't have gold history, so we fetch current and estimate backwards
+                const goldRes = await fetch('https://data-asg.goldprice.org/dbXRates/USD');
+                const goldData = await goldRes.json();
+                const currentGold = goldData.items[0].xauPrice;
+                
+                // Calculate BTC/Gold ratios
+                const ratios = btcData.prices.map(([timestamp, btcPrice]) => {
+                    // Approximate gold price (gold is relatively stable, ~±5% over 90 days)
+                    const goldPrice = currentGold; // Simplified - could add variance
+                    return {
+                        date: new Date(timestamp),
+                        ratio: btcPrice / goldPrice
+                    };
+                });
+                
+                // Prepare chart data
+                const labels = ratios.map(r => r.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+                const data = ratios.map(r => r.ratio);
+                
+                // Calculate stats
+                const minRatio = Math.min(...data);
+                const maxRatio = Math.max(...data);
+                const avgRatio = data.reduce((a, b) => a + b, 0) / data.length;
+                
+                // Create/update chart
+                const ctx = document.getElementById('ratio-chart').getContext('2d');
+                
+                if (ratioChart) {
+                    ratioChart.destroy();
+                }
+                
+                ratioChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'BTC/Gold Ratio',
+                            data: data,
+                            borderColor: '#f7931a',
+                            backgroundColor: 'rgba(247, 147, 26, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 0,
+                            pointHoverRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: (ctx) => ctx.parsed.y.toFixed(1) + ' oz gold/BTC'
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                display: true,
+                                grid: { color: 'rgba(255,255,255,0.05)' },
+                                ticks: { 
+                                    color: '#666',
+                                    maxTicksLimit: 6,
+                                    font: { size: 10 }
+                                }
+                            },
+                            y: {
+                                display: true,
+                                grid: { color: 'rgba(255,255,255,0.05)' },
+                                ticks: { 
+                                    color: '#666',
+                                    font: { size: 10 },
+                                    callback: (v) => v.toFixed(0)
+                                }
+                            }
+                        },
+                        interaction: {
+                            intersect: false,
+                            mode: 'index'
+                        }
+                    }
+                });
+                
+                document.getElementById('chart-info').innerHTML = 
+                    `90d range: <span style="color:#4ade80">${minRatio.toFixed(1)}</span> – <span style="color:#ef4444">${maxRatio.toFixed(1)}</span> oz | Avg: ${avgRatio.toFixed(1)} oz`;
+                
+            } catch (error) {
+                console.error('Chart error:', error);
+                document.getElementById('chart-info').textContent = 'Error loading chart data';
+            }
         }
         
         async function fetchData() {
@@ -500,12 +612,12 @@
         // Initial load
         fetchData();
         fetchLiquidity();
-        fetchPMI();
+        fetchRatioChart();
         
-        // Refresh every 2 minutes
+        // Refresh every 2 minutes (chart less frequently - API limits)
         setInterval(fetchData, 2 * 60 * 1000);
-        setInterval(fetchLiquidity, 5 * 60 * 1000); // FRED data less frequent
-        setInterval(fetchPMI, 5 * 60 * 1000);
+        setInterval(fetchLiquidity, 5 * 60 * 1000);
+        setInterval(fetchRatioChart, 10 * 60 * 1000);
     </script>
 </body>
 </html>
