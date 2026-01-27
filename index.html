@@ -214,6 +214,27 @@
     .footer { text-align: center; font-size: 10px; color: var(--text-dim); margin-top: 6px; }
     .footer a { color: var(--btc); text-decoration: none; }
     
+    .nav-links {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    
+    .nav-links a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 11px;
+      padding: 5px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+    }
+    
+    .nav-links a.active {
+      color: var(--btc);
+      background: rgba(247,147,26,0.15);
+    }
+    
     .loading { text-align: center; padding: 40px; color: var(--text-dim); }
     .error { background: rgba(255,107,107,0.1); color: var(--red); padding: 16px; border-radius: 12px; text-align: center; }
     
@@ -310,6 +331,11 @@
         <div class="subtitle">Long-term valuation model</div>
       </div>
     </header>
+    <div class="nav-links">
+      <a href="index.html" class="active">Power Law</a>
+      <a href="energy-metrics.html">Energy</a>
+      <a href="macro.html">Macro</a>
+    </div>
     <div id="app"><div class="loading">Loading...</div></div>
     <div class="footer">
       <span id="lastUpdate">—</span> · <a href="#" onclick="location.reload()">Refresh</a>

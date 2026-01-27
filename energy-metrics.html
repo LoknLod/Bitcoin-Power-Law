@@ -37,7 +37,28 @@
             text-align: center;
             color: #888;
             font-size: 0.9em;
-            margin-bottom: 30px;
+            margin-bottom: 15px;
+        }
+        
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .nav-links a {
+            color: #888;
+            text-decoration: none;
+            font-size: 0.8em;
+            padding: 5px 12px;
+            border-radius: 15px;
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .nav-links a.active {
+            color: #f7931a;
+            background: rgba(247,147,26,0.15);
         }
         
         .card {
@@ -154,6 +175,12 @@
     <div class="container">
         <h1>⚡ Bitcoin Energy Security</h1>
         <p class="subtitle">Proof of Work = Proof of Energy</p>
+        
+        <div class="nav-links">
+            <a href="index.html">Power Law</a>
+            <a href="energy-metrics.html" class="active">Energy</a>
+            <a href="macro.html">Macro</a>
+        </div>
         
         <div class="card attack-cost">
             <div class="card-title">🛡️ Cost to Attack (51%)</div>
