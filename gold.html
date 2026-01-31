@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="BTC vs Gold">
+  <meta name="theme-color" content="#0d0d0d">
+  <title>BTC vs Gold | Power Law</title>
+  <style>
+    :root {
+      --bg: #0d0d0d;
+      --card: #1a1a1a;
+      --border: #2a2a2a;
+      --text: #ffffff;
+      --text-dim: #888888;
+      --btc: #f7931a;
+      --gold: #ffd700;
+      --green: #00d395;
+      --red: #ff6b6b;
+      --blue: #4da6ff;
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+    
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 12px 12px 8px;
+    }
+    
+    header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    
+    .logo {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--btc), var(--gold));
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    
+    h1 { font-size: 18px; font-weight: 600; }
+    .subtitle { font-size: 11px; color: var(--text-dim); }
+    
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+    
+    .ratio-section {
+      text-align: center;
+      padding: 4px 0 10px;
+    }
+    
+    .ratio-label {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-bottom: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .ratio {
+      font-size: 38px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--gold);
+    }
+    
+    .ratio-unit {
+      font-size: 16px;
+      color: var(--text-dim);
+      font-weight: 400;
+    }
+    
+    .ratio-change { font-size: 13px; margin-top: 2px; }
+    .positive { color: var(--green); }
+    .negative { color: var(--red); }
+    
+    .prices-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    
+    .price-box {
+      background: rgba(255,255,255,0.03);
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+    }
+    
+    .price-box-value { font-size: 18px; font-weight: 600; margin-bottom: 2px; }
+    .price-box-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; }
+    .btc-color { color: var(--btc); }
+    .gold-color { color: var(--gold); }
+    
+    .metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    
+    .metric {
+      background: rgba(255,255,255,0.03);
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+    }
+    
+    .metric-value { font-size: 18px; font-weight: 600; margin-bottom: 2px; }
+    .metric-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; }
+    .power-law-value { color: var(--blue); }
+    
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 180px;
+      margin-bottom: 4px;
+    }
+    
+    #chart { width: 100%; height: 100%; }
+    
+    .chart-title {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    
+    .chart-legend {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      font-size: 9px;
+      color: var(--text-dim);
+      margin-top: 6px;
+    }
+    
+    .legend-item { display: flex; align-items: center; gap: 3px; }
+    .legend-dot { width: 6px; height: 6px; border-radius: 50%; }
+    
+    .gauge-section { display: flex; align-items: center; gap: 12px; }
+    .gauge-wrap { flex: 1; }
+    .gauge-label { font-size: 10px; color: var(--text-dim); margin-bottom: 6px; }
+    
+    .gauge {
+      height: 6px;
+      background: linear-gradient(to right, var(--green), var(--blue), var(--red));
+      border-radius: 3px;
+      position: relative;
+    }
+    
+    .gauge-marker {
+      position: absolute;
+      top: -5px;
+      width: 16px;
+      height: 16px;
+      background: var(--text);
+      border-radius: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+    
+    .gauge-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+    
+    .status-badge {
+      text-align: center;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    
+    .status-undervalued { background: rgba(0, 211, 149, 0.15); color: var(--green); }
+    .status-fair { background: rgba(77, 166, 255, 0.15); color: var(--blue); }
+    .status-overvalued { background: rgba(255, 107, 107, 0.15); color: var(--red); }
+    
+    .bands {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    
+    .band {
+      text-align: center;
+      padding: 8px 4px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 8px;
+    }
+    
+    .band-value { font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .band-label { font-size: 9px; color: var(--text-dim); margin-top: 1px; text-transform: uppercase; }
+    .band.support .band-value { color: var(--green); }
+    .band.fair .band-value { color: var(--blue); }
+    .band.resist .band-value { color: var(--red); }
+    
+    .insight-card {
+      background: rgba(247, 147, 26, 0.1);
+      border: 1px solid rgba(247, 147, 26, 0.3);
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    
+    .insight-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--btc);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    
+    .insight-text {
+      font-size: 12px;
+      color: var(--text);
+      line-height: 1.4;
+    }
+    
+    .footer { text-align: center; font-size: 10px; color: var(--text-dim); margin-top: 6px; }
+    .footer a { color: var(--btc); text-decoration: none; }
+    
+    .nav-links {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    
+    .nav-links a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 11px;
+      padding: 5px 10px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+    }
+    
+    .nav-links a.active {
+      color: var(--gold);
+      background: rgba(255,215,0,0.15);
+    }
+    
+    .loading { text-align: center; padding: 40px; color: var(--text-dim); }
+    .error { background: rgba(255,107,107,0.1); color: var(--red); padding: 16px; border-radius: 12px; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">₿/Au</div>
+      <div>
+        <h1>BTC vs Gold</h1>
+        <div class="subtitle">Power Law in gold terms</div>
+      </div>
+    </header>
+    <div class="nav-links">
+      <a href="index.html">Power Law</a>
+      <a href="energy-metrics.html">Energy</a>
+      <a href="macro.html">Macro</a>
+      <a href="gold.html" class="active">vs Gold</a>
+    </div>
+    <div id="app"><div class="loading">Loading...</div></div>
+    <div class="footer">
+      <span id="lastUpdate">—</span> · <a href="#" onclick="location.reload()">Refresh</a>
+    </div>
+  </div>
+
+  <script>
+    const GENESIS = new Date('2009-01-03T18:15:05Z');
+    // BTC/Gold power law parameters (derived from historical data)
+    const PL_A = -19.150, PL_B = 5.525;
+    const SUPPORT_MULT = 0.35, RESIST_MULT = 3.5;
+    
+    const daysSinceGenesis = (d = new Date()) => (d - GENESIS) / 864e5;
+    const powerLawRatio = days => Math.pow(10, PL_A + PL_B * Math.log10(days));
+    
+    const formatRatio = r => r >= 100 ? r.toFixed(0) : r >= 10 ? r.toFixed(1) : r.toFixed(2);
+    const formatPrice = p => p >= 1e6 ? '$'+(p/1e6).toFixed(2)+'M' : p >= 1e3 ? '$'+Math.round(p).toLocaleString() : '$'+p.toFixed(2);
+    const formatPct = v => (v >= 0 ? '+' : '') + (v * 100).toFixed(1) + '%';
+    
+    async function fetchPrices() {
+      try {
+        // Fetch BTC
+        const btcRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true');
+        const btcData = await btcRes.json();
+        
+        // Fetch Gold (using a free API)
+        let goldPrice;
+        try {
+          const goldRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=tether-gold&vs_currencies=usd');
+          const goldData = await goldRes.json();
+          goldPrice = goldData['tether-gold']?.usd || 2800; // Fallback
+        } catch {
+          goldPrice = 2800; // Fallback to approximate
+        }
+        
+        return { 
+          btc: btcData.bitcoin.usd, 
+          btcChange: btcData.bitcoin.usd_24h_change / 100,
+          gold: goldPrice
+        };
+      } catch (e) {
+        console.error('Fetch error:', e);
+        throw e;
+      }
+    }
+    
+    function getStatus(ratio, fair, sup, res) {
+      if (ratio < sup) return { text: '🟢 Deeply Undervalued vs Gold', cls: 'status-undervalued' };
+      if (ratio < fair * 0.7) return { text: '🟢 Undervalued vs Gold', cls: 'status-undervalued' };
+      if (ratio < fair * 1.3) return { text: '🔵 Fair Value vs Gold', cls: 'status-fair' };
+      if (ratio < res) return { text: '🟠 Above Fair Value', cls: 'status-overvalued' };
+      return { text: '🔴 Overvalued vs Gold', cls: 'status-overvalued' };
+    }
+    
+    function gaugePos(ratio, sup, res) {
+      const lr = Math.log10(ratio), ls = Math.log10(sup), lres = Math.log10(res);
+      return Math.max(0, Math.min(100, (lr - ls) / (lres - ls) * 100));
+    }
+    
+    function drawChart(canvas, currentRatio) {
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+      
+      const W = rect.width, H = rect.height;
+      const pad = { t: 15, r: 10, b: 22, l: 40 };
+      const cW = W - pad.l - pad.r, cH = H - pad.t - pad.b;
+      
+      const startD = daysSinceGenesis(new Date('2014-01-01'));
+      const endD = daysSinceGenesis(new Date('2032-01-01'));
+      const curD = daysSinceGenesis();
+      const logMin = -2, logMax = 3;
+      
+      const xPos = d => pad.l + ((d - startD) / (endD - startD)) * cW;
+      const yPos = r => pad.t + (1 - (Math.log10(Math.max(0.01, Math.min(1000, r))) - logMin) / (logMax - logMin)) * cH;
+      
+      ctx.fillStyle = '#1a1a1a';
+      ctx.fillRect(0, 0, W, H);
+      
+      // Grid
+      ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+      ctx.lineWidth = 1;
+      [0.1, 1, 10, 100].forEach(r => {
+        ctx.beginPath(); ctx.moveTo(pad.l, yPos(r)); ctx.lineTo(W - pad.r, yPos(r)); ctx.stroke();
+      });
+      
+      // Fill corridor
+      ctx.fillStyle = 'rgba(255,215,0,0.08)';
+      ctx.beginPath();
+      for (let d = startD; d <= endD; d += 30) { 
+        const x = xPos(d), y = yPos(powerLawRatio(d) * SUPPORT_MULT); 
+        d === startD ? ctx.moveTo(x, y) : ctx.lineTo(x, y); 
+      }
+      for (let d = endD; d >= startD; d -= 30) { 
+        ctx.lineTo(xPos(d), yPos(powerLawRatio(d) * RESIST_MULT)); 
+      }
+      ctx.closePath(); ctx.fill();
+      
+      // Lines
+      ctx.lineWidth = 2;
+      [[SUPPORT_MULT, 'rgba(0,211,149,0.7)'], [1, 'rgba(255,215,0,0.9)'], [RESIST_MULT, 'rgba(255,107,107,0.7)']].forEach(([m, c]) => {
+        ctx.strokeStyle = c; ctx.beginPath();
+        for (let d = startD; d <= endD; d += 30) { 
+          const x = xPos(d), y = yPos(powerLawRatio(d) * m); 
+          d === startD ? ctx.moveTo(x, y) : ctx.lineTo(x, y); 
+        }
+        ctx.stroke();
+      });
+      
+      // Current time line
+      ctx.strokeStyle = 'rgba(255,255,255,0.2)'; ctx.setLineDash([4, 4]);
+      ctx.beginPath(); ctx.moveTo(xPos(curD), pad.t); ctx.lineTo(xPos(curD), H - pad.b); ctx.stroke();
+      ctx.setLineDash([]);
+      
+      // Ratio dot
+      ctx.fillStyle = '#ffd700';
+      ctx.beginPath(); ctx.arc(xPos(curD), yPos(currentRatio), 5, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+      
+      // Labels
+      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      ctx.font = '9px -apple-system, sans-serif';
+      ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+      [0.1, 1, 10, 100].forEach(r => {
+        ctx.fillText(r + ' oz', pad.l - 5, yPos(r));
+      });
+      
+      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+      [2014, 2018, 2022, 2026, 2030].forEach(y => ctx.fillText(y, xPos(daysSinceGenesis(new Date(y + '-01-01'))), H - pad.b + 6));
+      
+      ctx.fillStyle = '#ffd700';
+      ctx.font = 'bold 9px -apple-system, sans-serif';
+      ctx.fillText('NOW', xPos(curD), H - pad.b + 6);
+    }
+    
+    async function render() {
+      const app = document.getElementById('app');
+      
+      try {
+        const { btc, btcChange, gold } = await fetchPrices();
+        const days = daysSinceGenesis();
+        const ratio = btc / gold; // oz of gold per BTC
+        const fair = powerLawRatio(days);
+        const sup = fair * SUPPORT_MULT;
+        const res = fair * RESIST_MULT;
+        const deviation = (ratio / fair) - 1;
+        const status = getStatus(ratio, fair, sup, res);
+        
+        // Calculate insight
+        const undervaluation = ((fair - ratio) / fair * 100).toFixed(0);
+        const toFairValue = (fair / ratio).toFixed(1);
+        
+        app.innerHTML = `
+          <div class="card">
+            <div class="ratio-section">
+              <div class="ratio-label">1 BTC = </div>
+              <div class="ratio">${formatRatio(ratio)} <span class="ratio-unit">oz gold</span></div>
+              <div class="ratio-change ${deviation >= 0 ? 'positive' : 'negative'}">
+                ${formatPct(deviation)} from fair value
+              </div>
+            </div>
+          </div>
+          
+          <div class="prices-row">
+            <div class="price-box">
+              <div class="price-box-value btc-color">${formatPrice(btc)}</div>
+              <div class="price-box-label">Bitcoin</div>
+            </div>
+            <div class="price-box">
+              <div class="price-box-value gold-color">${formatPrice(gold)}</div>
+              <div class="price-box-label">Gold / oz</div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="gauge-section">
+              <div class="gauge-wrap">
+                <div class="gauge-label">BTC/Gold Power Law Position</div>
+                <div class="gauge">
+                  <div class="gauge-marker" style="left: ${gaugePos(ratio, sup, res)}%"></div>
+                </div>
+                <div class="gauge-labels">
+                  <span>Undervalued</span>
+                  <span>Fair</span>
+                  <span>Overvalued</span>
+                </div>
+              </div>
+              <div class="status-badge ${status.cls}">${status.text}</div>
+            </div>
+            <div class="bands">
+              <div class="band support">
+                <div class="band-value">${formatRatio(sup)} oz</div>
+                <div class="band-label">Support</div>
+              </div>
+              <div class="band fair">
+                <div class="band-value">${formatRatio(fair)} oz</div>
+                <div class="band-label">Fair Value</div>
+              </div>
+              <div class="band resist">
+                <div class="band-value">${formatRatio(res)} oz</div>
+                <div class="band-label">Resistance</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card chart-card">
+            <div class="chart-title">BTC/Gold Ratio — Power Law Corridor</div>
+            <div class="chart-container">
+              <canvas id="chart"></canvas>
+            </div>
+            <div class="chart-legend">
+              <div class="legend-item"><span class="legend-dot" style="background:#00d395"></span> Support</div>
+              <div class="legend-item"><span class="legend-dot" style="background:#ffd700"></span> Fair Value</div>
+              <div class="legend-item"><span class="legend-dot" style="background:#ff6b6b"></span> Resistance</div>
+            </div>
+          </div>
+          
+          <div class="insight-card">
+            <div class="insight-title">💡 Insight</div>
+            <div class="insight-text">
+              BTC is <strong>${undervaluation}% undervalued</strong> vs gold. 
+              At fair value, 1 BTC would buy <strong>${formatRatio(fair)} oz</strong> of gold instead of ${formatRatio(ratio)} oz.
+              That's a <strong>${toFairValue}x</strong> move just to reach the trend line.
+            </div>
+          </div>
+        `;
+        
+        const canvas = document.getElementById('chart');
+        if (canvas) drawChart(canvas, ratio);
+        
+        document.getElementById('lastUpdate').textContent = 'Updated ' + new Date().toLocaleTimeString();
+        
+      } catch (e) {
+        app.innerHTML = `<div class="error">Failed to load data. <a href="#" onclick="location.reload()">Retry</a></div>`;
+      }
+    }
+    
+    render();
+    setInterval(render, 60000);
+  </script>
+</body>
+</html>
