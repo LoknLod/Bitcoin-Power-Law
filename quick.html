@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="BTC Quick">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta property="og:title" content="Bitcoin Power Law — Quick Look">
+  <meta property="og:description" content="Is BTC cheap or expensive? Check the power law.">
+  <meta property="og:image" content="https://loknlod.github.io/Bitcoin-Power-Law/og-image.png">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>₿</text></svg>">
+  <title>₿ Quick Look</title>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --card: #141414;
+      --border: #222;
+      --text: #fff;
+      --dim: #666;
+      --btc: #f7931a;
+      --gold: #ffd700;
+      --green: #00d395;
+      --red: #ff6b6b;
+      --blue: #4da6ff;
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .container {
+      max-width: 420px;
+      margin: 0 auto;
+      padding: 16px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    
+    .logo-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .logo {
+      font-size: 24px;
+      color: var(--btc);
+    }
+    
+    .title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    
+    .more-link {
+      font-size: 12px;
+      color: var(--dim);
+      text-decoration: none;
+    }
+    
+    /* Price Hero */
+    .price-hero {
+      text-align: center;
+      padding: 20px 0;
+    }
+    
+    .price {
+      font-size: 48px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -1px;
+    }
+    
+    .price-change {
+      font-size: 14px;
+      margin-top: 4px;
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 12px;
+    }
+    
+    .status-undervalued { background: rgba(0,211,149,0.15); color: var(--green); }
+    .status-fair { background: rgba(77,166,255,0.15); color: var(--blue); }
+    .status-overvalued { background: rgba(255,107,107,0.15); color: var(--red); }
+    
+    /* Two Column Compare */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 16px 0;
+    }
+    
+    .compare-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+    }
+    
+    .compare-label {
+      font-size: 11px;
+      color: var(--dim);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    
+    .compare-icon {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+    
+    .compare-fair {
+      font-size: 11px;
+      color: var(--dim);
+      margin-bottom: 4px;
+    }
+    
+    .compare-fair span {
+      color: var(--text);
+      font-weight: 500;
+    }
+    
+    .compare-dev {
+      font-size: 28px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    
+    .compare-dev.positive { color: var(--red); }
+    .compare-dev.negative { color: var(--green); }
+    
+    /* Gauge */
+    .gauge-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    
+    .gauge {
+      flex: 1;
+      height: 6px;
+      background: linear-gradient(to right, var(--green), var(--blue), var(--red));
+      border-radius: 3px;
+      position: relative;
+    }
+    
+    .gauge-marker {
+      position: absolute;
+      top: -5px;
+      width: 16px;
+      height: 16px;
+      background: var(--text);
+      border-radius: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+    
+    /* Bands */
+    .bands-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    
+    .bands-title {
+      font-size: 11px;
+      color: var(--dim);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    
+    .bands-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+    
+    .band {
+      text-align: center;
+      padding: 8px 4px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 10px;
+    }
+    
+    .band-label {
+      font-size: 9px;
+      color: var(--dim);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    
+    .band-usd {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    
+    .band-gold {
+      font-size: 11px;
+      color: var(--gold);
+    }
+    
+    .band.support .band-usd { color: var(--green); }
+    .band.fair .band-usd { color: var(--blue); }
+    .band.resist .band-usd { color: var(--red); }
+    
+    /* Network Pulse */
+    .pulse-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      padding: 10px 0;
+      font-size: 12px;
+      color: var(--dim);
+    }
+    
+    .pulse-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 16px 0;
+      border-top: 1px solid var(--border);
+      margin-top: auto;
+    }
+    
+    .zap-section {
+      margin-bottom: 12px;
+    }
+    
+    .zap-label {
+      font-size: 11px;
+      color: var(--dim);
+      margin-bottom: 6px;
+    }
+    
+    .zap-address {
+      font-family: monospace;
+      font-size: 12px;
+      color: var(--btc);
+      background: rgba(247,147,26,0.1);
+      padding: 8px 12px;
+      border-radius: 8px;
+      display: inline-block;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .zap-address:hover {
+      background: rgba(247,147,26,0.2);
+    }
+    
+    .zap-address:active {
+      background: rgba(247,147,26,0.3);
+    }
+    
+    .zap-copied {
+      font-size: 11px;
+      color: var(--green);
+      margin-top: 4px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    
+    .zap-copied.show { opacity: 1; }
+    
+    .update-time {
+      font-size: 10px;
+      color: var(--dim);
+    }
+    
+    .update-time a {
+      color: var(--btc);
+      text-decoration: none;
+    }
+    
+    /* Loading */
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--dim);
+    }
+    
+    .error {
+      text-align: center;
+      padding: 20px;
+      color: var(--red);
+      background: rgba(255,107,107,0.1);
+      border-radius: 12px;
+    }
+    
+    /* Responsive */
+    @media (max-width: 360px) {
+      .price { font-size: 40px; }
+      .compare-dev { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo-group">
+        <span class="logo">₿</span>
+        <span class="title">Quick Look</span>
+      </div>
+      <a href="index.html" class="more-link">Full App →</a>
+    </div>
+    
+    <div id="app">
+      <div class="loading">Loading...</div>
+    </div>
+    
+    <div class="footer">
+      <div class="zap-section">
+        <div class="zap-label">⚡ Zap this tool</div>
+        <div class="zap-address" id="zapAddress" onclick="copyZap()">keats@getalby.com</div>
+        <div class="zap-copied" id="zapCopied">Copied!</div>
+      </div>
+      <div class="update-time">
+        <span id="updateTime">—</span> · <a href="#" onclick="location.reload()">Refresh</a>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Constants
+    const GENESIS = new Date('2009-01-03T18:15:05Z');
+    
+    // BTC/USD Power Law
+    const USD_A = -17.01, USD_B = 5.82;
+    
+    // BTC/Gold Power Law
+    const GOLD_A = -19.150, GOLD_B = 5.525;
+    
+    const SUPPORT_MULT = 0.35, RESIST_MULT = 3.5;
+    
+    const daysSinceGenesis = () => (Date.now() - GENESIS.getTime()) / 864e5;
+    const powerLawUSD = days => Math.pow(10, USD_A + USD_B * Math.log10(days));
+    const powerLawGold = days => Math.pow(10, GOLD_A + GOLD_B * Math.log10(days));
+    
+    const formatPrice = p => p >= 1e6 ? '$'+(p/1e6).toFixed(2)+'M' : p >= 1e3 ? '$'+Math.round(p).toLocaleString() : '$'+p.toFixed(2);
+    const formatRatio = r => r >= 100 ? r.toFixed(0) : r >= 10 ? r.toFixed(1) : r.toFixed(2);
+    const formatPct = v => (v >= 0 ? '+' : '') + (v * 100).toFixed(0) + '%';
+    
+    function getStatus(price, fair, sup) {
+      if (price < sup) return { text: '🟢 Deeply Undervalued', cls: 'status-undervalued' };
+      if (price < fair * 0.7) return { text: '🟢 Undervalued', cls: 'status-undervalued' };
+      if (price < fair * 1.3) return { text: '🔵 Fair Value Zone', cls: 'status-fair' };
+      return { text: '🔴 Overvalued', cls: 'status-overvalued' };
+    }
+    
+    function gaugePos(price, sup, res) {
+      const lp = Math.log10(price), ls = Math.log10(sup), lr = Math.log10(res);
+      return Math.max(0, Math.min(100, (lp - ls) / (lr - ls) * 100));
+    }
+    
+    async function fetchData() {
+      // Fetch BTC
+      const btcRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true');
+      const btcData = await btcRes.json();
+      const btcPrice = btcData.bitcoin.usd;
+      const btcChange = btcData.bitcoin.usd_24h_change;
+      
+      // Fetch Gold
+      let goldPrice = 2800; // Fallback
+      try {
+        const goldRes = await fetch('https://data-asg.goldprice.org/dbXRates/USD');
+        const goldData = await goldRes.json();
+        goldPrice = goldData.items[0].xauPrice;
+      } catch (e) {
+        try {
+          const goldRes2 = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=tether-gold&vs_currencies=usd');
+          const goldData2 = await goldRes2.json();
+          goldPrice = goldData2['tether-gold']?.usd || 2800;
+        } catch {}
+      }
+      
+      // Fetch Hashrate
+      let hashrate = null;
+      try {
+        const hashRes = await fetch('https://mempool.space/api/v1/mining/hashrate/3d');
+        const hashData = await hashRes.json();
+        hashrate = (hashData.currentHashrate / 1e18).toFixed(0);
+      } catch {}
+      
+      return { btcPrice, btcChange, goldPrice, hashrate };
+    }
+    
+    async function render() {
+      const app = document.getElementById('app');
+      
+      try {
+        const { btcPrice, btcChange, goldPrice, hashrate } = await fetchData();
+        
+        const days = daysSinceGenesis();
+        
+        // USD calculations
+        const usdFair = powerLawUSD(days);
+        const usdSup = usdFair * SUPPORT_MULT;
+        const usdRes = usdFair * RESIST_MULT;
+        const usdDev = (btcPrice - usdFair) / usdFair;
+        
+        // Gold calculations
+        const btcGold = btcPrice / goldPrice;
+        const goldFair = powerLawGold(days);
+        const goldSup = goldFair * SUPPORT_MULT;
+        const goldRes = goldFair * RESIST_MULT;
+        const goldDev = (btcGold - goldFair) / goldFair;
+        
+        const status = getStatus(btcPrice, usdFair, usdSup);
+        
+        app.innerHTML = `
+          <div class="price-hero">
+            <div class="price">${formatPrice(btcPrice)}</div>
+            <div class="price-change ${btcChange >= 0 ? 'positive' : 'negative'}" style="color: ${btcChange >= 0 ? 'var(--green)' : 'var(--red)'}">
+              ${btcChange >= 0 ? '+' : ''}${btcChange.toFixed(1)}% (24h)
+            </div>
+            <div class="status-badge ${status.cls}">${status.text}</div>
+          </div>
+          
+          <div class="compare-grid">
+            <div class="compare-card">
+              <div class="compare-label">vs US Dollar</div>
+              <div class="compare-icon">💵</div>
+              <div class="compare-fair">Fair: <span>${formatPrice(usdFair)}</span></div>
+              <div class="compare-dev ${usdDev >= 0 ? 'positive' : 'negative'}">${formatPct(usdDev)}</div>
+              <div class="gauge-row">
+                <div class="gauge">
+                  <div class="gauge-marker" style="left: ${gaugePos(btcPrice, usdSup, usdRes)}%"></div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="compare-card">
+              <div class="compare-label">vs Gold</div>
+              <div class="compare-icon">🥇</div>
+              <div class="compare-fair">Fair: <span>${formatRatio(goldFair)} oz</span></div>
+              <div class="compare-dev ${goldDev >= 0 ? 'positive' : 'negative'}">${formatPct(goldDev)}</div>
+              <div class="gauge-row">
+                <div class="gauge">
+                  <div class="gauge-marker" style="left: ${gaugePos(btcGold, goldSup, goldRes)}%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bands-card">
+            <div class="bands-title">Power Law Bands</div>
+            <div class="bands-grid">
+              <div class="band support">
+                <div class="band-label">Support</div>
+                <div class="band-usd">${formatPrice(usdSup)}</div>
+                <div class="band-gold">${formatRatio(goldSup)} oz</div>
+              </div>
+              <div class="band fair">
+                <div class="band-label">Fair</div>
+                <div class="band-usd">${formatPrice(usdFair)}</div>
+                <div class="band-gold">${formatRatio(goldFair)} oz</div>
+              </div>
+              <div class="band resist">
+                <div class="band-label">Resist</div>
+                <div class="band-usd">${formatPrice(usdRes)}</div>
+                <div class="band-gold">${formatRatio(goldRes)} oz</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="pulse-row">
+            <div class="pulse-item">
+              <div class="pulse-dot"></div>
+              <span>${hashrate ? hashrate + ' EH/s' : '—'}</span>
+            </div>
+            <div class="pulse-item">
+              <span>Gold: ${formatPrice(goldPrice)}/oz</span>
+            </div>
+            <div class="pulse-item">
+              <span>1 BTC = ${formatRatio(btcGold)} oz</span>
+            </div>
+          </div>
+        `;
+        
+        document.getElementById('updateTime').textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
+      } catch (e) {
+        console.error(e);
+        app.innerHTML = `<div class="error">Failed to load data. <a href="#" onclick="location.reload()" style="color: var(--btc)">Retry</a></div>`;
+      }
+    }
+    
+    function copyZap() {
+      const addr = document.getElementById('zapAddress').textContent;
+      navigator.clipboard.writeText(addr).then(() => {
+        const copied = document.getElementById('zapCopied');
+        copied.classList.add('show');
+        setTimeout(() => copied.classList.remove('show'), 2000);
+      });
+    }
+    
+    // Run
+    render();
+    setInterval(render, 60000);
+  </script>
+</body>
+</html>

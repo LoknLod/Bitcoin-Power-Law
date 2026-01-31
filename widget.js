@@ -1,9 +1,14 @@
 // BTC Power Law Widget for Scriptable
 // Add to Home Screen as a widget for always-on display
+// v2.0 - Now includes BTC/Gold ratio
 
 const GENESIS = new Date('2009-01-03T18:15:05Z');
-const PL_A = -17.01;
-const PL_B = 5.82;
+
+// BTC/USD Power Law
+const USD_A = -17.01, USD_B = 5.82;
+// BTC/Gold Power Law  
+const GOLD_A = -19.150, GOLD_B = 5.525;
+
 const SUPPORT_MULT = 0.35;
 const RESIST_MULT = 3.5;
 
@@ -11,14 +16,22 @@ function daysSinceGenesis() {
   return (Date.now() - GENESIS.getTime()) / (1000 * 60 * 60 * 24);
 }
 
-function powerLawPrice(days) {
-  return Math.pow(10, PL_A + PL_B * Math.log10(days));
+function powerLawUSD(days) {
+  return Math.pow(10, USD_A + USD_B * Math.log10(days));
+}
+
+function powerLawGold(days) {
+  return Math.pow(10, GOLD_A + GOLD_B * Math.log10(days));
 }
 
 function formatPrice(price) {
   if (price >= 1000000) return '$' + (price / 1000000).toFixed(2) + 'M';
   if (price >= 1000) return '$' + Math.round(price).toLocaleString();
   return '$' + price.toFixed(2);
+}
+
+function formatRatio(r) {
+  return r >= 100 ? r.toFixed(0) : r >= 10 ? r.toFixed(1) : r.toFixed(2);
 }
 
 async function fetchBTCPrice() {
@@ -39,8 +52,18 @@ async function fetchBTCPrice() {
   }
 }
 
+async function fetchGoldPrice() {
+  try {
+    const req = new Request('https://data-asg.goldprice.org/dbXRates/USD');
+    const data = await req.loadJSON();
+    return data.items[0].xauPrice;
+  } catch (e) {
+    return 2800; // Fallback
+  }
+}
+
 function getStatus(price, fairValue, support, resist) {
-  if (price < support) return { text: 'Deeply Undervalued', emoji: '🟢', color: new Color('#00d395') };
+  if (price < support) return { text: 'Deep Value', emoji: '🟢', color: new Color('#00d395') };
   if (price < fairValue * 0.7) return { text: 'Undervalued', emoji: '🟢', color: new Color('#00d395') };
   if (price < fairValue * 1.3) return { text: 'Fair Value', emoji: '🔵', color: new Color('#4da6ff') };
   if (price < resist) return { text: 'Above Fair', emoji: '🟠', color: new Color('#ff9500') };
@@ -55,17 +78,29 @@ function getGaugePosition(price, support, resist) {
 }
 
 async function createWidget() {
-  const { price, change24h } = await fetchBTCPrice();
+  const [{ price, change24h }, goldPrice] = await Promise.all([
+    fetchBTCPrice(),
+    fetchGoldPrice()
+  ]);
+  
   const days = daysSinceGenesis();
-  const fairValue = powerLawPrice(days);
-  const support = fairValue * SUPPORT_MULT;
-  const resist = fairValue * RESIST_MULT;
-  const deviation = ((price - fairValue) / fairValue) * 100;
-  const status = getStatus(price, fairValue, support, resist);
-  const gaugePos = getGaugePosition(price, support, resist);
+  
+  // USD calculations
+  const usdFair = powerLawUSD(days);
+  const usdSupport = usdFair * SUPPORT_MULT;
+  const usdResist = usdFair * RESIST_MULT;
+  const usdDev = ((price - usdFair) / usdFair) * 100;
+  
+  // Gold calculations
+  const btcGold = price / goldPrice;
+  const goldFair = powerLawGold(days);
+  const goldDev = ((btcGold - goldFair) / goldFair) * 100;
+  
+  const status = getStatus(price, usdFair, usdSupport, usdResist);
+  const gaugePos = getGaugePosition(price, usdSupport, usdResist);
   
   const widget = new ListWidget();
-  widget.backgroundColor = new Color('#0d0d0d');
+  widget.backgroundColor = new Color('#0a0a0a');
   widget.setPadding(12, 14, 12, 14);
   
   // Header
@@ -73,13 +108,13 @@ async function createWidget() {
   headerStack.centerAlignContent();
   
   const logo = headerStack.addText('₿');
-  logo.font = Font.boldSystemFont(18);
+  logo.font = Font.boldSystemFont(16);
   logo.textColor = new Color('#f7931a');
   
   headerStack.addSpacer(6);
   
   const title = headerStack.addText('Power Law');
-  title.font = Font.mediumSystemFont(14);
+  title.font = Font.mediumSystemFont(13);
   title.textColor = new Color('#ffffff');
   
   headerStack.addSpacer();
@@ -87,79 +122,61 @@ async function createWidget() {
   const statusBadge = headerStack.addText(status.emoji);
   statusBadge.font = Font.systemFont(14);
   
-  widget.addSpacer(8);
+  widget.addSpacer(6);
   
   // Price
   const priceText = widget.addText(formatPrice(price));
-  priceText.font = Font.boldSystemFont(28);
+  priceText.font = Font.boldSystemFont(26);
   priceText.textColor = new Color('#ffffff');
   
   // 24h change
   if (change24h !== null) {
-    const changeText = widget.addText((change24h >= 0 ? '+' : '') + change24h.toFixed(1) + '% (24h)');
-    changeText.font = Font.systemFont(12);
+    const changeText = widget.addText((change24h >= 0 ? '+' : '') + change24h.toFixed(1) + '%');
+    changeText.font = Font.systemFont(11);
     changeText.textColor = change24h >= 0 ? new Color('#00d395') : new Color('#ff6b6b');
   }
   
   widget.addSpacer(8);
   
-  // Gauge bar
-  const gaugeStack = widget.addStack();
-  gaugeStack.layoutHorizontally();
-  gaugeStack.centerAlignContent();
-  gaugeStack.size = new Size(0, 8);
+  // Deviations row
+  const devStack = widget.addStack();
+  devStack.layoutHorizontally();
   
-  // Draw gauge using colored stacks
-  const gaugeWidth = 140;
-  const markerPos = Math.round(gaugePos * gaugeWidth);
+  // USD deviation
+  const usdStack = devStack.addStack();
+  usdStack.layoutVertically();
   
-  const gaugeContainer = gaugeStack.addStack();
-  gaugeContainer.layoutHorizontally();
-  gaugeContainer.cornerRadius = 4;
-  gaugeContainer.size = new Size(gaugeWidth, 6);
+  const usdLabel = usdStack.addText('vs USD');
+  usdLabel.font = Font.systemFont(9);
+  usdLabel.textColor = new Color('#666');
   
-  // Green portion
-  const greenWidth = Math.round(gaugeWidth * 0.33);
-  const green = gaugeContainer.addStack();
-  green.backgroundColor = new Color('#00d395');
-  green.size = new Size(greenWidth, 6);
+  const usdDevText = usdStack.addText((usdDev >= 0 ? '+' : '') + usdDev.toFixed(0) + '%');
+  usdDevText.font = Font.boldSystemFont(14);
+  usdDevText.textColor = usdDev >= 0 ? new Color('#ff6b6b') : new Color('#00d395');
   
-  // Blue portion  
-  const blueWidth = Math.round(gaugeWidth * 0.34);
-  const blue = gaugeContainer.addStack();
-  blue.backgroundColor = new Color('#4da6ff');
-  blue.size = new Size(blueWidth, 6);
+  devStack.addSpacer();
   
-  // Red portion
-  const red = gaugeContainer.addStack();
-  red.backgroundColor = new Color('#ff6b6b');
-  red.size = new Size(gaugeWidth - greenWidth - blueWidth, 6);
+  // Gold deviation
+  const goldStack = devStack.addStack();
+  goldStack.layoutVertically();
+  
+  const goldLabel = goldStack.addText('vs Gold');
+  goldLabel.font = Font.systemFont(9);
+  goldLabel.textColor = new Color('#666');
+  
+  const goldDevText = goldStack.addText((goldDev >= 0 ? '+' : '') + goldDev.toFixed(0) + '%');
+  goldDevText.font = Font.boldSystemFont(14);
+  goldDevText.textColor = goldDev >= 0 ? new Color('#ff6b6b') : new Color('#00d395');
   
   widget.addSpacer(6);
   
-  // Fair value and deviation
-  const infoStack = widget.addStack();
-  infoStack.layoutHorizontally();
-  
-  const fairLabel = infoStack.addText('Fair: ' + formatPrice(fairValue));
-  fairLabel.font = Font.systemFont(11);
-  fairLabel.textColor = new Color('#4da6ff');
-  
-  infoStack.addSpacer();
-  
-  const devLabel = infoStack.addText((deviation >= 0 ? '+' : '') + deviation.toFixed(0) + '%');
-  devLabel.font = Font.boldSystemFont(11);
-  devLabel.textColor = deviation >= 0 ? new Color('#ff6b6b') : new Color('#00d395');
-  
-  widget.addSpacer(4);
-  
   // Status text
   const statusText = widget.addText(status.text);
-  statusText.font = Font.mediumSystemFont(12);
+  statusText.font = Font.mediumSystemFont(11);
   statusText.textColor = status.color;
   
   // Tap to open web app
-  widget.url = 'https://loknlod.github.io/Bitcoin-Power-Law/';
+  widget.url = 'https://loknlod.github.io/Bitcoin-Power-Law/quick.html';
   
   return widget;
 }
