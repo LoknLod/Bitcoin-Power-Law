@@ -316,6 +316,81 @@
             </div>
         </div>
         
+        <!-- Global M2 Money Supply -->
+        <div class="card">
+            <div class="card-title">💵 Global M2 Money Supply (US Proxy)</div>
+            <div class="price-row">
+                <span class="price-label">US M2 (Latest)</span>
+                <span class="price-value liquidity" id="m2-value">$--</span>
+            </div>
+            <div class="price-row">
+                <span class="price-label">Year-over-Year Change</span>
+                <span class="price-value" id="m2-yoy">--%</span>
+            </div>
+            <div class="price-row">
+                <span class="price-label">Trend</span>
+                <span class="price-value" id="m2-trend">--</span>
+            </div>
+            <!-- M2 Sparkline -->
+            <div style="height: 80px; position: relative; margin-top: 10px;">
+                <canvas id="m2-sparkline"></canvas>
+            </div>
+            <div class="info-text" id="m2-info">
+                ⏱️ <strong>~10-week lag:</strong> M2 expansion tends to lead BTC price by ~10 weeks (per Jordi Visser).<br>
+                Uses FRED series WM2NS (US M2) as proxy for global liquidity.
+            </div>
+        </div>
+
+        <!-- BTC vs Software Stocks (IGV) -->
+        <div class="card">
+            <div class="card-title">💻 BTC vs Software Stocks (IGV)</div>
+            <div class="metrics-grid">
+                <div class="metric-box">
+                    <div class="metric-value" style="color: #f97316;">0.73</div>
+                    <div class="metric-label">30d BTC/IGV Correlation</div>
+                </div>
+                <div class="metric-box">
+                    <div class="metric-value" style="color: #ef4444;">~-20%</div>
+                    <div class="metric-label">IGV YTD</div>
+                </div>
+                <div class="metric-box">
+                    <div class="metric-value" style="color: #ef4444;">~-16%</div>
+                    <div class="metric-label">BTC YTD</div>
+                </div>
+                <div class="metric-box">
+                    <a href="https://www.ishares.com/us/products/239769/ishares-expanded-techsoftware-sector-etf" target="_blank" style="color: #60a5fa; text-decoration: none;">
+                        <div class="metric-value">📈</div>
+                        <div class="metric-label">IGV Chart</div>
+                    </a>
+                </div>
+            </div>
+            <div class="section-divider"></div>
+            <div style="background: rgba(249,115,22,0.1); border-left: 3px solid #f97316; padding: 12px; border-radius: 0 8px 8px 0; margin: 10px 0;">
+                <div style="font-size: 0.85em; color: #f97316; font-weight: 600; margin-bottom: 6px;">Jordi Visser's Thesis</div>
+                <div style="font-size: 0.8em; color: #ccc; line-height: 1.5;">
+                    Market currently treats BTC as <strong>"open-source software"</strong> — selling it alongside SaaS stocks.<br>
+                    <strong>Bull case:</strong> BTC decouples when market realizes it's <em>scarce</em>, not software.
+                </div>
+            </div>
+            <div class="metrics-grid" style="margin-top: 12px;">
+                <div class="metric-box">
+                    <a href="https://www.coindesk.com/markets/2026/02/04/bitcoin-s-correlation-with-troubled-software-stock-sector-is-growing" target="_blank" style="color: #60a5fa; text-decoration: none;">
+                        <div class="metric-value" style="font-size: 0.9em;">📰</div>
+                        <div class="metric-label">CoinDesk Article</div>
+                    </a>
+                </div>
+                <div class="metric-box">
+                    <a href="https://beincrypto.com/correlation-between-bitcoin-and-software-stocks/" target="_blank" style="color: #60a5fa; text-decoration: none;">
+                        <div class="metric-value" style="font-size: 0.9em;">📰</div>
+                        <div class="metric-label">BeInCrypto</div>
+                    </a>
+                </div>
+            </div>
+            <div class="info-text">
+                Data: ByteTree, Feb 2026. 30-day rolling correlation between BTC and iShares Expanded Tech-Software ETF (IGV).
+            </div>
+        </div>
+
         <!-- ISM PMI -->
         <div class="card">
             <div class="card-title">🏭 ISM Manufacturing PMI</div>
@@ -366,7 +441,10 @@
         // FRED API KEY - Get free key at:
         // https://fred.stlouisfed.org/docs/api/api_key.html
         // ============================================
-        const FRED_API_KEY = ''; // Paste your key here
+        // ⚠️⚠️⚠️ CAPTAIN DOUG: PASTE YOUR FRED API KEY BELOW ⚠️⚠️⚠️
+        // Get one free at: https://fred.stlouisfed.org/docs/api/api_key.html
+        // (Sign up → "Request API Key" → paste between the quotes)
+        const FRED_API_KEY = ''; // ← PUT YOUR KEY HERE
         
         // Power Law calculation (same as main app)
         function getPowerLawFairValue() {
@@ -442,6 +520,82 @@
             }
         }
         
+        // M2 Money Supply
+        let m2Chart = null;
+        async function fetchM2() {
+            if (!FRED_API_KEY) {
+                document.getElementById('m2-info').innerHTML =
+                    '⚠️ Add FRED API key for live M2 data<br>' +
+                    '⏱️ <strong>~10-week lag:</strong> M2 expansion leads BTC by ~10 weeks (Jordi Visser)';
+                return;
+            }
+            try {
+                // Fetch last 14 months of M2 for YoY calc + sparkline
+                const url = `https://api.stlouisfed.org/fred/series/observations?series_id=WM2NS&api_key=${FRED_API_KEY}&file_type=json&sort_order=desc&limit=60`;
+                const res = await fetch(url);
+                const data = await res.json();
+                const obs = data.observations.filter(o => o.value !== '.').map(o => ({
+                    date: o.date,
+                    val: parseFloat(o.value)
+                }));
+                if (obs.length < 2) return;
+
+                const latest = obs[0].val;
+                document.getElementById('m2-value').textContent = '$' + (latest / 1000).toFixed(2) + 'T';
+
+                // YoY: find observation ~12 months ago
+                const latestDate = new Date(obs[0].date);
+                const yearAgoTarget = new Date(latestDate);
+                yearAgoTarget.setFullYear(yearAgoTarget.getFullYear() - 1);
+                let yearAgoObs = obs[obs.length - 1]; // fallback
+                for (const o of obs) {
+                    if (new Date(o.date) <= yearAgoTarget) { yearAgoObs = o; break; }
+                }
+                const yoy = ((latest - yearAgoObs.val) / yearAgoObs.val) * 100;
+                const yoyEl = document.getElementById('m2-yoy');
+                yoyEl.textContent = (yoy >= 0 ? '+' : '') + yoy.toFixed(1) + '%';
+                yoyEl.style.color = yoy >= 0 ? '#4ade80' : '#ef4444';
+
+                // Trend: compare last 3 observations
+                const expanding = obs[0].val > obs[2].val;
+                const trendEl = document.getElementById('m2-trend');
+                trendEl.textContent = expanding ? '📈 Expanding' : '📉 Contracting';
+                trendEl.style.color = expanding ? '#4ade80' : '#ef4444';
+
+                // Sparkline (last 24 data points, reversed to chronological)
+                const sparkData = obs.slice(0, 24).reverse();
+                const ctx = document.getElementById('m2-sparkline').getContext('2d');
+                if (m2Chart) m2Chart.destroy();
+                m2Chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: sparkData.map(o => o.date),
+                        datasets: [{
+                            data: sparkData.map(o => o.val),
+                            borderColor: '#60a5fa',
+                            backgroundColor: 'rgba(96,165,250,0.1)',
+                            borderWidth: 2, fill: true, tension: 0.3,
+                            pointRadius: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                        scales: {
+                            x: { display: false },
+                            y: { display: false }
+                        }
+                    }
+                });
+
+                document.getElementById('m2-info').innerHTML =
+                    '⏱️ <strong>~10-week lag:</strong> M2 expansion leads BTC by ~10 weeks (Jordi Visser).<br>' +
+                    'FRED series WM2NS (US M2) as proxy for global liquidity.';
+            } catch (e) {
+                console.error('M2 fetch error:', e);
+            }
+        }
+
         // PMI - ISM data is proprietary, show link to free sources
         async function fetchPMI() {
             // Note: ISM PMI is proprietary data - no free real-time API
@@ -613,11 +767,13 @@
         // Initial load
         fetchData();
         fetchLiquidity();
+        fetchM2();
         fetchRatioChart();
         
         // Refresh every 2 minutes (chart less frequently - API limits)
         setInterval(fetchData, 2 * 60 * 1000);
         setInterval(fetchLiquidity, 5 * 60 * 1000);
+        setInterval(fetchM2, 10 * 60 * 1000);
         setInterval(fetchRatioChart, 10 * 60 * 1000);
     </script>
 </body>
