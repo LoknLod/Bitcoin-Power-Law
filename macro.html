@@ -711,7 +711,8 @@
                 
             } catch (error) {
                 console.error('Chart error:', error);
-                document.getElementById('chart-info').textContent = 'Error loading chart data';
+                const el = document.getElementById('chart-info');
+                if (el) el.textContent = 'Chart data unavailable';
             }
         }
         
@@ -772,7 +773,8 @@
                 
             } catch (error) {
                 console.error('Error:', error);
-                document.getElementById('update-time').textContent = 'Error loading data';
+                const el = document.getElementById('update-time');
+                if (el) el.textContent = 'Data unavailable';
             }
         }
         
