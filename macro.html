@@ -221,6 +221,7 @@
             <a href="index.html">Power Law</a>
             <a href="gold.html">vs Gold</a>
             <a href="macro.html" class="active">Macro</a>
+            <a href="energy-metrics.html">Energy</a>
         </div>
         
         <!-- BTC/Gold Ratio Card -->
@@ -462,7 +463,7 @@
             return '$' + (billions / 1000).toFixed(2) + 'T';
         }
         
-        // Fetch FRED series (returns latest value in billions)
+        // Fetch FRED series (returns raw value as-is)
         async function fetchFRED(series) {
             if (!FRED_API_KEY) return null;
             try {
@@ -471,7 +472,7 @@
                 const data = await res.json();
                 if (data.observations && data.observations.length > 0) {
                     const val = parseFloat(data.observations[0].value);
-                    return isNaN(val) ? null : val / 1000; // Convert millions to billions
+                    return isNaN(val) ? null : val;
                 }
             } catch (e) {
                 console.error('FRED fetch error:', series, e);
@@ -490,26 +491,30 @@
             
             try {
                 // Fetch all three in parallel
-                const [balance, rrp, tga] = await Promise.all([
-                    fetchFRED('WALCL'),    // Fed Balance Sheet (millions, weekly)
-                    fetchFRED('RRPONTSYD'), // Reverse Repo (billions, daily)
-                    fetchFRED('WTREGEN')    // TGA (millions, weekly)
+                const [balanceRaw, rrpRaw, tgaRaw] = await Promise.all([
+                    fetchFRED('WALCL'),    // Fed Balance Sheet (Millions of USD, weekly)
+                    fetchFRED('RRPONTSYD'), // Reverse Repo (Billions of USD, daily)
+                    fetchFRED('WTREGEN')    // TGA (Millions of USD, weekly)
                 ]);
+                
+                // Normalize everything to billions
+                const balance = balanceRaw !== null ? balanceRaw / 1000 : null; // millions → billions
+                const rrp = rrpRaw;                                              // already billions
+                const tga = tgaRaw !== null ? tgaRaw / 1000 : null;             // millions → billions
                 
                 if (balance !== null) {
                     document.getElementById('fed-balance').textContent = formatT(balance);
                 }
                 if (rrp !== null) {
-                    // RRP is already in billions
-                    document.getElementById('rrp').textContent = formatT(rrp * 1000);
+                    document.getElementById('rrp').textContent = formatT(rrp);
                 }
                 if (tga !== null) {
                     document.getElementById('tga').textContent = formatT(tga);
                 }
                 
-                // Calculate Net Liquidity
+                // Calculate Net Liquidity (all in billions)
                 if (balance !== null && rrp !== null && tga !== null) {
-                    const netLiq = balance - (rrp * 1000) - tga; // All in billions
+                    const netLiq = balance - rrp - tga;
                     document.getElementById('net-liquidity').textContent = formatT(netLiq);
                     document.getElementById('liquidity-info').innerHTML = 
                         '💡 Net Liquidity = Fed Balance Sheet − RRP − TGA<br>' +
@@ -540,7 +545,7 @@
                 }));
                 if (obs.length < 2) return;
 
-                const latest = obs[0].val;
+                const latest = obs[0].val; // WM2NS is in billions
                 document.getElementById('m2-value').textContent = '$' + (latest / 1000).toFixed(2) + 'T';
 
                 // YoY: find observation ~12 months ago
@@ -613,11 +618,13 @@
                 const btcRes = await fetch('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=90&interval=daily');
                 const btcData = await btcRes.json();
                 
-                // For gold, we'll use a more stable estimate (gold moves slowly)
-                // CoinGecko doesn't have gold history, so we fetch current and estimate backwards
-                const goldRes = await fetch('https://data-asg.goldprice.org/dbXRates/USD');
-                const goldData = await goldRes.json();
-                const currentGold = goldData.items[0].xauPrice;
+                // Fetch current gold price for ratio calculation
+                let currentGold = 5000;
+                try {
+                    const goldRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd');
+                    const goldData = await goldRes.json();
+                    currentGold = goldData['pax-gold']?.usd || 5000;
+                } catch {}
                 
                 // Calculate BTC/Gold ratios
                 const ratios = btcData.prices.map(([timestamp, btcPrice]) => {
@@ -716,11 +723,16 @@
                 const btcPrice = btcData.bitcoin.usd;
                 const btcMcap = btcData.bitcoin.usd_market_cap;
                 
-                // Fetch Gold price
-                const goldRes = await fetch('https://data-asg.goldprice.org/dbXRates/USD');
-                const goldData = await goldRes.json();
-                const goldPrice = goldData.items[0].xauPrice;
-                const silverPrice = goldData.items[0].xagPrice;
+                // Fetch Gold price (pax-gold tracks 1 troy oz)
+                let goldPrice = 5000, silverPrice = 32;
+                try {
+                    const goldRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd');
+                    const goldData = await goldRes.json();
+                    goldPrice = goldData['pax-gold']?.usd || 5000;
+                } catch {}
+                // Silver: derive from gold/silver ratio (~85-90x typically)
+                // No free reliable silver API; use approximate ratio
+                silverPrice = goldPrice / 87;
                 
                 // Calculate ratios
                 const btcGoldRatio = btcPrice / goldPrice;

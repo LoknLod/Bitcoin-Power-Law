@@ -290,6 +290,7 @@
       <a href="index.html">Power Law</a>
       <a href="gold.html" class="active">vs Gold</a>
       <a href="macro.html">Macro</a>
+      <a href="energy-metrics.html">Energy</a>
     </div>
     <div id="app"><div class="loading">Loading...</div></div>
     <div class="footer">
@@ -316,14 +317,14 @@
         const btcRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true');
         const btcData = await btcRes.json();
         
-        // Fetch Gold (using a free API)
+        // Fetch Gold (pax-gold tracks 1 troy oz)
         let goldPrice;
         try {
-          const goldRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=tether-gold&vs_currencies=usd');
+          const goldRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd');
           const goldData = await goldRes.json();
-          goldPrice = goldData['tether-gold']?.usd || 2800; // Fallback
+          goldPrice = goldData['pax-gold']?.usd || 5000;
         } catch {
-          goldPrice = 2800; // Fallback to approximate
+          goldPrice = 5000; // Fallback
         }
         
         return { 

@@ -54,11 +54,11 @@ async function fetchBTCPrice() {
 
 async function fetchGoldPrice() {
   try {
-    const req = new Request('https://data-asg.goldprice.org/dbXRates/USD');
+    const req = new Request('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd');
     const data = await req.loadJSON();
-    return data.items[0].xauPrice;
+    return data['pax-gold']?.usd || 5000;
   } catch (e) {
-    return 2800; // Fallback
+    return 5000; // Fallback
   }
 }
 

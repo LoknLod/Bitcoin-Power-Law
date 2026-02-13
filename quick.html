@@ -413,17 +413,17 @@
       const btcPrice = btcData.bitcoin.usd;
       const btcChange = btcData.bitcoin.usd_24h_change;
       
-      // Fetch Gold
-      let goldPrice = 2800; // Fallback
+      // Fetch Gold (use CoinGecko pax-gold which tracks 1 troy oz)
+      let goldPrice = 5000; // Fallback
       try {
-        const goldRes = await fetch('https://data-asg.goldprice.org/dbXRates/USD');
+        const goldRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd');
         const goldData = await goldRes.json();
-        goldPrice = goldData.items[0].xauPrice;
+        goldPrice = goldData['pax-gold']?.usd || 5000;
       } catch (e) {
         try {
           const goldRes2 = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=tether-gold&vs_currencies=usd');
           const goldData2 = await goldRes2.json();
-          goldPrice = goldData2['tether-gold']?.usd || 2800;
+          goldPrice = goldData2['tether-gold']?.usd || 5000;
         } catch {}
       }
       
