@@ -469,6 +469,7 @@
             try {
                 const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${series}&api_key=${FRED_API_KEY}&file_type=json&sort_order=desc&limit=1`;
                 const res = await fetch(url);
+                if (!res.ok) throw new Error('FRED HTTP ' + res.status);
                 const data = await res.json();
                 if (data.observations && data.observations.length > 0) {
                     const val = parseFloat(data.observations[0].value);
@@ -476,6 +477,8 @@
                 }
             } catch (e) {
                 console.error('FRED fetch error:', series, e);
+            }
+            return null;
             }
             return null;
         }
