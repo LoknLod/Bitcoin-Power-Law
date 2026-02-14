@@ -737,6 +737,18 @@
                     const goldData = await goldRes.json();
                     goldPrice = goldData['pax-gold']?.usd || 5000;
                 } catch {}
+                // Fallback: try Kitco scraper if CoinGecko fails
+                if (goldPrice === 5000 || !goldPrice) {
+                    try {
+                        const kitcoRes = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://www.kitco.com/gold-price-today-usa/'));
+                        const kitcoText = await kitcoRes.text();
+                        // Extract bid price from Kitco (pattern: "Bid\n### 5,041.20")
+                        const bidMatch = kitcoText.match(/Bid[\s\S]*?###\s*([0-9,.]+)/);
+                        if (bidMatch) {
+                            goldPrice = parseFloat(bidMatch[1].replace(/,/g, ''));
+                        }
+                    } catch (e) { console.log('Kitco fallback failed:', e); }
+                }
                 // Silver: derive from gold/silver ratio (~85-90x typically)
                 // No free reliable silver API; use approximate ratio
                 silverPrice = goldPrice / 87;
