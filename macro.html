@@ -623,11 +623,11 @@
                 const btcData = await btcRes.json();
                 
                 // Fetch current gold price for ratio calculation
-                let currentGold = 5000;
+                let currentGold = 0;
                 try {
                     const goldRes = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd'));
                     const goldData = await goldRes.json();
-                    currentGold = goldData['pax-gold']?.usd || 5000;
+                    currentGold = goldData['pax-gold']?.usd || 0;
                 } catch {}
                 
                 // Calculate BTC/Gold ratios

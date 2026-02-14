@@ -318,14 +318,27 @@
         const btcData = await btcRes.json();
         
         // Fetch Gold (pax-gold tracks 1 troy oz)
-        let goldPrice;
+        let goldPrice = 0;
         try {
           const goldRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd');
           const goldData = await goldRes.json();
-          goldPrice = goldData['pax-gold']?.usd || 5000;
-        } catch {
-          goldPrice = 5000; // Fallback
+          goldPrice = goldData['pax-gold']?.usd || 0;
+        } catch {}
+        if (!goldPrice || goldPrice < 1000) {
+          try {
+            const goldRes = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd'));
+            const goldData = await goldRes.json();
+            goldPrice = goldData['pax-gold']?.usd || 0;
+          } catch {}
         }
+        if (!goldPrice || goldPrice < 1000) {
+          try {
+            const goldRes = await fetch('https://api.coinbase.com/v2/prices/PAXG-USD/spot');
+            const goldData = await goldRes.json();
+            goldPrice = parseFloat(goldData.data?.amount) || 0;
+          } catch {}
+        }
+        if (!goldPrice || goldPrice < 1000) goldPrice = 2950;
         
         return { 
           btc: btcData.bitcoin.usd, 

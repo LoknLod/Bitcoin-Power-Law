@@ -56,9 +56,9 @@ async function fetchGoldPrice() {
   try {
     const req = new Request('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd');
     const data = await req.loadJSON();
-    return data['pax-gold']?.usd || 5000;
+    return data['pax-gold']?.usd || 2950;
   } catch (e) {
-    return 5000; // Fallback
+    return 2950; // Fallback
   }
 }
 
