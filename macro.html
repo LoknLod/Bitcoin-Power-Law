@@ -740,24 +740,37 @@
                 // Last resort fallback
                 if (!btcPrice) btcPrice = 68000;
                 
-                // Fetch Gold price - try Kitco first (most reliable)
-                let goldPrice = 5000;
+                // Fetch Gold price via PAX-Gold (tokenized gold, tracks spot)
+                let goldPrice = 0;
+                // Try 1: CoinGecko PAX-Gold (no proxy needed for some regions)
                 try {
-                    const kitcoText = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://www.kitco.com/gold-price-today-usa/')).then(r => r.text());
-                    const bidMatch = kitcoText.match(/Bid[\s\S]*?###\s*([0-9,.]+)/);
-                    if (bidMatch) goldPrice = parseFloat(bidMatch[1].replace(/,/g, ''));
+                    const goldRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd');
+                    const goldData = await goldRes.json();
+                    goldPrice = goldData['pax-gold']?.usd || 0;
                 } catch {}
-                // Fallback to CoinGecko if Kitco fails
+                // Try 2: CoinGecko via CORS proxy
                 if (!goldPrice || goldPrice < 1000) {
                     try {
                         const goldRes = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd'));
                         const goldData = await goldRes.json();
-                        goldPrice = goldData['pax-gold']?.usd || 5000;
+                        goldPrice = goldData['pax-gold']?.usd || 0;
                     } catch {}
                 }
+                // Try 3: Coinbase XAU
+                if (!goldPrice || goldPrice < 1000) {
+                    try {
+                        const goldRes = await fetch('https://api.coinbase.com/v2/prices/PAXG-USD/spot');
+                        const goldData = await goldRes.json();
+                        goldPrice = parseFloat(goldData.data?.amount) || 0;
+                    } catch {}
+                }
+                // Fallback
+                if (!goldPrice || goldPrice < 1000) goldPrice = 2950;
                 
-                // Silver - derive from gold/silver ratio (~87x typically)
-                const silverPrice = goldPrice / 87;
+                // Silver via gold/silver ratio (~88:1 as of Feb 2026)
+                // No reliable free silver API; derive from gold
+                const goldSilverRatio = 88;
+                const silverPrice = goldPrice / goldSilverRatio;
                 
                 // Calculate ratios
                 const btcGoldRatio = btcPrice / goldPrice;
