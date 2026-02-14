@@ -724,38 +724,49 @@
         
         async function fetchData() {
             try {
-                // Fetch BTC price
-                const btcRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_market_cap=true');
-                const btcData = await btcRes.json();
-                const btcPrice = btcData.bitcoin.usd;
-                const btcMcap = btcData.bitcoin.usd_market_cap;
+                // Fetch BTC price - try multiple sources
+                let btcPrice = 0;
+                try {
+                    const btcRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_market_cap=true');
+                    const btcData = await btcRes.json();
+                    btcPrice = btcData.bitcoin?.usd || 0;
+                } catch {}
                 
-                // Fetch Gold price (pax-gold tracks 1 troy oz)
-                let goldPrice = 5000, silverPrice = 32;
+                // Fallback to Coinbase if CoinGecko fails
+                if (!btcPrice) {
+                    try {
+                        const cbRes = await fetch('https://api.coinbase.com/v2/prices/BTC-USD/spot');
+                        const cbData = await cbRes.json();
+                        btcPrice = parseFloat(cbData.data?.amount) || 0;
+                    } catch {}
+                }
+                
+                // Fallback to last known if still fails
+                if (!btcPrice) btcPrice = 68000; // fallback
+                
+                // Fetch Gold price - try CoinGecko first
+                let goldPrice = 5000;
                 try {
                     const goldRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd');
                     const goldData = await goldRes.json();
                     goldPrice = goldData['pax-gold']?.usd || 5000;
                 } catch {}
-                // Fallback: try Kitco scraper if CoinGecko fails
+                // Fallback to Kitco if CoinGecko fails
                 if (goldPrice === 5000 || !goldPrice) {
                     try {
-                        const kitcoRes = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://www.kitco.com/gold-price-today-usa/'));
-                        const kitcoText = await kitcoRes.text();
-                        // Extract bid price from Kitco (pattern: "Bid\n### 5,041.20")
+                        const kitcoText = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://www.kitco.com/gold-price-today-usa/')).then(r => r.text());
                         const bidMatch = kitcoText.match(/Bid[\s\S]*?###\s*([0-9,.]+)/);
-                        if (bidMatch) {
-                            goldPrice = parseFloat(bidMatch[1].replace(/,/g, ''));
-                        }
-                    } catch (e) { console.log('Kitco fallback failed:', e); }
+                        if (bidMatch) goldPrice = parseFloat(bidMatch[1].replace(/,/g, ''));
+                    } catch {}
                 }
-                // Silver: derive from gold/silver ratio (~85-90x typically)
-                // No free reliable silver API; use approximate ratio
-                silverPrice = goldPrice / 87;
+                
+                // Silver - derive from gold/silver ratio (~87x typically)
+                const silverPrice = goldPrice / 87;
                 
                 // Calculate ratios
                 const btcGoldRatio = btcPrice / goldPrice;
                 const btcSilverRatio = btcPrice / silverPrice;
+                const btcMcap = btcPrice * 19500000; // approx 19.5M BTC
                 
                 // Power Law
                 const fairValue = getPowerLawFairValue();
