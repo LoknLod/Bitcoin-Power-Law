@@ -767,9 +767,9 @@
                 // Fallback
                 if (!goldPrice || goldPrice < 1000) goldPrice = 2950;
                 
-                // Silver via gold/silver ratio (~180:1 as of Feb 2026, CoinGecko API broken)
+                // Silver via gold/silver ratio (~71:1 as of Feb 2026, CoinGecko API broken)
                 // No reliable free silver API; derive from gold
-                const goldSilverRatio = 180;
+                const goldSilverRatio = 71;
                 const silverPrice = goldPrice / goldSilverRatio;
                 
                 // Calculate ratios
