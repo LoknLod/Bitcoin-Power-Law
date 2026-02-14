@@ -620,14 +620,14 @@
             try {
                 document.getElementById('chart-info').textContent = 'Loading historical data...';
                 
-                // Fetch 90 days of BTC price history from CoinGecko
-                const btcRes = await fetch('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=90&interval=daily');
+                // Fetch 90 days of BTC price history via proxy
+                const btcRes = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=90&interval=daily'));
                 const btcData = await btcRes.json();
                 
                 // Fetch current gold price for ratio calculation
                 let currentGold = 5000;
                 try {
-                    const goldRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd');
+                    const goldRes = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd'));
                     const goldData = await goldRes.json();
                     currentGold = goldData['pax-gold']?.usd || 5000;
                 } catch {}
@@ -724,39 +724,37 @@
         
         async function fetchData() {
             try {
-                // Fetch BTC price - try multiple sources
+                // Fetch BTC price - try Coinbase first (no proxy needed, supports CORS)
                 let btcPrice = 0;
                 try {
-                    const btcRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_market_cap=true');
-                    const btcData = await btcRes.json();
-                    btcPrice = btcData.bitcoin?.usd || 0;
+                    const cbRes = await fetch('https://api.coinbase.com/v2/prices/BTC-USD/spot');
+                    const cbData = await cbRes.json();
+                    btcPrice = parseFloat(cbData.data?.amount) || 0;
                 } catch {}
-                
-                // Fallback to Coinbase if CoinGecko fails
+                // Fallback to CoinGecko via proxy if Coinbase fails
                 if (!btcPrice) {
                     try {
-                        const cbRes = await fetch('https://api.coinbase.com/v2/prices/BTC-USD/spot');
-                        const cbData = await cbRes.json();
-                        btcPrice = parseFloat(cbData.data?.amount) || 0;
+                        const btcRes = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_market_cap=true'));
+                        const btcData = await btcRes.json();
+                        btcPrice = btcData.bitcoin?.usd || 0;
                     } catch {}
                 }
+                // Last resort fallback
+                if (!btcPrice) btcPrice = 68000;
                 
-                // Fallback to last known if still fails
-                if (!btcPrice) btcPrice = 68000; // fallback
-                
-                // Fetch Gold price - try CoinGecko first
+                // Fetch Gold price - try Kitco first (most reliable)
                 let goldPrice = 5000;
                 try {
-                    const goldRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd');
-                    const goldData = await goldRes.json();
-                    goldPrice = goldData['pax-gold']?.usd || 5000;
+                    const kitcoText = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://www.kitco.com/gold-price-today-usa/')).then(r => r.text());
+                    const bidMatch = kitcoText.match(/Bid[\s\S]*?###\s*([0-9,.]+)/);
+                    if (bidMatch) goldPrice = parseFloat(bidMatch[1].replace(/,/g, ''));
                 } catch {}
-                // Fallback to Kitco if CoinGecko fails
-                if (goldPrice === 5000 || !goldPrice) {
+                // Fallback to CoinGecko if Kitco fails
+                if (!goldPrice || goldPrice < 1000) {
                     try {
-                        const kitcoText = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://www.kitco.com/gold-price-today-usa/')).then(r => r.text());
-                        const bidMatch = kitcoText.match(/Bid[\s\S]*?###\s*([0-9,.]+)/);
-                        if (bidMatch) goldPrice = parseFloat(bidMatch[1].replace(/,/g, ''));
+                        const goldRes = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd'));
+                        const goldData = await goldRes.json();
+                        goldPrice = goldData['pax-gold']?.usd || 5000;
                     } catch {}
                 }
                 
