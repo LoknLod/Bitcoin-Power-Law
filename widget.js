@@ -35,21 +35,36 @@ async function fetchBTCPrice() {
 
 async function fetchHashRate() {
   try {
-    const req = new Request('https://mempool.space/api/v1/mining/hashrate/3d');
+    const req = new Request('https://mempool.space/api/v1/mining/hashrate/7d');
     const data = await req.loadJSON();
-    // currentHashrate is in H/s — convert to EH/s
-    const ehs = data.currentHashrate / 1e18;
-    return ehs.toFixed(0);
+    const current = data.currentHashrate / 1e18;
+    
+    // Find hashrate ~7 days ago
+    const now = Date.now() / 1000;
+    const sevenDaysAgo = now - (7 * 24 * 60 * 60);
+    const hashrates = data.hashrates || [];
+    let past = current;
+    for (const h of hashrates) {
+      if (h.timestamp <= sevenDaysAgo) {
+        past = h.avgHashrate / 1e18;
+        break;
+      }
+    }
+    
+    const change = ((current - past) / past) * 100;
+    return { ehs: current.toFixed(0), change: change.toFixed(1) };
   } catch (e) {
     return null;
   }
 }
 
 async function createWidget() {
-  const [{ price, change24h }, hashRate] = await Promise.all([
+  const [{ price, change24h }, hashData] = await Promise.all([
     fetchBTCPrice(),
     fetchHashRate()
   ]);
+  const hashRate = hashData ? hashData.ehs : null;
+  const hashChange = hashData ? hashData.change : null;
 
   const widget = new ListWidget();
   widget.backgroundColor = new Color('#0a0a0a');
@@ -112,7 +127,17 @@ async function createWidget() {
 
   const hashValue = hashStack.addText(hashRate ? hashRate + ' EH/s' : '—');
   hashValue.font = Font.boldSystemFont(13);
-  hashValue.textColor = new Color('#f7931a');
+  hashValue.textColor = hashChange !== null && hashChange < 0 ? new Color('#ff6b6b') : new Color('#f7931a');
+
+  // 7d change
+  if (hashChange !== null) {
+    widget.addSpacer(2);
+    const changeStack = widget.addStack();
+    changeStack.centerAlignContent();
+    const hc = changeStack.addText((hashChange >= 0 ? '+' : '') + hashChange + '% (7d)');
+    hc.font = Font.systemFont(10);
+    hc.textColor = hashChange >= 0 ? new Color('#00d395') : new Color('#ff6b6b');
+  }
 
   widget.addSpacer(4);
 
