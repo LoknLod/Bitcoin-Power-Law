@@ -326,7 +326,7 @@
         } catch {}
         if (!goldPrice || goldPrice < 1000) {
           try {
-            const goldRes = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd'));
+            const goldRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd');
             const goldData = await goldRes.json();
             goldPrice = goldData['pax-gold']?.usd || 0;
           } catch {}
