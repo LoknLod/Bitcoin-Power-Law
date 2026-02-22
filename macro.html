@@ -463,24 +463,30 @@
             return '$' + (billions / 1000).toFixed(2) + 'T';
         }
         
-        // Fetch FRED series (returns raw value as-is)
-        async function fetchFRED(series) {
-            if (!FRED_API_KEY) return null;
+        // FRED cache URL (updated daily by Keats server-side, CORS-safe)
+        const FRED_CACHE_URL = 'https://raw.githubusercontent.com/LoknLod/Bitcoin-Power-Law/main/fred-cache.json';
+        let fredCache = null;
+
+        async function loadFredCache() {
+            if (fredCache) return fredCache;
             try {
-                // Use CORS proxy for browser requests
-                const targetUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=${series}&api_key=${FRED_API_KEY}&file_type=json&sort_order=desc&limit=1`;
-                const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(targetUrl);
-                const res = await fetch(proxyUrl);
-                if (!res.ok) throw new Error('FRED HTTP ' + res.status);
-                const data = await res.json();
-                if (data.observations && data.observations.length > 0) {
-                    const val = parseFloat(data.observations[0].value);
-                    return isNaN(val) ? null : val;
-                }
+                const res = await fetch(FRED_CACHE_URL);
+                fredCache = await res.json();
+                return fredCache;
             } catch (e) {
-                console.error('FRED fetch error:', series, e);
+                console.error('Failed to load FRED cache:', e);
+                return null;
             }
-            return null;
+        }
+
+        // Fetch latest value for a FRED series from cache
+        async function fetchFRED(series) {
+            const cache = await loadFredCache();
+            if (!cache || !cache.series[series]) return null;
+            const obs = cache.series[series].observations;
+            if (!obs || obs.length === 0) return null;
+            const val = parseFloat(obs[obs.length - 1].value);
+            return isNaN(val) ? null : val;
         }
         
         // Fetch Fed Liquidity data
@@ -531,22 +537,15 @@
         // M2 Money Supply
         let m2Chart = null;
         async function fetchM2() {
-            if (!FRED_API_KEY) {
-                document.getElementById('m2-info').innerHTML =
-                    '⚠️ Add FRED API key for live M2 data<br>' +
-                    '⏱️ <strong>~10-week lag:</strong> M2 expansion leads BTC by ~10 weeks (Jordi Visser)';
-                return;
-            }
+            // FRED data loaded from cache — no API key needed in browser
             try {
-                // Fetch last 14 months of M2 for YoY calc + sparkline
-                const targetUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=WM2NS&api_key=${FRED_API_KEY}&file_type=json&sort_order=desc&limit=60`;
-                const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(targetUrl);
-                const res = await fetch(proxyUrl);
-                const data = await res.json();
-                const obs = data.observations.filter(o => o.value !== '.').map(o => ({
+                // Load M2 from FRED cache (server-side updated daily)
+                const cache = await loadFredCache();
+                if (!cache || !cache.series.WM2NS) return;
+                const obs = cache.series.WM2NS.observations.map(o => ({
                     date: o.date,
                     val: parseFloat(o.value)
-                }));
+                })).reverse(); // cache is chronological, reverse for latest-first
                 if (obs.length < 2) return;
 
                 const latest = obs[0].val; // WM2NS is in billions
@@ -619,13 +618,13 @@
                 document.getElementById('chart-info').textContent = 'Loading historical data...';
                 
                 // Fetch 90 days of BTC price history via proxy
-                const btcRes = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=90&interval=daily'));
+                const btcRes = await fetch('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=90&interval=daily');
                 const btcData = await btcRes.json();
                 
                 // Fetch current gold price for ratio calculation
                 let currentGold = 0;
                 try {
-                    const goldRes = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd'));
+                    const goldRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd');
                     const goldData = await goldRes.json();
                     currentGold = goldData['pax-gold']?.usd || 0;
                 } catch {}
@@ -732,7 +731,7 @@
                 // Fallback to CoinGecko via proxy if Coinbase fails
                 if (!btcPrice) {
                     try {
-                        const btcRes = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_market_cap=true'));
+                        const btcRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_market_cap=true'));
                         const btcData = await btcRes.json();
                         btcPrice = btcData.bitcoin?.usd || 0;
                     } catch {}
@@ -751,7 +750,7 @@
                 // Try 2: CoinGecko via CORS proxy
                 if (!goldPrice || goldPrice < 1000) {
                     try {
-                        const goldRes = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd'));
+                        const goldRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd');
                         const goldData = await goldRes.json();
                         goldPrice = goldData['pax-gold']?.usd || 0;
                     } catch {}
