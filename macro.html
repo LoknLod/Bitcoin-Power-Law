@@ -731,7 +731,7 @@
                 // Fallback to CoinGecko via proxy if Coinbase fails
                 if (!btcPrice) {
                     try {
-                        const btcRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_market_cap=true'));
+                        const btcRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_market_cap=true');
                         const btcData = await btcRes.json();
                         btcPrice = btcData.bitcoin?.usd || 0;
                     } catch {}
