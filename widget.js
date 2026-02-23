@@ -1,12 +1,8 @@
 // BTC Power Law Widget for Scriptable
 // iPhone home screen widget — shows BTC price (7d change) + hash rate (7d change)
-// v4.0 - 7d changes for both price and hashrate
+// v5.0 - Compact layout for small iOS widgets
 
 const GENESIS = new Date('2009-01-03T18:15:05Z');
-
-function daysSinceGenesis() {
-  return (Date.now() - GENESIS.getTime()) / (1000 * 60 * 60 * 24);
-}
 
 function formatPrice(price) {
   if (price >= 1000000) return '$' + (price / 1000000).toFixed(2) + 'M';
@@ -16,7 +12,6 @@ function formatPrice(price) {
 
 async function fetchBTCPriceAndChange() {
   try {
-    // Get current price + 7d history
     const req = new Request('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=7&interval=daily');
     const data = await req.loadJSON();
     const prices = data.prices || [];
@@ -28,14 +23,12 @@ async function fetchBTCPriceAndChange() {
     }
   } catch (e) {}
   
-  // Fallback: try simple price
   try {
     const req = new Request('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
     const data = await req.loadJSON();
     return { price: data.bitcoin.usd, change7d: null };
   } catch (e) {}
   
-  // Final fallback to Coinbase
   try {
     const req = new Request('https://api.coinbase.com/v2/prices/BTC-USD/spot');
     const data = await req.loadJSON();
@@ -51,7 +44,6 @@ async function fetchHashRate() {
     const data = await req.loadJSON();
     const current = data.currentHashrate / 1e18;
     
-    // Find hashrate ~7 days ago
     const now = Date.now() / 1000;
     const sevenDaysAgo = now - (7 * 24 * 60 * 60);
     const hashrates = data.hashrates || [];
@@ -80,77 +72,68 @@ async function createWidget() {
 
   const widget = new ListWidget();
   widget.backgroundColor = new Color('#0a0a0a');
-  widget.setPadding(14, 16, 14, 16);
+  widget.setPadding(12, 14, 12, 14);
 
   // Header row: ₿ Bitcoin
   const headerStack = widget.addStack();
   headerStack.centerAlignContent();
 
   const logo = headerStack.addText('₿');
-  logo.font = Font.boldSystemFont(15);
+  logo.font = Font.boldSystemFont(14);
   logo.textColor = new Color('#f7931a');
 
   headerStack.addSpacer(5);
 
   const title = headerStack.addText('Bitcoin');
-  title.font = Font.mediumSystemFont(13);
+  title.font = Font.mediumSystemFont(12);
   title.textColor = new Color('#aaaaaa');
 
-  widget.addSpacer(8);
+  widget.addSpacer(6);
 
   // BTC Price — big
   const priceText = widget.addText(price ? formatPrice(price) : '—');
-  priceText.font = Font.boldSystemFont(28);
+  priceText.font = Font.boldSystemFont(26);
   priceText.textColor = new Color('#ffffff');
 
-  // 7d change (right-aligned next to price)
+  // 7d change directly under price, left aligned
   if (change7d !== null && change7d !== undefined) {
-    const priceStack = widget.addStack();
-    priceStack.layoutHorizontally();
-    priceStack.addSpacer();
+    widget.addSpacer(2);
     const sign = change7d >= 0 ? '+' : '';
-    const pChange = priceStack.addText(sign + change7d.toFixed(1) + '% (7d)');
-    pChange.font = Font.systemFont(12);
+    const pChange = widget.addText(sign + change7d.toFixed(1) + '% (7d avg)');
+    pChange.font = Font.systemFont(11);
     pChange.textColor = change7d >= 0 ? new Color('#00d395') : new Color('#ff6b6b');
   }
 
-  widget.addSpacer(12);
-
-  // Divider
-  const divider = widget.addStack();
-  divider.backgroundColor = new Color('#222222');
-  divider.size = new Size(0, 1);
-
   widget.addSpacer(10);
 
-  // Hash Rate row
+  // Hash Rate row (Icon + Label on left, Value + % on right)
   const hashRow = widget.addStack();
   hashRow.layoutHorizontally();
   hashRow.centerAlignContent();
 
-  const hashIcon = hashRow.addText('⛏');
-  hashIcon.font = Font.systemFont(12);
+  const hashIcon = hashRow.addText('⛏ ');
+  hashIcon.font = Font.systemFont(11);
 
-  hashRow.addSpacer(4);
-
-  const hashLabel = hashRow.addText('Hash Rate');
+  const hashLabel = hashRow.addText('Hash');
   hashLabel.font = Font.systemFont(11);
   hashLabel.textColor = new Color('#666666');
 
-  hashRow.addSpacer(6);
+  hashRow.addSpacer();
 
-  const hashValue = hashRow.addText(hashRate ? hashRate + ' EH/s' : '—');
-  hashValue.font = Font.boldSystemFont(13);
-  hashValue.textColor = new Color('#f7931a');
-
-  // 7d change for hash rate
+  const hashValStr = hashRate ? `${hashRate} EH/s` : '—';
+  const hashPctStr = hashChange !== null ? ` (${hashChange >= 0 ? '+' : ''}${hashChange}%)` : '';
+  
+  const hashValue = hashRow.addText(hashValStr + hashPctStr);
+  hashValue.font = Font.boldSystemFont(11);
+  
+  // Color the hash rate text based on the change trajectory
   if (hashChange !== null) {
-    const hc = hashRow.addText((hashChange >= 0 ? '+' : '') + hashChange + '% (7d)');
-    hc.font = Font.systemFont(11);
-    hc.textColor = hashChange >= 0 ? new Color('#00d395') : new Color('#ff6b6b');
+      hashValue.textColor = hashChange >= 0 ? new Color('#00d395') : new Color('#ff6b6b');
+  } else {
+      hashValue.textColor = new Color('#f7931a');
   }
 
-  widget.addSpacer(8);
+  widget.addSpacer(6);
 
   // Last updated
   const now = new Date();
