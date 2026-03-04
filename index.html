@@ -368,7 +368,7 @@
   <script>
     const GENESIS = new Date('2009-01-03T18:15:05Z');
     const PL_A = -17.01, PL_B = 5.82;
-    const SUPPORT_MULT = 0.35, RESIST_MULT = 3.5;
+    const SUPPORT_MULT = 0.35, FAIR_MULT = 0.71, RESIST_MULT = 3.5;
     
     const daysSinceGenesis = (d = new Date()) => (d - GENESIS) / 864e5;
     const powerLawPrice = days => Math.pow(10, PL_A + PL_B * Math.log10(days));
@@ -494,12 +494,12 @@
         
         // 2028 halving projection
         const d2028 = daysSinceGenesis(new Date('2028-04-01'));
-        const fair2028 = powerLawPrice(d2028);
+        const fair2028 = powerLawPrice(d2028) * FAIR_MULT;
         ctx.fillText('2028: ' + formatPrice(fair2028), xPos(d2028), yPos(fair2028) - 15);
         
         // 2032 projection
         const d2032 = daysSinceGenesis(new Date('2032-01-01'));
-        const fair2032 = powerLawPrice(d2032);
+        const fair2032 = powerLawPrice(d2032) * FAIR_MULT;
         ctx.fillText('2032: ' + formatPrice(fair2032), xPos(d2032), yPos(fair2032) - 15);
       }
     }
@@ -552,7 +552,7 @@
       const app = document.getElementById('app');
       try {
         const { price, change } = await fetchBTC();
-        const days = daysSinceGenesis(), fair = powerLawPrice(days);
+        const days = daysSinceGenesis(), fair = powerLawPrice(days) * FAIR_MULT;
         const sup = fair * SUPPORT_MULT, res = fair * RESIST_MULT;
         const dev = (price - fair) / fair, status = getStatus(price, fair, sup, res);
         
