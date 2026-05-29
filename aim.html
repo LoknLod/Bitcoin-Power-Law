@@ -622,6 +622,7 @@
                     <span class="tag">${escapeHtml(titleize(signal.regime))}</span>
                     <span class="tag">Weight ${escapeHtml(signal.weight ?? "n/a")}</span>
                     <span class="tag">${escapeHtml(signal.direction || "direction n/a")}</span>
+                    ${signal.value_label ? `<span class="tag">${escapeHtml(signal.value_label)}</span>` : ""}
                     <span class="tag">${escapeHtml(signal.source || "source n/a")}</span>
                     <span class="tag">${escapeHtml(signal.as_of || "as_of n/a")}</span>
                     ${signal.freshness ? `<span class="tag">${escapeHtml(titleize(signal.freshness))}</span>` : ""}
