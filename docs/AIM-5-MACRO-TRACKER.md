@@ -34,9 +34,16 @@ Language rule:
 `aim.html` only reads that cache. If the cache cannot be loaded, the page falls
 back to embedded demo-only data and displays a visible demo warning.
 
+Source cache updaters:
+
+- `scripts/update_fred_cache.py`: refreshes `fred-cache.json` from public FRED graph CSV endpoints, with no API key.
+- `scripts/update_market_cache.py`: refreshes `market-cache.json` from public BTC/PAXG price endpoints, with no API key.
+
 For committed/cache generation, use an explicit as-of date:
 
 ```bash
+python3 scripts/update_fred_cache.py --as-of YYYY-MM-DD
+python3 scripts/update_market_cache.py --as-of YYYY-MM-DD
 python3 scripts/score_aim_macro.py --as-of YYYY-MM-DD
 ```
 
@@ -62,10 +69,14 @@ Required compatible fields:
 Run:
 
 ```bash
+python3 scripts/update_fred_cache.py --as-of 2026-05-29
+python3 scripts/update_market_cache.py --as-of 2026-05-29
 python3 scripts/score_aim_macro.py --as-of 2026-05-29
 ```
 
-The script uses only Python standard library modules. It does not make network requests and does not require API keys.
+The scripts use only Python standard library modules. The source cache updaters
+make public, no-key network requests; the scorer itself reads only local JSON
+files and does not make network requests.
 
 Current model:
 
@@ -73,7 +84,7 @@ Current model:
 - AI Bubble Risk: low-confidence starter score until hyperscaler capex, utilization, and financing quality data are added.
 - Monetary Reset Risk: deterministic score from local `fred-cache.json` when usable.
 - Energy Bottleneck: low-confidence qualitative starter score until power/grid data are added.
-- Hard Money Repricing: low-confidence BTC power-law fair value anchor from the existing repo formula; live BTC price source is pending and no valuation spread is faked.
+- Hard Money Repricing: deterministic score from local `market-cache.json` when BTC/PAXG prices are usable, plus the repo BTC power-law fair-value formula.
 
 FRED series used when present:
 
@@ -81,14 +92,31 @@ FRED series used when present:
 - `WALCL`: Fed balance sheet
 - `RRPONTSYD`: overnight reverse repo
 - `WTREGEN`: Treasury General Account
+- `QUSCAMUSDA`: U.S. total credit to non-financial sector
+- `Q5ACAMUSDA`: total reporting countries credit to non-financial sector
+- `GFDEBTN`: federal debt
+- `A091RC1Q027SBEA`: federal government interest payments
+- `DGS10`: 10Y Treasury yield
+- `DFII10`: 10Y real yield
+- `T10YIE`: 10Y breakeven inflation
+- `BAMLH0A0HYM2`: high-yield option-adjusted spread
+
+Market cache assets used when present:
+
+- `btc_usd`: BTC/USD spot
+- `gold_usd`: PAXG/USD gold proxy
 
 The monetary score is a simple weighted average of transparent signal scores.
 Each FRED-derived signal carries `freshness` and `age_days`. Overall cache
-freshness is coverage-aware:
+freshness is coverage-aware across both FRED and market cache inputs:
 
-- `demo`: no useful weighted FRED monetary data is available.
-- `stale`: any required FRED series used by a weighted monetary signal is older than 45 days as of `--as-of`.
-- `local_cache`: all required FRED series used by weighted monetary signals are within 45 days as of `--as-of`.
+- `demo`: no useful weighted FRED or market data is available.
+- `stale`: FRED or market data is missing or stale for required weighted signals.
+- `local_cache`: required FRED and market signals are available and fresh enough as of `--as-of`.
+
+Daily/weekly FRED signals use a 45-day freshness window. Quarterly credit and
+fiscal series use a 370-day window so slower BIS and fiscal reporting lag is not
+mislabeled as stale. Market prices use a 3-day freshness window.
 
 Net Liquidity uses the same normalized proxy as `macro.html`:
 
@@ -107,8 +135,15 @@ observation when possible. The score is:
 If comparable component data is insufficient, the Net Liquidity signal is
 informational with weight `0` and score `50`.
 
-Starter AI, energy, and hard-money anchor signals are marked `starter` rather
-than being counted as fresh market data.
+Starter AI and energy signals are marked `starter` rather than being counted as
+fresh source data. If `market-cache.json` is missing, hard-money repricing
+signals are marked `missing` and weighted at `0`.
+
+Hard-money repricing uses:
+
+- BTC power-law fair-value gap using `10^(-17.01 + 5.82 * log10(daysSinceGenesis))` from genesis date `2009-01-03`
+- BTC/gold ratio using BTC/USD over PAXG/USD
+- PAXG gold proxy price
 
 ## Posture Rules
 
@@ -126,7 +161,7 @@ These are labels for discussion and review, not automatic reallocations.
 
 - Add verified AI capex, AI revenue, utilization, and productivity sources.
 - Add power price, grid queue, data center load, and transformer/turbine bottleneck signals.
-- Add live BTC price and gold hard-money repricing source data without broker, wallet, or trade behavior.
+- Add additional hard-money context such as BTC realized-price bands or gold lease-rate stress without broker, wallet, or trade behavior.
 - Add visual regression checks once this static site has a stable browser test harness.
 
 ## Security
