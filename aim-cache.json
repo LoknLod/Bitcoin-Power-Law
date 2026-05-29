@@ -1,0 +1,173 @@
+{
+  "schema_version": "aim_macro_cache.v0.1",
+  "scoring_version": "aim_macro_scoring.v0.1",
+  "generated_at": "2026-05-29T00:00:00Z",
+  "source": "local_fred_cache",
+  "freshness": "stale",
+  "posture": {
+    "key": "barbell",
+    "label": "Barbell",
+    "explanation": "Base case: AI boom and monetary stress coexist; keep AIM-5 balance."
+  },
+  "scores": {
+    "ai_productivity": {
+      "score": 55,
+      "confidence": "low",
+      "interpretation": "Evidence is real but monetization and broad productivity flow-through need more proof."
+    },
+    "ai_bubble_risk": {
+      "score": 50,
+      "confidence": "low",
+      "interpretation": "Capex is large; returns, utilization, and financing quality are not yet fully proven."
+    },
+    "monetary_reset": {
+      "score": 63,
+      "confidence": "low",
+      "interpretation": "One or more required weighted FRED signals are stale beyond 45 days as of 2026-05-29 (latest monetary observation 2026-02-27); score is directional only."
+    },
+    "energy_bottleneck": {
+      "score": 60,
+      "confidence": "low",
+      "interpretation": "Starter qualitative score: AI and Bitcoin both expose power and grid constraints."
+    },
+    "hard_money_repricing": {
+      "score": 50,
+      "confidence": "low",
+      "interpretation": "BTC power-law fair value is included as a time-based anchor; local live BTC price spread scoring is pending."
+    }
+  },
+  "aim5_allocation": [
+    {
+      "sleeve": "AI Productive Equity",
+      "target_pct": 40,
+      "role": "Own profitable AI platforms and infrastructure."
+    },
+    {
+      "sleeve": "Hard Money / Monetary Reset Hedge",
+      "target_pct": 25,
+      "role": "BTC spear, gold shield."
+    },
+    {
+      "sleeve": "Energy / Power / Real Assets",
+      "target_pct": 15,
+      "role": "Own physical bottlenecks behind AI and hard money."
+    },
+    {
+      "sleeve": "Runway / Optionality",
+      "target_pct": 15,
+      "role": "Dry powder and forced-selling protection."
+    },
+    {
+      "sleeve": "Spec AIM Venture Basket",
+      "target_pct": 5,
+      "role": "Small sandbox for asymmetric moonshots."
+    }
+  ],
+  "signals": [
+    {
+      "name": "AI Productivity Starter",
+      "regime": "ai_productivity",
+      "score": 55,
+      "weight": 0.35,
+      "direction": "higher supports productive AI boom",
+      "source": "starter_static_assumption",
+      "as_of": "2026-05-29",
+      "note": "Placeholder until verified AI revenue, margin, and productivity series are added.",
+      "freshness": "starter"
+    },
+    {
+      "name": "AI Capex Bubble Starter",
+      "regime": "ai_bubble_risk",
+      "score": 50,
+      "weight": 0.35,
+      "direction": "higher means capex return risk is rising",
+      "source": "starter_static_assumption",
+      "as_of": "2026-05-29",
+      "note": "Placeholder until hyperscaler capex, financing, and utilization data are added.",
+      "freshness": "starter"
+    },
+    {
+      "name": "Energy Bottleneck Starter",
+      "regime": "energy_bottleneck",
+      "score": 60,
+      "weight": 0.3,
+      "direction": "higher means power constraints matter more",
+      "source": "starter_static_assumption",
+      "as_of": "2026-05-29",
+      "note": "Qualitative starter: AI data centers and Bitcoin mining both expose power constraints.",
+      "freshness": "starter"
+    },
+    {
+      "name": "BTC Power Law Fair Value Anchor",
+      "regime": "hard_money_repricing",
+      "score": 50,
+      "weight": 0.0,
+      "direction": "time-based anchor only; live price spread pending",
+      "source": "repo_formula",
+      "as_of": "2026-05-29",
+      "note": "BTC power-law fair value anchor is $133,086 as of 2026-05-29. Live BTC price source pending; no local price spread is scored, so valuation repricing remains informational.",
+      "freshness": "starter"
+    },
+    {
+      "name": "M2 Money Stock YoY",
+      "regime": "monetary_reset",
+      "score": 62,
+      "weight": 0.28,
+      "direction": "higher can signal debasement pressure; contraction can signal credit stress",
+      "source": "FRED WM2NS",
+      "as_of": "2026-02-02",
+      "note": "US M2 is +4.6% YoY at $22,463B.",
+      "freshness": "stale",
+      "age_days": 116
+    },
+    {
+      "name": "Fed Balance Sheet YoY",
+      "regime": "monetary_reset",
+      "score": 52,
+      "weight": 0.18,
+      "direction": "higher adds liquidity; sustained runoff keeps pressure on credit",
+      "source": "FRED WALCL",
+      "as_of": "2026-02-25",
+      "note": "Fed assets are -2.5% YoY at $6,614B.",
+      "freshness": "stale",
+      "age_days": 93
+    },
+    {
+      "name": "Reverse Repo Buffer",
+      "regime": "monetary_reset",
+      "score": 72,
+      "weight": 0.22,
+      "direction": "lower means less residual liquidity buffer",
+      "source": "FRED RRPONTSYD",
+      "as_of": "2026-02-27",
+      "note": "Overnight reverse repo is $16B, a thin remaining buffer.",
+      "freshness": "stale",
+      "age_days": 91
+    },
+    {
+      "name": "Treasury General Account",
+      "regime": "monetary_reset",
+      "score": 66,
+      "weight": 0.22,
+      "direction": "higher can drain private liquidity",
+      "source": "FRED WTREGEN",
+      "as_of": "2026-02-25",
+      "note": "TGA is $888B, which keeps liquidity conditions tighter.",
+      "freshness": "stale",
+      "age_days": 93
+    },
+    {
+      "name": "Net Liquidity Proxy",
+      "regime": "monetary_reset",
+      "score": 55,
+      "weight": 0.1,
+      "direction": "higher supports risk appetite; lower supports stress",
+      "source": "FRED WALCL-RRPONTSYD-WTREGEN",
+      "as_of": "2026-02-25",
+      "note": "Simple WALCL minus RRP minus TGA proxy is $5,710B; roughly 90d change is +1.1%.",
+      "freshness": "stale",
+      "age_days": 93
+    }
+  ],
+  "debate_question": "Is AI producing real productivity faster than credit/fiscal stress is degrading money?"
+}
