@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="BTC/AIM Dashboard">
+  <meta name="apple-mobile-web-app-title" content="AIM Macro Cockpit">
   <meta name="theme-color" content="#0d0d0d">
-  <title>BTC/AIM Dashboard</title>
+  <title>AIM Macro Cockpit</title>
   <style>
     :root {
       --bg: #0d0d0d;
@@ -413,17 +413,20 @@
 <body>
   <div class="container">
     <header>
-      <div class="logo">₿</div>
+      <div class="logo">AIM</div>
       <div>
-        <h1>BTC/AIM Dashboard</h1>
-        <div class="subtitle">BTC signal, AIM posture, and macro regime — no six-tab circus.</div>
+        <h1>AIM Macro Cockpit</h1>
+        <div class="subtitle">AI productivity vs monetary reset vs energy bottlenecks</div>
       </div>
     </header>
 
-        <div class="nav-links">
-      <a href="index.html" class="active">Dashboard</a>
-      <a href="power-law.html">Power Law</a>
-      <a href="macro.html">Macro</a>
+    <div class="nav-links">
+      <a href="quick.html">Quick</a>
+      <a href="../index.html">Power Law</a>
+      <a href="gold.html">vs Gold</a>
+      <a href="../macro.html">Macro</a>
+      <a href="energy-metrics.html">Energy</a>
+      <a href="aim.html" class="active">AIM</a>
     </div>
 
     <div id="demoWarning" class="card warning">Embedded demo only: aim-cache.json could not be loaded. Run scripts/score_aim_macro.py --as-of YYYY-MM-DD for the canonical cache.</div>
@@ -517,7 +520,7 @@
 
     async function loadCache() {
       try {
-        const response = await fetch("aim-cache.json", { cache: "no-store" });
+        const response = await fetch("../aim-cache.json", { cache: "no-store" });
         if (!response.ok) throw new Error("Cache request failed");
         const data = await response.json();
         if (!data || !data.scores || !data.posture) throw new Error("Cache shape invalid");
@@ -532,7 +535,7 @@
       const freshness = data.freshness || "unknown";
       return `
         <section class="card">
-          <div class="card-title">Dashboard Posture</div>
+          <div class="card-title">Current Posture</div>
           <div class="posture-row">
             <div class="posture-label">${escapeHtml(data.posture?.label || "Unknown")}</div>
             <span class="badge ${freshnessClass(freshness)}">${escapeHtml(titleize(freshness))}</span>
@@ -543,7 +546,7 @@
             <div class="meta-item"><span>Scoring</span><strong>${escapeHtml(data.scoring_version || data.model_version || "unknown")}</strong></div>
           </div>
           <p class="explanation">${escapeHtml(data.posture?.explanation || "")}</p>
-          <p class="thesis-line">BTC is the spear. Gold is the shield. AIM stays barbelled unless the signal ledger earns a tilt.</p>
+          <p class="thesis-line">BTC is the spear. Gold is the shield. The barbell is the base posture unless signals clearly tilt.</p>
         </section>
       `;
     }

@@ -14,7 +14,7 @@ This is not a trade executor. It does not connect to brokers, accounts, wallets,
 
 ## AIM-5 Frame
 
-The base allocation frame shown in `aim.html` is:
+The base allocation frame shown on the active dashboard, `index.html`, is:
 
 - AI Productive Equity: 40%
 - Hard Money / Monetary Reset Hedge: 25%
@@ -31,8 +31,10 @@ Language rule:
 ## Cache Contract
 
 `scripts/score_aim_macro.py` is the canonical generator for `aim-cache.json`.
-`aim.html` only reads that cache. If the cache cannot be loaded, the page falls
-back to embedded demo-only data and displays a visible demo warning.
+`index.html` reads that cache for the active BTC/AIM Dashboard. If the cache cannot
+be loaded, the page falls back to embedded demo-only data and displays a visible
+demo warning. The former standalone AIM page lives at `archive/aim.html` only for
+historical/reference use.
 
 Source cache updaters:
 

@@ -142,8 +142,8 @@ async function createWidget() {
   updatedText.font = Font.systemFont(9);
   updatedText.textColor = new Color('#444444');
 
-  // Tap opens the quick view
-  widget.url = 'https://loknlod.github.io/Bitcoin-Power-Law/quick.html';
+  // Tap opens the simplified dashboard
+  widget.url = 'https://loknlod.github.io/Bitcoin-Power-Law/';
 
   return widget;
 }
