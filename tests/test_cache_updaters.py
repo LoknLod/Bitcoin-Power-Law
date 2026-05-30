@@ -1,3 +1,4 @@
+import json
 import sys
 import unittest
 from pathlib import Path
@@ -10,6 +11,7 @@ import update_fred_cache  # noqa: E402
 import update_alpha_vantage_cache  # noqa: E402
 import update_market_cache  # noqa: E402
 import score_ai_signals  # noqa: E402
+import update_sec_edgar_cache  # noqa: E402
 
 
 class FredCacheUpdaterTests(unittest.TestCase):
@@ -245,6 +247,117 @@ class AISignalScoringTests(unittest.TestCase):
 
         self.assertEqual(metrics["debt"], 1000.0)
         self.assertAlmostEqual(metrics["debt_yoy_pct"], 100.0)
+
+
+class SecEdgarCacheUpdaterTests(unittest.TestCase):
+    def test_latest_filings_selects_recent_10k_and_10q(self):
+        submissions = {
+            "filings": {
+                "recent": {
+                    "form": ["8-K", "10-Q", "10-K"],
+                    "accessionNumber": ["0000000000-26-000001", "0000789019-26-000010", "0000789019-25-000100"],
+                    "filingDate": ["2026-05-01", "2026-04-25", "2025-07-30"],
+                    "primaryDocument": ["x.htm", "msft-20260331.htm", "msft-20250630.htm"],
+                }
+            }
+        }
+
+        latest = update_sec_edgar_cache.latest_filings("0000789019", submissions)
+
+        self.assertEqual(latest["10-Q"]["filing_date"], "2026-04-25")
+        self.assertEqual(latest["10-K"]["filing_date"], "2025-07-30")
+        self.assertIn("/Archives/edgar/data/789019/000078901926000010/msft-20260331.htm", latest["10-Q"]["url"])
+
+    def test_company_fact_subset_keeps_only_relevant_us_gaap_tags(self):
+        facts = {
+            "facts": {
+                "us-gaap": {
+                    "Revenues": {"units": {"USD": [{"end": "2026-03-31", "val": 700}]}},
+                    "CapitalExpendituresIncurredButNotYetPaid": {"units": {"USD": [{"end": "2026-03-31", "val": 30}]}},
+                    "Assets": {"units": {"USD": [{"end": "2026-03-31", "val": 1000}]}},
+                }
+            }
+        }
+
+        subset = update_sec_edgar_cache.company_fact_subset(facts)
+
+        self.assertEqual(set(subset), {"Revenues", "CapitalExpendituresIncurredButNotYetPaid"})
+        self.assertEqual(subset["Revenues"]["units"]["USD"][0]["val"], 700)
+
+    def test_extract_language_markers_counts_ai_capex_and_power_terms(self):
+        text = """
+        We are investing in AI infrastructure, GPUs, and data centers.
+        Power availability and electricity constraints may affect data center capacity.
+        We expect AI monetization through cloud revenue over time.
+        """
+
+        markers = update_sec_edgar_cache.extract_language_markers(text)
+
+        self.assertGreaterEqual(markers["ai_mentions"], 2)
+        self.assertGreaterEqual(markers["capex_infrastructure_mentions"], 3)
+        self.assertGreaterEqual(markers["energy_constraint_mentions"], 2)
+        self.assertLessEqual(len(markers["snippets"]), 5)
+
+    def test_build_cache_uses_user_agent_and_never_stores_it(self):
+        calls = []
+
+        def fake_fetch_json(url, user_agent):
+            calls.append((url, user_agent))
+            if "submissions" in url:
+                return {
+                    "name": "MICROSOFT CORP",
+                    "filings": {"recent": {"form": [], "accessionNumber": [], "filingDate": [], "primaryDocument": []}},
+                }
+            return {"facts": {"us-gaap": {"Revenues": {"units": {"USD": []}}}}}
+
+        cache = update_sec_edgar_cache.build_cache(
+            tickers=["MSFT"],
+            user_agent="Doug Test user@example.com",
+            fetch_json=fake_fetch_json,
+        )
+
+        self.assertTrue(all(call[1] == "Doug Test user@example.com" for call in calls))
+        self.assertEqual(cache["schema_version"], "sec_edgar_cache.v0.1")
+        self.assertEqual(cache["companies"]["MSFT"]["cik"], "0000789019")
+        self.assertNotIn("user@example.com", json.dumps(cache))
+
+    def test_build_cache_redacts_user_agent_from_error_messages(self):
+        def leaking_fetch_json(url, user_agent):
+            raise RuntimeError(f"provider rejected UA {user_agent}")
+
+        cache = update_sec_edgar_cache.build_cache(
+            tickers=["MSFT"],
+            user_agent="Doug Test user@example.com",
+            fetch_json=leaking_fetch_json,
+        )
+
+        errors = json.dumps(cache["errors"])
+        self.assertIn("[USER_AGENT_REDACTED]", errors)
+        self.assertNotIn("Doug Test", errors)
+        self.assertNotIn("user@example.com", errors)
+
+    def test_validate_user_agent_requires_contactable_identity(self):
+        with self.assertRaises(ValueError):
+            update_sec_edgar_cache.validate_user_agent("")
+        with self.assertRaises(ValueError):
+            update_sec_edgar_cache.validate_user_agent("Bitcoin-Power-Law AIM research https://github.com/LoknLod/Bitcoin-Power-Law")
+        self.assertEqual(
+            update_sec_edgar_cache.validate_user_agent("Doug Test user@example.com"),
+            "Doug Test user@example.com",
+        )
+
+    def test_build_cache_records_unknown_ticker_error_without_network(self):
+        def never_fetch_json(url, user_agent):
+            raise AssertionError("network should not be called for unknown ticker")
+
+        cache = update_sec_edgar_cache.build_cache(
+            tickers=["NOPE"],
+            user_agent="Doug Test user@example.com",
+            fetch_json=never_fetch_json,
+        )
+
+        self.assertIn("NOPE", cache["errors"])
+        self.assertEqual(cache["companies"], {})
 
 
 if __name__ == "__main__":

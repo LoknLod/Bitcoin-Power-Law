@@ -86,6 +86,18 @@ python3 scripts/score_ai_signals.py
 python3 scripts/score_aim_macro.py --as-of 2026-05-29 --ai-signals-cache ai-signals-cache.json
 ```
 
+SEC EDGAR filing/facts cache for the next language-scoring layer:
+
+```bash
+python3 scripts/update_sec_edgar_cache.py --tickers MSFT,GOOGL,AMZN,META,NVDA,AVGO,AMD,ORCL,TSM --user-agent "$SEC_EDGAR_USER_AGENT"
+python3 scripts/update_sec_edgar_cache.py --tickers MSFT --include-filing-text --user-agent "$SEC_EDGAR_USER_AGENT"
+```
+
+EDGAR needs an identifiable `User-Agent`; set `SEC_EDGAR_USER_AGENT` for local
+runs. The cache stores company CIKs, latest 10-K/10-Q metadata, selected
+Company Facts tags, and optional filing-language markers, but it does not store
+the user-agent string.
+
 The explicit `--ai-signals-cache` flag is deliberate: `ai-signals-cache.json` is
 a local ignored API-derived cache, so it must not silently alter the tracked
 `aim-cache.json` artifact just because it exists on one machine.
@@ -188,7 +200,7 @@ These are labels for discussion and review, not automatic reallocations.
 
 ## TODOs
 
-- Wire SEC filing language and segment-level evidence into the AI productivity/capex scores.
+- Score SEC filing language and segment-level evidence from `sec-edgar-cache.json` into the AI productivity/capex scores.
 - Add power price, grid queue, data center load, and transformer/turbine bottleneck signals.
 - Add additional hard-money context such as BTC realized-price bands or gold lease-rate stress without broker, wallet, or trade behavior.
 - Add visual regression checks once this static site has a stable browser test harness.
