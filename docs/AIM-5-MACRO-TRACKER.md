@@ -56,7 +56,7 @@ script without `--as-of` uses the current UTC date for interactive manual runs.
 Required compatible fields:
 
 - `schema_version`: currently `aim_macro_cache.v0.1`
-- `scoring_version`: currently `aim_macro_scoring.v0.1`
+- `scoring_version`: currently `aim_macro_scoring.v0.2`
 - `generated_at`: ISO timestamp for the generated local cache
 - `source`: source label such as `local_fred_cache` or `starter_static_cache`
 - `freshness`: `local_cache`, `stale`, or `demo`
@@ -77,14 +77,27 @@ python3 scripts/update_market_cache.py --as-of 2026-05-29
 python3 scripts/score_aim_macro.py --as-of 2026-05-29
 ```
 
+To replace the starter AI signals with Alpha Vantage-derived financial scores,
+build the AI sidecar cache and opt in explicitly:
+
+```bash
+python3 scripts/update_alpha_vantage_cache.py
+python3 scripts/score_ai_signals.py
+python3 scripts/score_aim_macro.py --as-of 2026-05-29 --ai-signals-cache ai-signals-cache.json
+```
+
+The explicit `--ai-signals-cache` flag is deliberate: `ai-signals-cache.json` is
+a local ignored API-derived cache, so it must not silently alter the tracked
+`aim-cache.json` artifact just because it exists on one machine.
+
 The scripts use only Python standard library modules. The source cache updaters
 make public, no-key network requests; the scorer itself reads only local JSON
 files and does not make network requests.
 
 Current model:
 
-- AI Productivity: low-confidence starter score until verified AI revenue, margin, and productivity data are added.
-- AI Bubble Risk: low-confidence starter score until hyperscaler capex, utilization, and financing quality data are added.
+- AI Productivity: low-confidence starter score by default; medium-confidence Alpha Vantage-derived score when a valid `ai-signals-cache.json` is explicitly supplied.
+- AI Bubble Risk: low-confidence starter score by default; medium-confidence Alpha Vantage-derived capex/malinvestment score when a valid `ai-signals-cache.json` is explicitly supplied.
 - Monetary Reset Risk: deterministic score from local `fred-cache.json` when usable, anchored on world credit growth rather than U.S. M2.
 - Energy Bottleneck: low-confidence qualitative starter score until power/grid data are added.
 - Hard Money Repricing: deterministic score from local `market-cache.json` when BTC/PAXG prices are usable, plus the repo BTC power-law fair-value formula.
@@ -143,13 +156,17 @@ If comparable component data is insufficient, the Net Liquidity signal is
 informational with weight `0` and score `50`.
 
 Starter AI and energy signals are marked `starter` rather than being counted as
-fresh source data. If `market-cache.json` is missing, hard-money repricing
-signals are marked `missing` and weighted at `0`.
+fresh source data. A supplied AI cache is accepted only when it uses the expected
+schema, has at least one company, has numeric AI scores, and is fresh by the
+underlying company metric dates; otherwise the model falls back to the starter
+AI signals. If `market-cache.json` is missing, hard-money repricing signals are
+marked `missing` and weighted at `0`.
 
 Dashboard rule: the active Dashboard shows only `dashboard_signals`, a small
-watchlist of the two AI placeholders, the best BTC/gold hard-money signals,
-and the most important macro signal. The full raw ledger remains in `signals`
-for auditability; the Macro page owns the broader monetary reset subset.
+watchlist of the two AI scores when available — otherwise the two AI starters —
+the best BTC/gold hard-money signals, and the most important macro signal. The
+full raw ledger remains in `signals` for auditability; the Macro page owns the
+broader monetary reset subset.
 
 Hard-money repricing uses:
 
@@ -171,7 +188,7 @@ These are labels for discussion and review, not automatic reallocations.
 
 ## TODOs
 
-- Add verified AI capex, AI revenue, utilization, and productivity sources.
+- Wire SEC filing language and segment-level evidence into the AI productivity/capex scores.
 - Add power price, grid queue, data center load, and transformer/turbine bottleneck signals.
 - Add additional hard-money context such as BTC realized-price bands or gold lease-rate stress without broker, wallet, or trade behavior.
 - Add visual regression checks once this static site has a stable browser test harness.
