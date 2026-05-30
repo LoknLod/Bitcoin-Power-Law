@@ -205,6 +205,85 @@ class AISignalScoringTests(unittest.TestCase):
         self.assertGreater(cache["signals"]["ai_capex_bubble_risk"]["score"], 50)
         self.assertIn("BUBBLE", cache["signals"]["ai_capex_bubble_risk"]["leaders"])
 
+    def test_build_ai_signal_cache_blends_sec_language_evidence(self):
+        alpha_cache = {
+            "schema_version": "alpha_vantage_cache.v0.1",
+            "generated_at": "2026-05-30T00:00:00Z",
+            "tickers": {
+                "GOOD": {
+                    "income_statement": {"quarterlyReports": [
+                        {"fiscalDateEnding": "2026-03-31", "totalRevenue": "1200", "operatingIncome": "360", "researchAndDevelopment": "120"},
+                        {"fiscalDateEnding": "2025-03-31", "totalRevenue": "1000", "operatingIncome": "250", "researchAndDevelopment": "100"},
+                    ]},
+                    "cash_flow": {"quarterlyReports": [
+                        {"fiscalDateEnding": "2026-03-31", "operatingCashflow": "420", "capitalExpenditures": "-120"},
+                        {"fiscalDateEnding": "2025-03-31", "operatingCashflow": "350", "capitalExpenditures": "-100"},
+                    ]},
+                    "balance_sheet": {"quarterlyReports": [
+                        {"fiscalDateEnding": "2026-03-31", "shortTermDebt": "10", "longTermDebt": "190"},
+                        {"fiscalDateEnding": "2025-03-31", "shortTermDebt": "10", "longTermDebt": "190"},
+                    ]},
+                },
+                "BUBBLE": {
+                    "income_statement": {"quarterlyReports": [
+                        {"fiscalDateEnding": "2026-03-31", "totalRevenue": "1000", "operatingIncome": "80", "researchAndDevelopment": "300"},
+                        {"fiscalDateEnding": "2025-03-31", "totalRevenue": "980", "operatingIncome": "100", "researchAndDevelopment": "160"},
+                    ]},
+                    "cash_flow": {"quarterlyReports": [
+                        {"fiscalDateEnding": "2026-03-31", "operatingCashflow": "180", "capitalExpenditures": "-500"},
+                        {"fiscalDateEnding": "2025-03-31", "operatingCashflow": "200", "capitalExpenditures": "-150"},
+                    ]},
+                    "balance_sheet": {"quarterlyReports": [
+                        {"fiscalDateEnding": "2026-03-31", "shortTermDebt": "200", "longTermDebt": "800"},
+                        {"fiscalDateEnding": "2025-03-31", "shortTermDebt": "100", "longTermDebt": "400"},
+                    ]},
+                },
+            },
+        }
+        sec_cache = {
+            "schema_version": "sec_edgar_cache.v0.1",
+            "companies": {
+                "GOOD": {"language_markers": {"ai_mentions": 8, "monetization_mentions": 7, "capex_infrastructure_mentions": 2, "energy_constraint_mentions": 0, "obligation_risk_mentions": 0}},
+                "BUBBLE": {"language_markers": {"ai_mentions": 9, "monetization_mentions": 0, "capex_infrastructure_mentions": 14, "energy_constraint_mentions": 6, "obligation_risk_mentions": 5}},
+            },
+        }
+
+        baseline = score_ai_signals.build_cache(alpha_cache, generated_at="2026-05-30T00:00:00Z")
+        blended = score_ai_signals.build_cache(alpha_cache, sec_cache=sec_cache, generated_at="2026-05-30T00:00:00Z")
+
+        self.assertEqual(blended["metadata"]["sec_edgar_schema_version"], "sec_edgar_cache.v0.1")
+        self.assertEqual(blended["source"], "alpha_vantage_cache+sec_edgar_cache")
+        self.assertGreater(blended["signals"]["ai_productivity"]["score"], baseline["signals"]["ai_productivity"]["score"])
+        self.assertGreater(blended["signals"]["ai_capex_bubble_risk"]["score"], baseline["signals"]["ai_capex_bubble_risk"]["score"])
+        bubble_metrics = next(m for m in blended["company_metrics"] if m["ticker"] == "BUBBLE")
+        self.assertGreater(bubble_metrics["sec_language_bubble_risk_score"], 80)
+        self.assertIn("SEC filing-language", blended["signals"]["ai_capex_bubble_risk"]["note"])
+
+    def test_sec_language_cache_with_no_alpha_overlap_does_not_claim_sec_source(self):
+        alpha_cache = {
+            "schema_version": "alpha_vantage_cache.v0.1",
+            "generated_at": "2026-05-30T00:00:00Z",
+            "tickers": {
+                "MSFT": {
+                    "income_statement": {"quarterlyReports": [{"fiscalDateEnding": "2026-03-31", "totalRevenue": "1000", "operatingIncome": "250"}]},
+                    "cash_flow": {"quarterlyReports": [{"fiscalDateEnding": "2026-03-31", "operatingCashflow": "300", "capitalExpenditures": "-100"}]},
+                    "balance_sheet": {"quarterlyReports": [{"fiscalDateEnding": "2026-03-31", "shortTermDebt": "50", "longTermDebt": "450"}]},
+                }
+            },
+        }
+        sec_cache = {
+            "schema_version": "sec_edgar_cache.v0.1",
+            "companies": {
+                "NVDA": {"language_markers": {"ai_mentions": 10, "monetization_mentions": 10, "capex_infrastructure_mentions": 10}},
+            },
+        }
+
+        cache = score_ai_signals.build_cache(alpha_cache, sec_cache=sec_cache, generated_at="2026-05-30T00:00:00Z")
+
+        self.assertEqual(cache["source"], "alpha_vantage_cache")
+        self.assertEqual(cache["metadata"]["sec_language_company_count"], 0)
+        self.assertIsNone(cache["metadata"]["sec_edgar_schema_version"])
+
     def test_company_metrics_do_not_label_adjacent_quarter_as_yoy(self):
         ticker_payload = {
             "income_statement": {"quarterlyReports": [

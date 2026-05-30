@@ -178,55 +178,125 @@ def rounded(value: Optional[float]) -> Optional[float]:
     return round(value, 2)
 
 
-def build_signal(name: str, score: float, company_scores: Dict[str, float], direction: str, note: str) -> Dict[str, Any]:
+def marker_count(markers: Dict[str, Any], name: str) -> float:
+    parsed = parse_number(markers.get(name))
+    return parsed or 0.0
+
+
+def sec_language_scores(markers: Dict[str, Any]) -> Dict[str, float]:
+    """Convert SEC filing-language marker counts into 0-100 evidence scores."""
+    ai_mentions = marker_count(markers, "ai_mentions")
+    monetization = marker_count(markers, "monetization_mentions")
+    capex = marker_count(markers, "capex_infrastructure_mentions")
+    energy = marker_count(markers, "energy_constraint_mentions")
+    obligations = marker_count(markers, "obligation_risk_mentions")
+
+    productivity = average([
+        normalize_score(ai_mentions, 0, 10),
+        normalize_score(monetization, 0, 8),
+        100.0 - normalize_score(max(0.0, capex - monetization), 0, 12),
+    ]) or 50.0
+    bubble = average([
+        normalize_score(capex, 0, 12),
+        normalize_score(energy, 0, 6),
+        normalize_score(obligations, 0, 6),
+        100.0 - normalize_score(monetization, 0, 8),
+    ]) or 50.0
+    return {
+        "sec_language_productivity_score": productivity,
+        "sec_language_bubble_risk_score": bubble,
+    }
+
+
+def sec_language_by_ticker(sec_cache: Optional[Dict[str, Any]]) -> Dict[str, Dict[str, float]]:
+    companies = sec_cache.get("companies") if isinstance(sec_cache, dict) else {}
+    if not isinstance(companies, dict):
+        return {}
+    output: Dict[str, Dict[str, float]] = {}
+    for ticker, company in companies.items():
+        if not isinstance(company, dict):
+            continue
+        markers = company.get("language_markers")
+        if not isinstance(markers, dict) or not markers:
+            continue
+        output[str(ticker).upper()] = sec_language_scores(markers)
+    return output
+
+
+def build_signal(name: str, score: float, company_scores: Dict[str, float], direction: str, note: str, source: str = "alpha_vantage_cache") -> Dict[str, Any]:
     leaders = [ticker for ticker, _ in sorted(company_scores.items(), key=lambda item: item[1], reverse=True)[:3]]
     return {
         "name": name,
         "score": round(score, 1),
         "direction": direction,
         "leaders": leaders,
-        "source": "alpha_vantage_cache",
+        "source": source,
         "note": note,
     }
 
 
-def build_cache(alpha_cache: Dict[str, Any], generated_at: Optional[str] = None) -> Dict[str, Any]:
+def build_cache(alpha_cache: Dict[str, Any], sec_cache: Optional[Dict[str, Any]] = None, generated_at: Optional[str] = None) -> Dict[str, Any]:
     generated_at = generated_at or utc_now_stamp()
     ticker_payloads = alpha_cache.get("tickers") if isinstance(alpha_cache, dict) else {}
     if not isinstance(ticker_payloads, dict):
         ticker_payloads = {}
 
+    sec_scores = sec_language_by_ticker(sec_cache)
     metrics = [company_metrics(ticker, payload) for ticker, payload in sorted(ticker_payloads.items()) if isinstance(payload, dict)]
-    productivity_scores = {m["ticker"]: productivity_component(m) for m in metrics}
-    bubble_scores = {m["ticker"]: bubble_component(m) for m in metrics}
+    for metric in metrics:
+        language = sec_scores.get(metric["ticker"])
+        if language:
+            metric.update(language)
+    matched_sec_count = sum(1 for metric in metrics if metric["ticker"] in sec_scores)
+
+    productivity_scores: Dict[str, float] = {}
+    bubble_scores: Dict[str, float] = {}
+    for metric in metrics:
+        ticker = metric["ticker"]
+        base_productivity = productivity_component(metric)
+        base_bubble = bubble_component(metric)
+        if ticker in sec_scores:
+            productivity_scores[ticker] = max(base_productivity, (base_productivity * 0.8) + (sec_scores[ticker]["sec_language_productivity_score"] * 0.2))
+            bubble_scores[ticker] = max(base_bubble, (base_bubble * 0.8) + (sec_scores[ticker]["sec_language_bubble_risk_score"] * 0.2))
+        else:
+            productivity_scores[ticker] = base_productivity
+            bubble_scores[ticker] = base_bubble
+
     productivity_score = average(productivity_scores.values()) or 50.0
     bubble_score = average(bubble_scores.values()) or 50.0
+    source = "alpha_vantage_cache+sec_edgar_cache" if matched_sec_count else "alpha_vantage_cache"
+    productivity_note = "Revenue growth, margins, free cash flow margin, R&D intensity, and optional SEC filing-language monetization evidence."
+    bubble_note = "Capex growth, capex/revenue, debt growth, depreciation growth, free-cash-flow pressure, and optional SEC filing-language risk evidence."
 
     return {
         "schema_version": SCHEMA_VERSION,
         "generated_at": generated_at,
-        "source": "alpha_vantage_cache",
+        "source": source,
         "input_generated_at": alpha_cache.get("generated_at"),
-        "company_metrics": [{key: rounded(value) if isinstance(value, float) else value for key, value in m.items()} for m in metrics],
+        "company_metrics": [{key: rounded(value) if isinstance(value, float) else value for key, value in metric.items()} for metric in metrics],
         "signals": {
             "ai_productivity": build_signal(
                 "AI Productivity Score",
                 productivity_score,
                 productivity_scores,
                 "higher_is_better",
-                "Revenue growth, margins, free cash flow margin, and R&D intensity from hyperscaler/AI infrastructure fundamentals.",
+                productivity_note,
+                source,
             ),
             "ai_capex_bubble_risk": build_signal(
                 "AI Capex Bubble Risk",
                 bubble_score,
                 bubble_scores,
                 "higher_is_riskier",
-                "Capex growth, capex/revenue, debt growth, depreciation growth, and free-cash-flow pressure.",
+                bubble_note,
+                source,
             ),
         },
         "metadata": {
             "company_count": len(metrics),
             "alpha_vantage_schema_version": alpha_cache.get("schema_version"),
+            "sec_edgar_schema_version": sec_cache.get("schema_version") if isinstance(sec_cache, dict) and matched_sec_count else None,
+            "sec_language_company_count": matched_sec_count,
         },
     }
 
@@ -249,11 +319,13 @@ def write_cache(cache: Dict[str, Any], output_path: Path) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Score AI productivity and capex-bubble signals from Alpha Vantage cache")
     parser.add_argument("--input", type=Path, default=DEFAULT_INPUT, help="Input alpha-vantage-cache.json path")
+    parser.add_argument("--sec-cache", type=Path, default=None, help="Optional sec-edgar-cache.json path for filing-language scoring")
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT, help="Output ai-signals-cache.json path")
     args = parser.parse_args()
-    cache = build_cache(read_json(args.input))
+    sec_cache = read_json(args.sec_cache) if args.sec_cache else None
+    cache = build_cache(read_json(args.input), sec_cache=sec_cache)
     write_cache(cache, args.output)
-    print(f"wrote {args.output} companies={cache['metadata']['company_count']} productivity={cache['signals']['ai_productivity']['score']} bubble={cache['signals']['ai_capex_bubble_risk']['score']}")
+    print(f"wrote {args.output} companies={cache['metadata']['company_count']} sec_language={cache['metadata']['sec_language_company_count']} productivity={cache['signals']['ai_productivity']['score']} bubble={cache['signals']['ai_capex_bubble_risk']['score']}")
     return 0
 
 

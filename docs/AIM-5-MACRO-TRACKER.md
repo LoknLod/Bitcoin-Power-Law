@@ -82,7 +82,8 @@ build the AI sidecar cache and opt in explicitly:
 
 ```bash
 python3 scripts/update_alpha_vantage_cache.py
-python3 scripts/score_ai_signals.py
+python3 scripts/update_sec_edgar_cache.py --tickers MSFT,GOOGL,AMZN,META,NVDA,AVGO,AMD,ORCL,TSM --user-agent "$SEC_EDGAR_USER_AGENT" --include-filing-text
+python3 scripts/score_ai_signals.py --sec-cache sec-edgar-cache.json
 python3 scripts/score_aim_macro.py --as-of 2026-05-29 --ai-signals-cache ai-signals-cache.json
 ```
 
@@ -96,7 +97,12 @@ python3 scripts/update_sec_edgar_cache.py --tickers MSFT --include-filing-text -
 EDGAR needs an identifiable `User-Agent`; set `SEC_EDGAR_USER_AGENT` for local
 runs. The cache stores company CIKs, latest 10-K/10-Q metadata, selected
 Company Facts tags, and optional filing-language markers, but it does not store
-the user-agent string.
+the user-agent string. `score_ai_signals.py --sec-cache sec-edgar-cache.json`
+blends those filing-language markers into the AI Productivity and AI Capex
+Bubble Risk signals as a secondary evidence layer; Alpha Vantage fundamentals
+remain the primary numeric spine. The SEC layer uses a 20% max-only overlay:
+it can raise a signal when filing language adds supporting evidence, but it
+will not lower the Alpha Vantage numeric score.
 
 The explicit `--ai-signals-cache` flag is deliberate: `ai-signals-cache.json` is
 a local ignored API-derived cache, so it must not silently alter the tracked
@@ -200,7 +206,6 @@ These are labels for discussion and review, not automatic reallocations.
 
 ## TODOs
 
-- Score SEC filing language and segment-level evidence from `sec-edgar-cache.json` into the AI productivity/capex scores.
 - Add power price, grid queue, data center load, and transformer/turbine bottleneck signals.
 - Add additional hard-money context such as BTC realized-price bands or gold lease-rate stress without broker, wallet, or trade behavior.
 - Add visual regression checks once this static site has a stable browser test harness.
