@@ -316,28 +316,27 @@
             </div>
         </div>
         
-        <!-- Global M2 Money Supply -->
+        <!-- Monetary Reset Subset -->
         <div class="card">
-            <div class="card-title">💵 Global M2 Money Supply (US Proxy)</div>
+            <div class="card-title">💵 Monetary Reset Subset: World Credit Growth</div>
             <div class="price-row">
-                <span class="price-label">US M2 (Latest)</span>
-                <span class="price-value liquidity" id="m2-value">$--</span>
+                <span class="price-label">World Credit Latest</span>
+                <span class="price-value liquidity" id="world-credit-value">$--</span>
             </div>
             <div class="price-row">
-                <span class="price-label">Year-over-Year Change</span>
-                <span class="price-value" id="m2-yoy">--%</span>
+                <span class="price-label">3Y Annualized Growth</span>
+                <span class="price-value" id="world-credit-3y">--%</span>
             </div>
             <div class="price-row">
-                <span class="price-label">Trend</span>
-                <span class="price-value" id="m2-trend">--</span>
+                <span class="price-label">Signal Role</span>
+                <span class="price-value" id="world-credit-trend">Core</span>
             </div>
-            <!-- M2 Sparkline -->
             <div style="height: 80px; position: relative; margin-top: 10px;">
-                <canvas id="m2-sparkline"></canvas>
+                <canvas id="world-credit-sparkline"></canvas>
             </div>
-            <div class="info-text" id="m2-info">
-                ⏱️ <strong>~10-week lag:</strong> M2 expansion tends to lead BTC price by ~10 weeks (per Jordi Visser).<br>
-                Uses FRED series WM2NS (US M2) as proxy for global liquidity.
+            <div class="info-text" id="world-credit-info">
+                📚 <strong>Book thesis:</strong> world credit growth is the cleaner paper-claims signal than U.S. M2.<br>
+                Uses FRED series Q5ACAMUSDA; M2 becomes secondary domestic context.
             </div>
         </div>
 
@@ -533,47 +532,42 @@
             }
         }
         
-        // M2 Money Supply
-        let m2Chart = null;
-        async function fetchM2() {
-            // FRED data loaded from cache — no API key needed in browser
+        // World Credit Growth
+        let worldCreditChart = null;
+        async function fetchWorldCredit() {
             try {
-                // Load M2 from FRED cache (server-side updated daily)
                 const cache = await loadFredCache();
-                if (!cache || !cache.series.WM2NS) return;
-                const obs = cache.series.WM2NS.observations.map(o => ({
+                if (!cache || !cache.series.Q5ACAMUSDA) return;
+                const obs = cache.series.Q5ACAMUSDA.observations.map(o => ({
                     date: o.date,
                     val: parseFloat(o.value)
-                })).reverse(); // cache is chronological, reverse for latest-first
+                })).filter(o => Number.isFinite(o.val)).reverse();
                 if (obs.length < 2) return;
 
-                const latest = obs[0].val; // WM2NS is in billions
-                document.getElementById('m2-value').textContent = '$' + (latest / 1000).toFixed(2) + 'T';
+                const latest = obs[0].val;
+                document.getElementById('world-credit-value').textContent = '$' + (latest / 1000).toFixed(1) + 'T';
 
-                // YoY: find observation ~12 months ago
                 const latestDate = new Date(obs[0].date);
-                const yearAgoTarget = new Date(latestDate);
-                yearAgoTarget.setFullYear(yearAgoTarget.getFullYear() - 1);
-                let yearAgoObs = obs[obs.length - 1]; // fallback
+                const threeYearTarget = new Date(latestDate);
+                threeYearTarget.setFullYear(threeYearTarget.getFullYear() - 3);
+                let priorObs = obs[obs.length - 1];
                 for (const o of obs) {
-                    if (new Date(o.date) <= yearAgoTarget) { yearAgoObs = o; break; }
+                    if (new Date(o.date) <= threeYearTarget) { priorObs = o; break; }
                 }
-                const yoy = ((latest - yearAgoObs.val) / yearAgoObs.val) * 100;
-                const yoyEl = document.getElementById('m2-yoy');
-                yoyEl.textContent = (yoy >= 0 ? '+' : '') + yoy.toFixed(1) + '%';
-                yoyEl.style.color = yoy >= 0 ? '#4ade80' : '#ef4444';
+                const years = Math.max((latestDate - new Date(priorObs.date)) / (365.25 * 24 * 60 * 60 * 1000), 0.01);
+                const annualized = (Math.pow(latest / priorObs.val, 1 / years) - 1) * 100;
+                const growthEl = document.getElementById('world-credit-3y');
+                growthEl.textContent = (annualized >= 0 ? '+' : '') + annualized.toFixed(1) + '%';
+                growthEl.style.color = annualized >= 0 ? '#4ade80' : '#ef4444';
 
-                // Trend: compare last 3 observations
-                const expanding = obs[0].val > obs[2].val;
-                const trendEl = document.getElementById('m2-trend');
-                trendEl.textContent = expanding ? '📈 Expanding' : '📉 Contracting';
-                trendEl.style.color = expanding ? '#4ade80' : '#ef4444';
+                const roleEl = document.getElementById('world-credit-trend');
+                roleEl.textContent = annualized >= 5 ? 'Paper claims expanding' : 'Watch credit impulse';
+                roleEl.style.color = annualized >= 5 ? '#f97316' : '#60a5fa';
 
-                // Sparkline (last 24 data points, reversed to chronological)
                 const sparkData = obs.slice(0, 24).reverse();
-                const ctx = document.getElementById('m2-sparkline').getContext('2d');
-                if (m2Chart) m2Chart.destroy();
-                m2Chart = new Chart(ctx, {
+                const ctx = document.getElementById('world-credit-sparkline').getContext('2d');
+                if (worldCreditChart) worldCreditChart.destroy();
+                worldCreditChart = new Chart(ctx, {
                     type: 'line',
                     data: {
                         labels: sparkData.map(o => o.date),
@@ -588,18 +582,15 @@
                     options: {
                         responsive: true, maintainAspectRatio: false,
                         plugins: { legend: { display: false }, tooltip: { enabled: false } },
-                        scales: {
-                            x: { display: false },
-                            y: { display: false }
-                        }
+                        scales: { x: { display: false }, y: { display: false } }
                     }
                 });
 
-                document.getElementById('m2-info').innerHTML =
-                    '⏱️ <strong>~10-week lag:</strong> M2 expansion leads BTC by ~10 weeks (Jordi Visser).<br>' +
-                    'FRED series WM2NS (US M2) as proxy for global liquidity.';
+                document.getElementById('world-credit-info').innerHTML =
+                    '📚 <strong>Book thesis:</strong> world credit growth is the cleaner paper-claims signal than U.S. M2.<br>' +
+                    'FRED Q5ACAMUSDA: total reporting countries credit to non-financial sector, adjusted for breaks.';
             } catch (e) {
-                console.error('M2 fetch error:', e);
+                console.error('World credit fetch error:', e);
             }
         }
 
@@ -817,13 +808,13 @@
         // Initial load
         fetchData();
         fetchLiquidity();
-        fetchM2();
+        fetchWorldCredit();
         fetchRatioChart();
         
         // Refresh every 2 minutes (chart less frequently - API limits)
         setInterval(fetchData, 2 * 60 * 1000);
         setInterval(fetchLiquidity, 5 * 60 * 1000);
-        setInterval(fetchM2, 10 * 60 * 1000);
+        setInterval(fetchWorldCredit, 10 * 60 * 1000);
         setInterval(fetchRatioChart, 10 * 60 * 1000);
     </script>
 </body>

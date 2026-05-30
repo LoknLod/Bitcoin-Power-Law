@@ -34,7 +34,7 @@ class ScoreAimMacroTests(unittest.TestCase):
                 "RRPONTSYD": series(("2026-02-27", 90), ("2026-05-28", 25)),
                 "WTREGEN": series(("2026-02-25", 800000), ("2026-05-27", 850000)),
                 "QUSCAMUSDA": series(("2025-01-01", 72000), ("2026-01-01", 76000)),
-                "Q5ACAMUSDA": series(("2025-01-01", 260000), ("2026-01-01", 274000)),
+                "Q5ACAMUSDA": series(("2023-01-01", 230000), ("2025-01-01", 260000), ("2026-01-01", 274000)),
                 "GFDEBTN": series(("2025-01-01", 36000), ("2026-01-01", 38200)),
                 "A091RC1Q027SBEA": series(("2025-01-01", 950), ("2026-01-01", 1120)),
                 "DGS10": series(("2026-05-28", 4.55)),
@@ -71,10 +71,46 @@ class ScoreAimMacroTests(unittest.TestCase):
 
         signal_names = {signal["name"] for signal in cache["signals"]}
         self.assertEqual(cache["freshness"], "local_cache")
-        self.assertIn("U.S. Total Credit Growth", signal_names)
+        self.assertIn("World Credit Growth", signal_names)
+        self.assertIn("U.S. Credit Growth", signal_names)
         self.assertIn("Federal Interest Payments Growth", signal_names)
         self.assertIn("BTC Power Law Fair Value Gap", signal_names)
         self.assertGreater(cache["scores"]["hard_money_repricing"]["score"], 0)
+
+        monetary_signals = [s for s in cache["signals"] if s.get("regime") == "monetary_reset"]
+        world_credit = next(s for s in monetary_signals if s["name"] == "World Credit Growth")
+        m2 = next(s for s in monetary_signals if s["name"] == "U.S. M2 Liquidity Context")
+        self.assertGreater(world_credit["weight"], m2["weight"])
+        self.assertIn("3Y annualized", world_credit["value_label"])
+        self.assertIn("core monetary reset signal", world_credit["note"])
+
+    def test_dashboard_signal_ledger_prioritizes_small_watchlist(self):
+        cache = {
+            "signals": [
+                {"name": "U.S. M2 Liquidity Context", "regime": "monetary_reset", "weight": 0.03, "score": 50},
+                {"name": "World Credit Growth", "regime": "monetary_reset", "weight": 0.28, "score": 65},
+                {"name": "BTC Power Law Fair Value Gap", "regime": "hard_money_repricing", "weight": 0.45, "score": 60},
+                {"name": "BTC/Gold Ratio", "regime": "hard_money_repricing", "weight": 0.35, "score": 62},
+                {"name": "AI Productivity Starter", "regime": "ai_productivity", "weight": 0.35, "score": 55},
+                {"name": "AI Capex Bubble Starter", "regime": "ai_bubble_risk", "weight": 0.35, "score": 50},
+                {"name": "Federal Interest Payments Growth", "regime": "monetary_reset", "weight": 0.12, "score": 70},
+            ]
+        }
+
+        names = [signal["name"] for signal in score_aim_macro.dashboard_signal_watchlist(cache)]
+
+        self.assertEqual(
+            names,
+            [
+                "AI Productivity Starter",
+                "AI Capex Bubble Starter",
+                "BTC Power Law Fair Value Gap",
+                "BTC/Gold Ratio",
+                "World Credit Growth",
+            ],
+        )
+        self.assertNotIn("U.S. M2 Liquidity Context", names)
+
     def test_future_dated_market_cache_is_not_counted_fresh(self):
         as_of = date(2020, 1, 1)
         fred_cache = {

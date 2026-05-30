@@ -63,7 +63,8 @@ Required compatible fields:
 - `posture`: object with `key`, `label`, and `explanation`
 - `scores`: five regime objects with `score`, `confidence`, and `interpretation`
 - `aim5_allocation`: five target sleeve objects
-- `signals`: ledger entries with `name`, `regime`, `score`, `weight`, `direction`, `source`, `as_of`, `note`, and freshness metadata where applicable
+- `signals`: full audit ledger entries with `name`, `regime`, `score`, `weight`, `direction`, `source`, `as_of`, `note`, and freshness metadata where applicable
+- `dashboard_signals`: smaller Dashboard watchlist: AI productivity, AI capex risk, BTC power-law gap, BTC/gold ratio, and world credit growth
 - `debate_question`: current question to keep the thesis falsifiable
 
 ## First-Pass Scoring
@@ -84,18 +85,18 @@ Current model:
 
 - AI Productivity: low-confidence starter score until verified AI revenue, margin, and productivity data are added.
 - AI Bubble Risk: low-confidence starter score until hyperscaler capex, utilization, and financing quality data are added.
-- Monetary Reset Risk: deterministic score from local `fred-cache.json` when usable.
+- Monetary Reset Risk: deterministic score from local `fred-cache.json` when usable, anchored on world credit growth rather than U.S. M2.
 - Energy Bottleneck: low-confidence qualitative starter score until power/grid data are added.
 - Hard Money Repricing: deterministic score from local `market-cache.json` when BTC/PAXG prices are usable, plus the repo BTC power-law fair-value formula.
 
 FRED series used when present:
 
-- `WM2NS`: M2 money stock
+- `WM2NS`: M2 money stock — secondary U.S. liquidity context
 - `WALCL`: Fed balance sheet
 - `RRPONTSYD`: overnight reverse repo
 - `WTREGEN`: Treasury General Account
 - `QUSCAMUSDA`: U.S. total credit to non-financial sector
-- `Q5ACAMUSDA`: total reporting countries credit to non-financial sector
+- `Q5ACAMUSDA`: total reporting countries credit to non-financial sector — headline world-credit signal
 - `GFDEBTN`: federal debt
 - `A091RC1Q027SBEA`: federal government interest payments
 - `DGS10`: 10Y Treasury yield
@@ -109,6 +110,10 @@ Market cache assets used when present:
 - `gold_usd`: PAXG/USD gold proxy
 
 The monetary score is a simple weighted average of transparent signal scores.
+The headline paper-claims input is `World Credit Growth`, using `Q5ACAMUSDA`
+as a 3-year annualized growth signal. This is the closer match to the 2029 /
+Stansberry-style thesis than a domestic M2 chart. U.S. M2 remains in the model,
+but with low weight as context rather than the cockpit anchor.
 Each FRED-derived signal carries `freshness` and `age_days`. Overall cache
 freshness is coverage-aware across both FRED and market cache inputs:
 
@@ -140,6 +145,11 @@ informational with weight `0` and score `50`.
 Starter AI and energy signals are marked `starter` rather than being counted as
 fresh source data. If `market-cache.json` is missing, hard-money repricing
 signals are marked `missing` and weighted at `0`.
+
+Dashboard rule: the active Dashboard shows only `dashboard_signals`, a small
+watchlist of the two AI placeholders, the best BTC/gold hard-money signals,
+and the most important macro signal. The full raw ledger remains in `signals`
+for auditability; the Macro page owns the broader monetary reset subset.
 
 Hard-money repricing uses:
 

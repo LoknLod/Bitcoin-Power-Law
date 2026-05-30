@@ -604,7 +604,7 @@
       const items = Array.isArray(signals) ? signals : [];
       return `
         <section class="card">
-          <div class="card-title">Signal Ledger</div>
+          <div class="card-title">Signal Watchlist</div>
           <div class="signal-list">
             ${items.length ? items.map(signal => {
               const regimeSlug = slug(signal.regime).replace("monetary-reset-risk", "monetary-reset");
@@ -658,7 +658,7 @@
         renderPosture(data),
         renderScores(data.scores),
         renderAllocation(data.aim5_allocation),
-        renderSignals(data.signals),
+        renderSignals(data.dashboard_signals || data.signals),
         renderDebate(data.debate_question),
         renderRule()
       ].join("");

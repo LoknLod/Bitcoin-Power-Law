@@ -223,6 +223,13 @@ def best_growth_pct(observations: List[Observation]) -> Tuple[Optional[float], s
     return None, "growth unavailable"
 
 
+def three_year_annualized_growth_pct(observations: List[Observation]) -> Optional[float]:
+    current = latest(observations)
+    if current is None:
+        return None
+    return growth_pct_near(observations, current, 365 * 3, 210, annualize=True)
+
+
 def clamp_score(value: float) -> int:
     return int(round(max(0.0, min(100.0, value))))
 
@@ -552,6 +559,23 @@ def starter_signals(generated_at: str) -> List[Dict[str, Any]]:
     ]
 
 
+DASHBOARD_SIGNAL_ORDER = [
+    "AI Productivity Starter",
+    "AI Capex Bubble Starter",
+    "BTC Power Law Fair Value Gap",
+    "BTC/Gold Ratio",
+    "World Credit Growth",
+]
+
+
+def dashboard_signal_watchlist(cache: Dict[str, Any]) -> List[Dict[str, Any]]:
+    signals = cache.get("signals", []) if isinstance(cache, dict) else []
+    if not isinstance(signals, list):
+        return []
+    by_name = {signal.get("name"): signal for signal in signals if isinstance(signal, dict)}
+    return [by_name[name] for name in DASHBOARD_SIGNAL_ORDER if name in by_name]
+
+
 def market_price(cache: Optional[Dict[str, Any]], asset_key: str) -> Tuple[Optional[float], Optional[date], str]:
     if not isinstance(cache, dict):
         return None, None, "market-cache.json not found"
@@ -814,14 +838,14 @@ def build_monetary_signals(cache: Dict[str, Any], as_of: date) -> Tuple[List[Dic
     if wm2_latest:
         signals.append(
             regime_signal(
-                "M2 Money Stock YoY",
+                "U.S. M2 Liquidity Context",
                 "monetary_reset",
                 score_m2(wm2_yoy),
-                0.28,
-                "higher can signal debasement pressure; contraction can signal credit stress",
+                0.03,
+                "domestic liquidity context; not the core world-credit thesis signal",
                 "FRED WM2NS",
                 wm2_latest[0].isoformat(),
-                f"US M2 is {format_pct(wm2_yoy)} YoY at {format_billions(wm2_latest[1])}.",
+                f"US M2 is {format_pct(wm2_yoy)} YoY at {format_billions(wm2_latest[1])}; useful context, but world credit is the monetary reset anchor.",
                 freshness=fred_freshness("WM2NS", wm2_latest[0], as_of),
                 age_days=signal_age_days(wm2_latest[0], as_of),
                 value_label=format_pct(wm2_yoy),
@@ -830,10 +854,10 @@ def build_monetary_signals(cache: Dict[str, Any], as_of: date) -> Tuple[List[Dic
     else:
         signals.append(
             missing_monetary_signal(
-                "M2 Money Stock YoY",
+                "U.S. M2 Liquidity Context",
                 "WM2NS",
                 as_of,
-                "US M2 YoY is unavailable because FRED WM2NS has no usable observations.",
+                "US M2 context is unavailable because FRED WM2NS has no usable observations.",
             )
         )
 
@@ -983,26 +1007,47 @@ def build_monetary_signals(cache: Dict[str, Any], as_of: date) -> Tuple[List[Dic
             )
         )
 
+    world_credit_observations = observations["Q5ACAMUSDA"]
+    world_credit_latest = latest(world_credit_observations)
+    world_credit_growth = three_year_annualized_growth_pct(world_credit_observations)
+    if world_credit_latest is None:
+        signals.append(
+            missing_monetary_signal(
+                "World Credit Growth",
+                "Q5ACAMUSDA",
+                as_of,
+                "World credit growth is unavailable because FRED Q5ACAMUSDA has no usable observations.",
+            )
+        )
+    else:
+        signals.append(
+            regime_signal(
+                "World Credit Growth",
+                "monetary_reset",
+                score_credit_growth(world_credit_growth),
+                0.28,
+                "higher means the global stock of paper claims is expanding",
+                "FRED Q5ACAMUSDA",
+                world_credit_latest[0].isoformat(),
+                (
+                    "Total reporting countries credit to the non-financial sector is "
+                    f"{format_pct(world_credit_growth)} 3Y annualized at {world_credit_latest[1]:,.1f}; "
+                    "this is the core monetary reset signal, with U.S. M2 demoted to context."
+                ),
+                freshness=fred_freshness("Q5ACAMUSDA", world_credit_latest[0], as_of),
+                age_days=signal_age_days(world_credit_latest[0], as_of),
+                value_label=f"{format_pct(world_credit_growth)} 3Y annualized",
+            )
+        )
     add_growth_signal(
         signals,
         observations,
         "QUSCAMUSDA",
-        "U.S. Total Credit Growth",
-        0.12,
+        "U.S. Credit Growth",
+        0.08,
         score_credit_growth,
-        "higher can signal credit expansion and monetary stress",
+        "higher can signal domestic credit expansion and monetary stress",
         "U.S. total credit to the non-financial sector",
-        as_of,
-    )
-    add_growth_signal(
-        signals,
-        observations,
-        "Q5ACAMUSDA",
-        "Global Reporting Credit Growth",
-        0.10,
-        score_credit_growth,
-        "higher can signal broad credit expansion outside the U.S. alone",
-        "Total reporting countries credit to the non-financial sector",
         as_of,
     )
     add_growth_signal(
@@ -1264,6 +1309,7 @@ def build_cache(as_of: date) -> Dict[str, Any]:
     }
 
     signals = starter_signals(generated_at) + hard_money_signals + monetary_signals
+    dashboard_signals = dashboard_signal_watchlist({"signals": signals})
 
     return {
         "schema_version": SCHEMA_VERSION,
@@ -1275,6 +1321,7 @@ def build_cache(as_of: date) -> Dict[str, Any]:
         "scores": scores,
         "aim5_allocation": AIM5_ALLOCATION,
         "signals": signals,
+        "dashboard_signals": dashboard_signals,
         "debate_question": DEBATE_QUESTION,
     }
 

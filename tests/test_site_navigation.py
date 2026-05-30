@@ -79,6 +79,14 @@ class SiteNavigationTests(unittest.TestCase):
         self.assertNotIn("/quick.html", widget)
         self.assertIn("Bitcoin-Power-Law/", widget)
 
+    def test_macro_page_uses_world_credit_not_m2_as_monetary_reset_headline(self):
+        html = (ROOT / "macro.html").read_text()
+        self.assertIn("World Credit Growth", html)
+        self.assertIn("Q5ACAMUSDA", html)
+        self.assertIn("3Y Annualized", html)
+        self.assertIn("Monetary Reset Subset", html)
+        self.assertNotIn("Global M2 Money Supply (US Proxy)", html)
+
 
 if __name__ == "__main__":
     unittest.main()
