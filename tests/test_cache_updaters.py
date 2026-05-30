@@ -9,6 +9,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import update_fred_cache  # noqa: E402
 import update_alpha_vantage_cache  # noqa: E402
 import update_market_cache  # noqa: E402
+import score_ai_signals  # noqa: E402
 
 
 class FredCacheUpdaterTests(unittest.TestCase):
@@ -125,6 +126,125 @@ class AlphaVantageCacheUpdaterTests(unittest.TestCase):
         self.assertIn("CASH_FLOW", error_text)
         self.assertIn("rate limit", error_text)
         self.assertNotIn("SECRETKEY", error_text)
+
+
+class AISignalScoringTests(unittest.TestCase):
+    def test_company_metrics_compute_capex_margin_fcf_and_yoy(self):
+        ticker_payload = {
+            "income_statement": {"quarterlyReports": [
+                {"fiscalDateEnding": "2026-03-31", "totalRevenue": "1000", "operatingIncome": "250", "researchAndDevelopment": "120"},
+                {"fiscalDateEnding": "2025-03-31", "totalRevenue": "800", "operatingIncome": "180", "researchAndDevelopment": "80"},
+            ]},
+            "cash_flow": {"quarterlyReports": [
+                {"fiscalDateEnding": "2026-03-31", "operatingCashflow": "300", "capitalExpenditures": "-200", "depreciationDepletionAndAmortization": "60"},
+                {"fiscalDateEnding": "2025-03-31", "operatingCashflow": "260", "capitalExpenditures": "-100", "depreciationDepletionAndAmortization": "40"},
+            ]},
+            "balance_sheet": {"quarterlyReports": [
+                {"fiscalDateEnding": "2026-03-31", "shortTermDebt": "50", "longTermDebt": "450", "cashAndCashEquivalentsAtCarryingValue": "200"},
+                {"fiscalDateEnding": "2025-03-31", "shortTermDebt": "50", "longTermDebt": "350", "cashAndCashEquivalentsAtCarryingValue": "150"},
+            ]},
+        }
+
+        metrics = score_ai_signals.company_metrics("MSFT", ticker_payload)
+
+        self.assertEqual(metrics["ticker"], "MSFT")
+        self.assertEqual(metrics["as_of"], "2026-03-31")
+        self.assertAlmostEqual(metrics["revenue_yoy_pct"], 25.0)
+        self.assertAlmostEqual(metrics["capex_yoy_pct"], 100.0)
+        self.assertAlmostEqual(metrics["capex_to_revenue_pct"], 20.0)
+        self.assertAlmostEqual(metrics["operating_margin_pct"], 25.0)
+        self.assertAlmostEqual(metrics["free_cash_flow_margin_pct"], 10.0)
+        self.assertAlmostEqual(metrics["debt_yoy_pct"], 25.0)
+        self.assertAlmostEqual(metrics["r_and_d_to_revenue_pct"], 12.0)
+
+    def test_build_ai_signal_cache_scores_productivity_and_bubble_risk(self):
+        alpha_cache = {
+            "schema_version": "alpha_vantage_cache.v0.1",
+            "generated_at": "2026-05-30T00:00:00Z",
+            "tickers": {
+                "GOOD": {
+                    "income_statement": {"quarterlyReports": [
+                        {"fiscalDateEnding": "2026-03-31", "totalRevenue": "1200", "operatingIncome": "360", "researchAndDevelopment": "120"},
+                        {"fiscalDateEnding": "2025-03-31", "totalRevenue": "1000", "operatingIncome": "250", "researchAndDevelopment": "100"},
+                    ]},
+                    "cash_flow": {"quarterlyReports": [
+                        {"fiscalDateEnding": "2026-03-31", "operatingCashflow": "420", "capitalExpenditures": "-120", "depreciationDepletionAndAmortization": "50"},
+                        {"fiscalDateEnding": "2025-03-31", "operatingCashflow": "350", "capitalExpenditures": "-100", "depreciationDepletionAndAmortization": "40"},
+                    ]},
+                    "balance_sheet": {"quarterlyReports": [
+                        {"fiscalDateEnding": "2026-03-31", "shortTermDebt": "10", "longTermDebt": "190"},
+                        {"fiscalDateEnding": "2025-03-31", "shortTermDebt": "10", "longTermDebt": "190"},
+                    ]},
+                },
+                "BUBBLE": {
+                    "income_statement": {"quarterlyReports": [
+                        {"fiscalDateEnding": "2026-03-31", "totalRevenue": "1000", "operatingIncome": "80", "researchAndDevelopment": "300"},
+                        {"fiscalDateEnding": "2025-03-31", "totalRevenue": "980", "operatingIncome": "100", "researchAndDevelopment": "160"},
+                    ]},
+                    "cash_flow": {"quarterlyReports": [
+                        {"fiscalDateEnding": "2026-03-31", "operatingCashflow": "180", "capitalExpenditures": "-500", "depreciationDepletionAndAmortization": "140"},
+                        {"fiscalDateEnding": "2025-03-31", "operatingCashflow": "200", "capitalExpenditures": "-150", "depreciationDepletionAndAmortization": "50"},
+                    ]},
+                    "balance_sheet": {"quarterlyReports": [
+                        {"fiscalDateEnding": "2026-03-31", "shortTermDebt": "200", "longTermDebt": "800"},
+                        {"fiscalDateEnding": "2025-03-31", "shortTermDebt": "100", "longTermDebt": "400"},
+                    ]},
+                },
+            },
+        }
+
+        cache = score_ai_signals.build_cache(alpha_cache, generated_at="2026-05-30T00:00:00Z")
+
+        self.assertEqual(cache["schema_version"], "ai_signals_cache.v0.1")
+        self.assertEqual(cache["metadata"]["company_count"], 2)
+        self.assertEqual(cache["signals"]["ai_productivity"]["name"], "AI Productivity Score")
+        self.assertGreater(cache["signals"]["ai_productivity"]["score"], 50)
+        self.assertEqual(cache["signals"]["ai_capex_bubble_risk"]["name"], "AI Capex Bubble Risk")
+        self.assertGreater(cache["signals"]["ai_capex_bubble_risk"]["score"], 50)
+        self.assertIn("BUBBLE", cache["signals"]["ai_capex_bubble_risk"]["leaders"])
+
+    def test_company_metrics_do_not_label_adjacent_quarter_as_yoy(self):
+        ticker_payload = {
+            "income_statement": {"quarterlyReports": [
+                {"fiscalDateEnding": "2026-03-31", "totalRevenue": "1000", "operatingIncome": "250"},
+                {"fiscalDateEnding": "2025-12-31", "totalRevenue": "900", "operatingIncome": "220"},
+            ]},
+            "cash_flow": {"quarterlyReports": [
+                {"fiscalDateEnding": "2026-03-31", "operatingCashflow": "300", "capitalExpenditures": "-200"},
+                {"fiscalDateEnding": "2025-12-31", "operatingCashflow": "260", "capitalExpenditures": "-100"},
+            ]},
+            "balance_sheet": {"quarterlyReports": [
+                {"fiscalDateEnding": "2026-03-31", "shortTermDebt": "50", "longTermDebt": "450"},
+                {"fiscalDateEnding": "2025-12-31", "shortTermDebt": "50", "longTermDebt": "350"},
+            ]},
+        }
+
+        metrics = score_ai_signals.company_metrics("MSFT", ticker_payload)
+
+        self.assertIsNone(metrics["revenue_yoy_pct"])
+        self.assertIsNone(metrics["capex_yoy_pct"])
+        self.assertIsNone(metrics["debt_yoy_pct"])
+
+    def test_company_metrics_uses_total_debt_without_double_counting_long_term_debt(self):
+        ticker_payload = {
+            "income_statement": {"quarterlyReports": [
+                {"fiscalDateEnding": "2026-03-31", "totalRevenue": "1000", "operatingIncome": "250"},
+                {"fiscalDateEnding": "2025-03-31", "totalRevenue": "900", "operatingIncome": "200"},
+            ]},
+            "cash_flow": {"quarterlyReports": [
+                {"fiscalDateEnding": "2026-03-31", "operatingCashflow": "300", "capitalExpenditures": "-100"},
+                {"fiscalDateEnding": "2025-03-31", "operatingCashflow": "250", "capitalExpenditures": "-90"},
+            ]},
+            "balance_sheet": {"quarterlyReports": [
+                {"fiscalDateEnding": "2026-03-31", "shortLongTermDebtTotal": "1000", "longTermDebt": "800"},
+                {"fiscalDateEnding": "2025-03-31", "shortLongTermDebtTotal": "500", "longTermDebt": "400"},
+            ]},
+        }
+
+        metrics = score_ai_signals.company_metrics("MSFT", ticker_payload)
+
+        self.assertEqual(metrics["debt"], 1000.0)
+        self.assertAlmostEqual(metrics["debt_yoy_pct"], 100.0)
 
 
 if __name__ == "__main__":
