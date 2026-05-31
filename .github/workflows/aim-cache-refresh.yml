@@ -1,0 +1,101 @@
+name: Refresh AIM caches
+
+on:
+  schedule:
+    # Weekday pre-market refresh. GitHub schedules are UTC.
+    - cron: "17 10 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: aim-cache-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      SEC_EDGAR_USER_AGENT: ${{ secrets.SEC_EDGAR_USER_AGENT }}
+      ALPHA_VANTAGE_STOCK_API: ${{ secrets.ALPHA_VANTAGE_STOCK_API }}
+      EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate required secrets
+        run: |
+          set -euo pipefail
+          missing=0
+          for name in SEC_EDGAR_USER_AGENT ALPHA_VANTAGE_STOCK_API EIA_API_KEY; do
+            if [ -z "${!name:-}" ]; then
+              echo "Missing required secret: ${name}"
+              missing=1
+            fi
+          done
+          exit "$missing"
+
+      - name: Refresh AIM cache pipeline
+        run: |
+          set -euo pipefail
+          python3 scripts/run_aim_cache_pipeline.py \
+            --online-market \
+            --include-ai \
+            --include-sec \
+            --include-filing-text \
+            --include-energy
+
+      - name: Run tests
+        run: python3 -m unittest discover -s tests -v
+
+      - name: Check generated public cache diff for secret-shaped values
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import re
+          import subprocess
+
+          text = subprocess.check_output(
+              ["git", "diff", "--", "aim-cache.json", "fred-cache.json", "market-cache.json"],
+              text=True,
+              errors="ignore",
+          )
+          patterns = [
+              r"SEC_EDGAR_USER_AGENT",
+              r"USER_AGENT",
+              r"BWS_ACCESS_TOKEN",
+              r"ALPHA.*KEY",
+              r"FRED_API_KEY",
+              r"EIA_API_KEY",
+              r"api[_-]?key",
+              r"secret",
+              r"token",
+              r"authorization",
+          ]
+          hits = [pattern for pattern in patterns if re.search(pattern, text, re.I)]
+          if hits:
+              raise SystemExit(f"Secret-shaped values found in public cache diff: {hits}")
+          print("public cache diff secret sweep: clean")
+          PY
+
+      - name: Commit refreshed public caches
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- aim-cache.json fred-cache.json market-cache.json; then
+            echo "No public cache changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add aim-cache.json fred-cache.json market-cache.json
+          git commit -m "chore: refresh AIM cache data"
+          git push
