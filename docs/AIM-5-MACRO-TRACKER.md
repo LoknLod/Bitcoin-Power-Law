@@ -40,6 +40,7 @@ Source cache updaters:
 
 - `scripts/update_fred_cache.py`: refreshes `fred-cache.json` from public FRED graph CSV endpoints, with no API key.
 - `scripts/update_market_cache.py`: refreshes `market-cache.json` from public BTC/PAXG price endpoints, with no API key.
+- `scripts/update_eia_cache.py`: refreshes ignored local `energy-cache.json` from the EIA API for electricity price/sales bottleneck inputs.
 
 For committed/cache generation, use the pipeline runner. It writes a redacted
 `aim-pipeline-report.json` locally so a human or scheduled job can inspect which
@@ -95,6 +96,18 @@ python3 scripts/score_ai_signals.py --sec-cache sec-edgar-cache.json
 python3 scripts/score_aim_macro.py --as-of 2026-05-29 --ai-signals-cache ai-signals-cache.json
 ```
 
+Energy bottleneck source cache:
+
+```bash
+EIA_API="$EIA_API" python3 scripts/update_eia_cache.py
+```
+
+`energy-cache.json` is ignored locally because it is API-derived. The first EIA
+layer collects U.S. monthly retail electricity price and sales for all sectors,
+commercial, and industrial series. Commercial electricity is the first broad
+proxy for data-center load pressure; scoring into the AIM Energy Bottleneck
+gauge is the next phase.
+
 SEC EDGAR filing/facts cache for the next language-scoring layer:
 
 ```bash
@@ -116,9 +129,11 @@ The explicit `--ai-signals-cache` flag is deliberate: `ai-signals-cache.json` is
 a local ignored API-derived cache, so it must not silently alter the tracked
 `aim-cache.json` artifact just because it exists on one machine.
 
-The scripts use only Python standard library modules. The source cache updaters
-make public, no-key network requests; the scorer itself reads only local JSON
-files and does not make network requests.
+The scripts use only Python standard library modules. FRED/market source cache
+updaters make public, no-key network requests; Alpha Vantage, SEC, and EIA
+collectors use server-side/build-time credentials and write ignored local sidecar
+caches. The scorer itself reads only local JSON files and does not make network
+requests.
 
 Current model:
 
