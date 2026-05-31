@@ -84,7 +84,7 @@ To replace the starter AI signals with Alpha Vantage-derived financial scores,
 build the AI sidecar cache and opt in explicitly:
 
 ```bash
-python3 scripts/run_aim_cache_pipeline.py --as-of 2026-05-29 --include-ai --include-sec --include-filing-text --sec-user-agent "$SEC_EDGAR_USER_AGENT"
+python3 scripts/run_aim_cache_pipeline.py --as-of 2026-05-29 --include-ai --include-sec --include-filing-text --include-energy --sec-user-agent "$SEC_EDGAR_USER_AGENT"
 ```
 
 Equivalent manual steps remain:
@@ -93,7 +93,8 @@ Equivalent manual steps remain:
 python3 scripts/update_alpha_vantage_cache.py
 python3 scripts/update_sec_edgar_cache.py --tickers MSFT,GOOGL,AMZN,META,NVDA,AVGO,AMD,ORCL,TSM --user-agent "$SEC_EDGAR_USER_AGENT" --include-filing-text
 python3 scripts/score_ai_signals.py --sec-cache sec-edgar-cache.json
-python3 scripts/score_aim_macro.py --as-of 2026-05-29 --ai-signals-cache ai-signals-cache.json
+python3 scripts/update_eia_cache.py
+python3 scripts/score_aim_macro.py --as-of 2026-05-29 --ai-signals-cache ai-signals-cache.json --energy-cache energy-cache.json
 ```
 
 Energy bottleneck source cache:
@@ -102,11 +103,13 @@ Energy bottleneck source cache:
 EIA_API="$EIA_API" python3 scripts/update_eia_cache.py
 ```
 
-`energy-cache.json` is ignored locally because it is API-derived. The first EIA
-layer collects U.S. monthly retail electricity price and sales for all sectors,
-commercial, and industrial series. Commercial electricity is the first broad
-proxy for data-center load pressure; scoring into the AIM Energy Bottleneck
-gauge is the next phase.
+`energy-cache.json` is ignored locally because it is API-derived. The EIA layer
+collects U.S. monthly retail electricity price and sales for all sectors,
+commercial, and industrial series. When supplied explicitly with
+`--energy-cache energy-cache.json`, `score_aim_macro.py` replaces the qualitative
+Energy Bottleneck starter with a medium-confidence first-pass EIA score.
+Commercial electricity price/sales are the first broad proxy for data-center
+load pressure; industrial electricity adds heavy-load context.
 
 SEC EDGAR filing/facts cache for the next language-scoring layer:
 
@@ -140,7 +143,7 @@ Current model:
 - AI Productivity: low-confidence starter score by default; medium-confidence Alpha Vantage-derived score when a valid `ai-signals-cache.json` is explicitly supplied.
 - AI Bubble Risk: low-confidence starter score by default; medium-confidence Alpha Vantage-derived capex/malinvestment score when a valid `ai-signals-cache.json` is explicitly supplied.
 - Monetary Reset Risk: deterministic score from local `fred-cache.json` when usable, anchored on world credit growth rather than U.S. M2.
-- Energy Bottleneck: low-confidence qualitative starter score until power/grid data are added.
+- Energy Bottleneck: low-confidence starter score by default; medium-confidence EIA-derived score when a valid `energy-cache.json` is explicitly supplied.
 - Hard Money Repricing: deterministic score from local `market-cache.json` when BTC/PAXG prices are usable, plus the repo BTC power-law fair-value formula.
 
 FRED series used when present:
@@ -197,11 +200,13 @@ If comparable component data is insufficient, the Net Liquidity signal is
 informational with weight `0` and score `50`.
 
 Starter AI and energy signals are marked `starter` rather than being counted as
-fresh source data. A supplied AI cache is accepted only when it uses the expected
-schema, has at least one company, has numeric AI scores, and is fresh by the
-underlying company metric dates; otherwise the model falls back to the starter
-AI signals. If `market-cache.json` is missing, hard-money repricing signals are
-marked `missing` and weighted at `0`.
+fresh source data. Supplied AI and energy sidecar caches are accepted only via
+explicit flags. The AI cache must use the expected schema, have at least one
+company, have numeric AI scores, and be fresh by underlying company metric dates.
+The energy cache must use the expected EIA schema and have fresh monthly
+commercial/industrial electricity observations; future-dated EIA observations are
+marked `future` and excluded. If `market-cache.json` is missing, hard-money
+repricing signals are marked `missing` and weighted at `0`.
 
 Dashboard rule: the active Dashboard shows only `dashboard_signals`, a small
 watchlist of the two AI scores when available — otherwise the two AI starters —

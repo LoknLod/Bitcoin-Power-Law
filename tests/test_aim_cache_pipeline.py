@@ -20,6 +20,7 @@ class AimCachePipelineTests(unittest.TestCase):
             include_ai=True,
             include_sec=True,
             include_filing_text=True,
+            include_energy=True,
             sec_user_agent="Doug Test doug@example.com",
             offline_market=True,
         )
@@ -33,6 +34,7 @@ class AimCachePipelineTests(unittest.TestCase):
                 "update_alpha_vantage_cache",
                 "update_sec_edgar_cache",
                 "score_ai_signals",
+                "update_eia_cache",
                 "score_aim_macro",
             ],
         )
@@ -42,7 +44,9 @@ class AimCachePipelineTests(unittest.TestCase):
         self.assertIn("--include-filing-text", commands[3])
         self.assertIn("--user-agent Doug Test doug@example.com", commands[3])
         self.assertIn("--sec-cache sec-edgar-cache.json", commands[4])
-        self.assertIn("--ai-signals-cache ai-signals-cache.json", commands[5])
+        self.assertIn("update_eia_cache.py", commands[5])
+        self.assertIn("--energy-cache energy-cache.json", commands[6])
+        self.assertIn("--ai-signals-cache ai-signals-cache.json", commands[6])
 
     def test_pipeline_run_writes_report_with_statuses_and_redacts_secrets(self):
         calls = []
@@ -61,6 +65,7 @@ class AimCachePipelineTests(unittest.TestCase):
                 include_ai=True,
                 include_sec=True,
                 include_filing_text=True,
+                include_energy=False,
                 sec_user_agent="Doug Test doug@example.com",
                 offline_market=True,
                 dry_run=False,
@@ -94,6 +99,7 @@ class AimCachePipelineTests(unittest.TestCase):
                 include_ai=True,
                 include_sec=True,
                 include_filing_text=False,
+                include_energy=False,
                 sec_user_agent="Doug Test doug@example.com",
                 offline_market=False,
                 dry_run=False,
@@ -120,6 +126,7 @@ class AimCachePipelineTests(unittest.TestCase):
                 include_ai=True,
                 include_sec=True,
                 include_filing_text=True,
+                include_energy=False,
                 sec_user_agent="Doug Test doug@example.com",
                 offline_market=True,
                 dry_run=False,
@@ -146,6 +153,7 @@ class AimCachePipelineTests(unittest.TestCase):
                 include_ai=False,
                 include_sec=False,
                 include_filing_text=True,
+                include_energy=False,
                 sec_user_agent="Doug Test doug@example.com",
                 offline_market=True,
                 dry_run=True,
