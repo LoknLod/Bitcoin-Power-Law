@@ -58,6 +58,28 @@ python3 scripts/run_aim_cache_pipeline.py --as-of YYYY-MM-DD --include-ai --dry-
 observations to that date, and calculates freshness as of that date. Running the
 script without `--as-of` uses the current UTC date for interactive manual runs.
 
+## Scheduled Refresh Automation
+
+`.github/workflows/aim-cache-refresh.yml` runs the full public-cache refresh on
+weekday mornings and can also be triggered manually from GitHub Actions. It uses
+repo secrets for provider credentials/contact data:
+
+- `SEC_EDGAR_USER_AGENT`
+- `ALPHA_VANTAGE_STOCK_API`
+- `EIA_API_KEY`
+
+The workflow runs the full pipeline with live market data, AI fundamentals, SEC
+filing text, and EIA energy inputs; then it runs the test suite and commits only
+these public browser-readable caches when they changed:
+
+- `aim-cache.json`
+- `fred-cache.json`
+- `market-cache.json`
+
+Ignored sidecars such as Alpha Vantage, SEC EDGAR, AI signal, EIA energy, and
+pipeline report JSON files must stay local to the workflow run and must not be
+committed.
+
 Required compatible fields:
 
 - `schema_version`: currently `aim_macro_cache.v0.1`
