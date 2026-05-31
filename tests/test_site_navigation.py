@@ -87,6 +87,18 @@ class SiteNavigationTests(unittest.TestCase):
         self.assertIn("Monetary Reset Subset", html)
         self.assertNotIn("Global M2 Money Supply (US Proxy)", html)
 
+    def test_active_pages_do_not_embed_api_keys(self):
+        key_patterns = [
+            re.compile(r"[A-Za-z0-9]{32}"),
+            re.compile(r"API_KEY\s*=\s*['\"]"),
+        ]
+        for page in ACTIVE_PAGES:
+            html = (ROOT / page).read_text()
+            with self.subTest(page=page):
+                self.assertNotIn("PASTE YOUR FRED API KEY", html)
+                for pattern in key_patterns:
+                    self.assertIsNone(pattern.search(html))
+
 
 if __name__ == "__main__":
     unittest.main()

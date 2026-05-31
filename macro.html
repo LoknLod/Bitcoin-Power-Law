@@ -436,14 +436,8 @@
     </div>
     
     <script>
-        // ============================================
-        // FRED API KEY - Get free key at:
-        // https://fred.stlouisfed.org/docs/api/api_key.html
-        // ============================================
-        // ⚠️⚠️⚠️ CAPTAIN DOUG: PASTE YOUR FRED API KEY BELOW ⚠️⚠️⚠️
-        // Get one free at: https://fred.stlouisfed.org/docs/api/api_key.html
-        // (Sign up → "Request API Key" → paste between the quotes)
-        const FRED_API_KEY = 'c5dd4857346631ba49f64cc3e95fec6e'; // FRED API key
+        // FRED data is loaded from the server-side generated fred-cache.json.
+        // No API keys belong in browser-delivered HTML.
         
         // Power Law calculation (same as main app)
         function getPowerLawFairValue() {
@@ -489,13 +483,6 @@
         
         // Fetch Fed Liquidity data
         async function fetchLiquidity() {
-            if (!FRED_API_KEY) {
-                document.getElementById('liquidity-info').innerHTML = 
-                    '⚠️ Add FRED API key for live data<br>' +
-                    '<a href="https://fred.stlouisfed.org/docs/api/api_key.html" target="_blank" style="color: #60a5fa;">Get free key (30 sec) →</a>';
-                return;
-            }
-            
             try {
                 // Fetch all three in parallel
                 const [balanceRaw, rrpRaw, tgaRaw] = await Promise.all([

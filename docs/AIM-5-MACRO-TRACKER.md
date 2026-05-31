@@ -41,11 +41,14 @@ Source cache updaters:
 - `scripts/update_fred_cache.py`: refreshes `fred-cache.json` from public FRED graph CSV endpoints, with no API key.
 - `scripts/update_market_cache.py`: refreshes `market-cache.json` from public BTC/PAXG price endpoints, with no API key.
 
-For committed/cache generation, use an explicit as-of date:
+For committed/cache generation, use explicit as-of dates for deterministic
+FRED/AIM scoring. Market prices are live spot data, so historical market-cache
+renders must use `--offline` against an existing cache; live online market
+refreshes only support today's UTC date.
 
 ```bash
 python3 scripts/update_fred_cache.py --as-of YYYY-MM-DD
-python3 scripts/update_market_cache.py --as-of YYYY-MM-DD
+python3 scripts/update_market_cache.py --offline --as-of YYYY-MM-DD
 python3 scripts/score_aim_macro.py --as-of YYYY-MM-DD
 ```
 
@@ -73,7 +76,7 @@ Run:
 
 ```bash
 python3 scripts/update_fred_cache.py --as-of 2026-05-29
-python3 scripts/update_market_cache.py --as-of 2026-05-29
+python3 scripts/update_market_cache.py --offline --as-of 2026-05-29
 python3 scripts/score_aim_macro.py --as-of 2026-05-29
 ```
 
@@ -212,10 +215,10 @@ These are labels for discussion and review, not automatic reallocations.
 
 ## Security
 
-AIM adds no new secrets. The existing `macro.html` page has a browser-exposed
-FRED API key from prior work; browser-exposed keys are not secrets and should be
-moved to cache-only fetching in a future hardening pass. This AIM pass does not
-change that key or break the existing macro page.
+AIM adds no browser-delivered secrets. Active pages read public static caches or
+public no-key endpoints; provider credentials stay in server-side/build-time
+collectors only. The Macro page's old browser-embedded FRED key was removed and
+is now covered by a regression test.
 
 ## Rule
 
