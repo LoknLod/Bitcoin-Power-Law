@@ -41,11 +41,14 @@ Source cache updaters:
 - `scripts/update_fred_cache.py`: refreshes `fred-cache.json` from public FRED graph CSV endpoints, with no API key.
 - `scripts/update_market_cache.py`: refreshes `market-cache.json` from public BTC/PAXG price endpoints, with no API key.
 
-For committed/cache generation, use an explicit as-of date:
+For committed/cache generation, use explicit as-of dates for deterministic
+FRED/AIM scoring. Market prices are live spot data, so historical market-cache
+renders must use `--offline` against an existing cache; live online market
+refreshes only support today's UTC date.
 
 ```bash
 python3 scripts/update_fred_cache.py --as-of YYYY-MM-DD
-python3 scripts/update_market_cache.py --as-of YYYY-MM-DD
+python3 scripts/update_market_cache.py --offline --as-of YYYY-MM-DD
 python3 scripts/score_aim_macro.py --as-of YYYY-MM-DD
 ```
 
@@ -56,14 +59,15 @@ script without `--as-of` uses the current UTC date for interactive manual runs.
 Required compatible fields:
 
 - `schema_version`: currently `aim_macro_cache.v0.1`
-- `scoring_version`: currently `aim_macro_scoring.v0.1`
+- `scoring_version`: currently `aim_macro_scoring.v0.2`
 - `generated_at`: ISO timestamp for the generated local cache
 - `source`: source label such as `local_fred_cache` or `starter_static_cache`
 - `freshness`: `local_cache`, `stale`, or `demo`
 - `posture`: object with `key`, `label`, and `explanation`
 - `scores`: five regime objects with `score`, `confidence`, and `interpretation`
 - `aim5_allocation`: five target sleeve objects
-- `signals`: ledger entries with `name`, `regime`, `score`, `weight`, `direction`, `source`, `as_of`, `note`, and freshness metadata where applicable
+- `signals`: full audit ledger entries with `name`, `regime`, `score`, `weight`, `direction`, `source`, `as_of`, `note`, and freshness metadata where applicable
+- `dashboard_signals`: smaller Dashboard watchlist: AI productivity, AI capex risk, BTC power-law gap, BTC/gold ratio, and world credit growth
 - `debate_question`: current question to keep the thesis falsifiable
 
 ## First-Pass Scoring
@@ -72,9 +76,40 @@ Run:
 
 ```bash
 python3 scripts/update_fred_cache.py --as-of 2026-05-29
-python3 scripts/update_market_cache.py --as-of 2026-05-29
+python3 scripts/update_market_cache.py --offline --as-of 2026-05-29
 python3 scripts/score_aim_macro.py --as-of 2026-05-29
 ```
+
+To replace the starter AI signals with Alpha Vantage-derived financial scores,
+build the AI sidecar cache and opt in explicitly:
+
+```bash
+python3 scripts/update_alpha_vantage_cache.py
+python3 scripts/update_sec_edgar_cache.py --tickers MSFT,GOOGL,AMZN,META,NVDA,AVGO,AMD,ORCL,TSM --user-agent "$SEC_EDGAR_USER_AGENT" --include-filing-text
+python3 scripts/score_ai_signals.py --sec-cache sec-edgar-cache.json
+python3 scripts/score_aim_macro.py --as-of 2026-05-29 --ai-signals-cache ai-signals-cache.json
+```
+
+SEC EDGAR filing/facts cache for the next language-scoring layer:
+
+```bash
+python3 scripts/update_sec_edgar_cache.py --tickers MSFT,GOOGL,AMZN,META,NVDA,AVGO,AMD,ORCL,TSM --user-agent "$SEC_EDGAR_USER_AGENT"
+python3 scripts/update_sec_edgar_cache.py --tickers MSFT --include-filing-text --user-agent "$SEC_EDGAR_USER_AGENT"
+```
+
+EDGAR needs an identifiable `User-Agent`; set `SEC_EDGAR_USER_AGENT` for local
+runs. The cache stores company CIKs, latest 10-K/10-Q metadata, selected
+Company Facts tags, and optional filing-language markers, but it does not store
+the user-agent string. `score_ai_signals.py --sec-cache sec-edgar-cache.json`
+blends those filing-language markers into the AI Productivity and AI Capex
+Bubble Risk signals as a secondary evidence layer; Alpha Vantage fundamentals
+remain the primary numeric spine. The SEC layer uses a 20% max-only overlay:
+it can raise a signal when filing language adds supporting evidence, but it
+will not lower the Alpha Vantage numeric score.
+
+The explicit `--ai-signals-cache` flag is deliberate: `ai-signals-cache.json` is
+a local ignored API-derived cache, so it must not silently alter the tracked
+`aim-cache.json` artifact just because it exists on one machine.
 
 The scripts use only Python standard library modules. The source cache updaters
 make public, no-key network requests; the scorer itself reads only local JSON
@@ -82,20 +117,20 @@ files and does not make network requests.
 
 Current model:
 
-- AI Productivity: low-confidence starter score until verified AI revenue, margin, and productivity data are added.
-- AI Bubble Risk: low-confidence starter score until hyperscaler capex, utilization, and financing quality data are added.
-- Monetary Reset Risk: deterministic score from local `fred-cache.json` when usable.
+- AI Productivity: low-confidence starter score by default; medium-confidence Alpha Vantage-derived score when a valid `ai-signals-cache.json` is explicitly supplied.
+- AI Bubble Risk: low-confidence starter score by default; medium-confidence Alpha Vantage-derived capex/malinvestment score when a valid `ai-signals-cache.json` is explicitly supplied.
+- Monetary Reset Risk: deterministic score from local `fred-cache.json` when usable, anchored on world credit growth rather than U.S. M2.
 - Energy Bottleneck: low-confidence qualitative starter score until power/grid data are added.
 - Hard Money Repricing: deterministic score from local `market-cache.json` when BTC/PAXG prices are usable, plus the repo BTC power-law fair-value formula.
 
 FRED series used when present:
 
-- `WM2NS`: M2 money stock
+- `WM2NS`: M2 money stock — secondary U.S. liquidity context
 - `WALCL`: Fed balance sheet
 - `RRPONTSYD`: overnight reverse repo
 - `WTREGEN`: Treasury General Account
 - `QUSCAMUSDA`: U.S. total credit to non-financial sector
-- `Q5ACAMUSDA`: total reporting countries credit to non-financial sector
+- `Q5ACAMUSDA`: total reporting countries credit to non-financial sector — headline world-credit signal
 - `GFDEBTN`: federal debt
 - `A091RC1Q027SBEA`: federal government interest payments
 - `DGS10`: 10Y Treasury yield
@@ -109,6 +144,10 @@ Market cache assets used when present:
 - `gold_usd`: PAXG/USD gold proxy
 
 The monetary score is a simple weighted average of transparent signal scores.
+The headline paper-claims input is `World Credit Growth`, using `Q5ACAMUSDA`
+as a 3-year annualized growth signal. This is the closer match to the 2029 /
+Stansberry-style thesis than a domestic M2 chart. U.S. M2 remains in the model,
+but with low weight as context rather than the cockpit anchor.
 Each FRED-derived signal carries `freshness` and `age_days`. Overall cache
 freshness is coverage-aware across both FRED and market cache inputs:
 
@@ -138,8 +177,17 @@ If comparable component data is insufficient, the Net Liquidity signal is
 informational with weight `0` and score `50`.
 
 Starter AI and energy signals are marked `starter` rather than being counted as
-fresh source data. If `market-cache.json` is missing, hard-money repricing
-signals are marked `missing` and weighted at `0`.
+fresh source data. A supplied AI cache is accepted only when it uses the expected
+schema, has at least one company, has numeric AI scores, and is fresh by the
+underlying company metric dates; otherwise the model falls back to the starter
+AI signals. If `market-cache.json` is missing, hard-money repricing signals are
+marked `missing` and weighted at `0`.
+
+Dashboard rule: the active Dashboard shows only `dashboard_signals`, a small
+watchlist of the two AI scores when available — otherwise the two AI starters —
+the best BTC/gold hard-money signals, and the most important macro signal. The
+full raw ledger remains in `signals` for auditability; the Macro page owns the
+broader monetary reset subset.
 
 Hard-money repricing uses:
 
@@ -161,17 +209,16 @@ These are labels for discussion and review, not automatic reallocations.
 
 ## TODOs
 
-- Add verified AI capex, AI revenue, utilization, and productivity sources.
 - Add power price, grid queue, data center load, and transformer/turbine bottleneck signals.
 - Add additional hard-money context such as BTC realized-price bands or gold lease-rate stress without broker, wallet, or trade behavior.
 - Add visual regression checks once this static site has a stable browser test harness.
 
 ## Security
 
-AIM adds no new secrets. The existing `macro.html` page has a browser-exposed
-FRED API key from prior work; browser-exposed keys are not secrets and should be
-moved to cache-only fetching in a future hardening pass. This AIM pass does not
-change that key or break the existing macro page.
+AIM adds no browser-delivered secrets. Active pages read public static caches or
+public no-key endpoints; provider credentials stay in server-side/build-time
+collectors only. The Macro page's old browser-embedded FRED key was removed and
+is now covered by a regression test.
 
 ## Rule
 

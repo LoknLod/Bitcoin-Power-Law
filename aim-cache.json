@@ -1,7 +1,7 @@
 {
   "schema_version": "aim_macro_cache.v0.1",
   "scoring_version": "aim_macro_scoring.v0.2",
-  "generated_at": "2026-05-29T00:00:00Z",
+  "generated_at": "2026-05-30T00:00:00Z",
   "source": "local_fred_and_market_cache",
   "freshness": "local_cache",
   "posture": {
@@ -21,7 +21,7 @@
       "interpretation": "Capex is large; returns, utilization, and financing quality are not yet fully proven."
     },
     "monetary_reset": {
-      "score": 63,
+      "score": 62,
       "confidence": "medium",
       "interpretation": "Local FRED liquidity, credit, fiscal, rates, and spread proxies are available; score is still a simple first-pass model."
     },
@@ -71,7 +71,7 @@
       "weight": 0.35,
       "direction": "higher supports productive AI boom",
       "source": "starter_static_assumption",
-      "as_of": "2026-05-29",
+      "as_of": "2026-05-30",
       "note": "Placeholder until verified AI revenue, margin, and productivity series are added.",
       "freshness": "starter"
     },
@@ -82,7 +82,7 @@
       "weight": 0.35,
       "direction": "higher means capex return risk is rising",
       "source": "starter_static_assumption",
-      "as_of": "2026-05-29",
+      "as_of": "2026-05-30",
       "note": "Placeholder until hyperscaler capex, financing, and utilization data are added.",
       "freshness": "starter"
     },
@@ -93,7 +93,7 @@
       "weight": 0.3,
       "direction": "higher means power constraints matter more",
       "source": "starter_static_assumption",
-      "as_of": "2026-05-29",
+      "as_of": "2026-05-30",
       "note": "Qualitative starter: AI data centers and Bitcoin mining both expose power constraints.",
       "freshness": "starter"
     },
@@ -105,10 +105,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-05-29",
-      "note": "BTC spot is $73,450 versus a power-law anchor of $133,086, a -44.8% gap.",
+      "note": "BTC spot is $73,450 versus a power-law anchor of $133,208, a -44.9% gap.",
       "freshness": "local_cache",
-      "age_days": 0,
-      "value_label": "-44.8%"
+      "age_days": 1,
+      "value_label": "-44.9%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -120,7 +120,7 @@
       "as_of": "2026-05-29",
       "note": "BTC buys roughly 16.2 ounces of the PAXG gold proxy.",
       "freshness": "local_cache",
-      "age_days": 0,
+      "age_days": 1,
       "value_label": "16.2 oz"
     },
     {
@@ -133,20 +133,20 @@
       "as_of": "2026-05-29",
       "note": "PAXG gold proxy is $4,525.",
       "freshness": "local_cache",
-      "age_days": 0,
+      "age_days": 1,
       "value_label": "$4,525"
     },
     {
-      "name": "M2 Money Stock YoY",
+      "name": "U.S. M2 Liquidity Context",
       "regime": "monetary_reset",
       "score": 72,
-      "weight": 0.28,
-      "direction": "higher can signal debasement pressure; contraction can signal credit stress",
+      "weight": 0.03,
+      "direction": "domestic liquidity context; not the core world-credit thesis signal",
       "source": "FRED WM2NS",
       "as_of": "2026-05-04",
-      "note": "US M2 is +5.4% YoY at $22,879B.",
+      "note": "US M2 is +5.4% YoY at $22,879B; useful context, but world credit is the monetary reset anchor.",
       "freshness": "local_cache",
-      "age_days": 25,
+      "age_days": 26,
       "value_label": "+5.4%"
     },
     {
@@ -159,7 +159,7 @@
       "as_of": "2026-05-27",
       "note": "Fed assets are +0.2% YoY at $6,704B.",
       "freshness": "local_cache",
-      "age_days": 2,
+      "age_days": 3,
       "value_label": "+0.2%"
     },
     {
@@ -172,7 +172,7 @@
       "as_of": "2026-05-29",
       "note": "Overnight reverse repo is $12B, a thin remaining buffer.",
       "freshness": "local_cache",
-      "age_days": 0,
+      "age_days": 1,
       "value_label": "$12B"
     },
     {
@@ -185,7 +185,7 @@
       "as_of": "2026-05-27",
       "note": "TGA is $830B, which keeps liquidity conditions tighter.",
       "freshness": "local_cache",
-      "age_days": 2,
+      "age_days": 3,
       "value_label": "$830B"
     },
     {
@@ -198,34 +198,34 @@
       "as_of": "2026-05-27",
       "note": "Simple WALCL minus RRP minus TGA proxy is $5,862B; roughly 90d change is +2.4%.",
       "freshness": "local_cache",
-      "age_days": 2,
+      "age_days": 3,
       "value_label": "+2.4%"
     },
     {
-      "name": "U.S. Total Credit Growth",
+      "name": "World Credit Growth",
+      "regime": "monetary_reset",
+      "score": 64,
+      "weight": 0.28,
+      "direction": "higher means the global stock of paper claims is expanding",
+      "source": "FRED Q5ACAMUSDA",
+      "as_of": "2025-07-01",
+      "note": "Total reporting countries credit to the non-financial sector is +6.7% 3Y annualized at 257,926.8; this is the core monetary reset signal, with U.S. M2 demoted to context.",
+      "freshness": "local_cache",
+      "age_days": 333,
+      "value_label": "+6.7% 3Y annualized"
+    },
+    {
+      "name": "U.S. Credit Growth",
       "regime": "monetary_reset",
       "score": 55,
-      "weight": 0.12,
-      "direction": "higher can signal credit expansion and monetary stress",
+      "weight": 0.08,
+      "direction": "higher can signal domestic credit expansion and monetary stress",
       "source": "FRED QUSCAMUSDA",
       "as_of": "2025-07-01",
       "note": "U.S. total credit to the non-financial sector is +4.0% YoY at 75,951.1.",
       "freshness": "local_cache",
-      "age_days": 332,
+      "age_days": 333,
       "value_label": "+4.0% YoY"
-    },
-    {
-      "name": "Global Reporting Credit Growth",
-      "regime": "monetary_reset",
-      "score": 64,
-      "weight": 0.1,
-      "direction": "higher can signal broad credit expansion outside the U.S. alone",
-      "source": "FRED Q5ACAMUSDA",
-      "as_of": "2025-07-01",
-      "note": "Total reporting countries credit to the non-financial sector is +5.0% YoY at 257,926.8.",
-      "freshness": "local_cache",
-      "age_days": 332,
-      "value_label": "+5.0% YoY"
     },
     {
       "name": "Federal Debt Growth",
@@ -237,7 +237,7 @@
       "as_of": "2025-10-01",
       "note": "Federal debt is +6.3% YoY at 38,514,009.0.",
       "freshness": "local_cache",
-      "age_days": 240,
+      "age_days": 241,
       "value_label": "+6.3% YoY"
     },
     {
@@ -250,7 +250,7 @@
       "as_of": "2026-01-01",
       "note": "Federal government interest payments is +6.5% YoY at 1,218.9.",
       "freshness": "local_cache",
-      "age_days": 148,
+      "age_days": 149,
       "value_label": "+6.5% YoY"
     },
     {
@@ -263,7 +263,7 @@
       "as_of": "2026-05-28",
       "note": "10Y Treasury yield is 4.45%.",
       "freshness": "local_cache",
-      "age_days": 1,
+      "age_days": 2,
       "value_label": "4.45%"
     },
     {
@@ -276,7 +276,7 @@
       "as_of": "2026-05-28",
       "note": "10Y real yield is 2.06%.",
       "freshness": "local_cache",
-      "age_days": 1,
+      "age_days": 2,
       "value_label": "2.06%"
     },
     {
@@ -289,7 +289,7 @@
       "as_of": "2026-05-28",
       "note": "10Y breakeven inflation is 2.39%.",
       "freshness": "local_cache",
-      "age_days": 1,
+      "age_days": 2,
       "value_label": "2.39%"
     },
     {
@@ -302,8 +302,71 @@
       "as_of": "2026-05-28",
       "note": "High-yield option-adjusted spread is 2.72 percentage points.",
       "freshness": "local_cache",
-      "age_days": 1,
+      "age_days": 2,
       "value_label": "2.72%"
+    }
+  ],
+  "dashboard_signals": [
+    {
+      "name": "AI Productivity Starter",
+      "regime": "ai_productivity",
+      "score": 55,
+      "weight": 0.35,
+      "direction": "higher supports productive AI boom",
+      "source": "starter_static_assumption",
+      "as_of": "2026-05-30",
+      "note": "Placeholder until verified AI revenue, margin, and productivity series are added.",
+      "freshness": "starter"
+    },
+    {
+      "name": "AI Capex Bubble Starter",
+      "regime": "ai_bubble_risk",
+      "score": 50,
+      "weight": 0.35,
+      "direction": "higher means capex return risk is rising",
+      "source": "starter_static_assumption",
+      "as_of": "2026-05-30",
+      "note": "Placeholder until hyperscaler capex, financing, and utilization data are added.",
+      "freshness": "starter"
+    },
+    {
+      "name": "BTC Power Law Fair Value Gap",
+      "regime": "hard_money_repricing",
+      "score": 48,
+      "weight": 0.45,
+      "direction": "higher means BTC is repricing above the time-based power-law anchor",
+      "source": "coingecko bitcoin",
+      "as_of": "2026-05-29",
+      "note": "BTC spot is $73,450 versus a power-law anchor of $133,208, a -44.9% gap.",
+      "freshness": "local_cache",
+      "age_days": 1,
+      "value_label": "-44.9%"
+    },
+    {
+      "name": "BTC/Gold Ratio",
+      "regime": "hard_money_repricing",
+      "score": 55,
+      "weight": 0.35,
+      "direction": "higher means BTC is repricing versus the gold proxy",
+      "source": "market_cache BTC/USD over PAXG/USD",
+      "as_of": "2026-05-29",
+      "note": "BTC buys roughly 16.2 ounces of the PAXG gold proxy.",
+      "freshness": "local_cache",
+      "age_days": 1,
+      "value_label": "16.2 oz"
+    },
+    {
+      "name": "World Credit Growth",
+      "regime": "monetary_reset",
+      "score": 64,
+      "weight": 0.28,
+      "direction": "higher means the global stock of paper claims is expanding",
+      "source": "FRED Q5ACAMUSDA",
+      "as_of": "2025-07-01",
+      "note": "Total reporting countries credit to the non-financial sector is +6.7% 3Y annualized at 257,926.8; this is the core monetary reset signal, with U.S. M2 demoted to context.",
+      "freshness": "local_cache",
+      "age_days": 333,
+      "value_label": "+6.7% 3Y annualized"
     }
   ],
   "debate_question": "Is AI producing real productivity faster than credit/fiscal stress is degrading money?"

@@ -79,6 +79,26 @@ class SiteNavigationTests(unittest.TestCase):
         self.assertNotIn("/quick.html", widget)
         self.assertIn("Bitcoin-Power-Law/", widget)
 
+    def test_macro_page_uses_world_credit_not_m2_as_monetary_reset_headline(self):
+        html = (ROOT / "macro.html").read_text()
+        self.assertIn("World Credit Growth", html)
+        self.assertIn("Q5ACAMUSDA", html)
+        self.assertIn("3Y Annualized", html)
+        self.assertIn("Monetary Reset Subset", html)
+        self.assertNotIn("Global M2 Money Supply (US Proxy)", html)
+
+    def test_active_pages_do_not_embed_api_keys(self):
+        key_patterns = [
+            re.compile(r"[A-Za-z0-9]{32}"),
+            re.compile(r"API_KEY\s*=\s*['\"]"),
+        ]
+        for page in ACTIVE_PAGES:
+            html = (ROOT / page).read_text()
+            with self.subTest(page=page):
+                self.assertNotIn("PASTE YOUR FRED API KEY", html)
+                for pattern in key_patterns:
+                    self.assertIsNone(pattern.search(html))
+
 
 if __name__ == "__main__":
     unittest.main()

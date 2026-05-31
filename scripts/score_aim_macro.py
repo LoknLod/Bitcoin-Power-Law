@@ -19,6 +19,7 @@ from typing import Any, Dict, Iterable, List, Optional, Tuple
 ROOT = Path(__file__).resolve().parents[1]
 FRED_CACHE = ROOT / "fred-cache.json"
 MARKET_CACHE = ROOT / "market-cache.json"
+AI_SIGNALS_CACHE = ROOT / "ai-signals-cache.json"
 AIM_CACHE = ROOT / "aim-cache.json"
 SCHEMA_VERSION = "aim_macro_cache.v0.1"
 SCORING_VERSION = "aim_macro_scoring.v0.2"
@@ -223,6 +224,13 @@ def best_growth_pct(observations: List[Observation]) -> Tuple[Optional[float], s
     return None, "growth unavailable"
 
 
+def three_year_annualized_growth_pct(observations: List[Observation]) -> Optional[float]:
+    current = latest(observations)
+    if current is None:
+        return None
+    return growth_pct_near(observations, current, 365 * 3, 210, annualize=True)
+
+
 def clamp_score(value: float) -> int:
     return int(round(max(0.0, min(100.0, value))))
 
@@ -253,6 +261,16 @@ def format_ratio(value: Optional[float]) -> str:
     if value >= 100:
         return f"{value:,.0f}"
     return f"{value:,.1f}"
+
+
+def safe_float(value: Any) -> Optional[float]:
+    try:
+        parsed = float(value)
+    except (TypeError, ValueError):
+        return None
+    if not math.isfinite(parsed):
+        return None
+    return parsed
 
 
 def signal_age_days(observed_at: date, as_of: date) -> int:
@@ -552,6 +570,123 @@ def starter_signals(generated_at: str) -> List[Dict[str, Any]]:
     ]
 
 
+def ai_cache_observed_at(ai_cache: Dict[str, Any]) -> Optional[date]:
+    metrics = ai_cache.get("company_metrics")
+    dates = []
+    if isinstance(metrics, list):
+        for metric in metrics:
+            if isinstance(metric, dict):
+                parsed = parse_cache_date(metric.get("as_of"))
+                if parsed is not None:
+                    dates.append(parsed)
+    if dates:
+        return max(dates)
+    return parse_cache_date(ai_cache.get("input_generated_at")) or parse_cache_date(ai_cache.get("generated_at"))
+
+
+def ai_cache_signal(
+    payload: Dict[str, Any],
+    regime: str,
+    weight: float,
+    observed_at: date,
+    as_of: date,
+) -> Optional[Dict[str, Any]]:
+    raw_score = safe_float(payload.get("score", 50))
+    if raw_score is None:
+        return None
+    score = clamp_score(raw_score)
+    freshness = signal_freshness(observed_at, as_of, QUARTERLY_FRESHNESS_MAX_AGE_DAYS)
+    age_days = signal_age_days(observed_at, as_of)
+    leaders = payload.get("leaders") if isinstance(payload.get("leaders"), list) else []
+    leader_note = f" Leaders: {', '.join(str(item) for item in leaders[:3])}." if leaders else ""
+    return regime_signal(
+        str(payload.get("name") or "AI Signal"),
+        regime,
+        score,
+        weight,
+        str(payload.get("direction") or "higher is meaningful"),
+        str(payload.get("source") or "ai-signals-cache"),
+        observed_at.isoformat(),
+        f"{str(payload.get('note') or 'Derived from AI financial signal cache.')}{leader_note}",
+        freshness=freshness,
+        age_days=age_days,
+        value_label=f"score {score}/100",
+    )
+
+
+def build_ai_signals(
+    ai_cache: Optional[Dict[str, Any]],
+    generated_at: str,
+    as_of: date,
+) -> List[Dict[str, Any]]:
+    if not isinstance(ai_cache, dict):
+        return starter_signals(generated_at)
+    if ai_cache.get("schema_version") != "ai_signals_cache.v0.1":
+        return starter_signals(generated_at)
+    metadata = ai_cache.get("metadata") if isinstance(ai_cache.get("metadata"), dict) else {}
+    company_count = safe_float(metadata.get("company_count"))
+    if company_count is None or company_count < 1:
+        return starter_signals(generated_at)
+    observed_at = ai_cache_observed_at(ai_cache)
+    if observed_at is None:
+        return starter_signals(generated_at)
+    if signal_freshness(observed_at, as_of, QUARTERLY_FRESHNESS_MAX_AGE_DAYS) != "local_cache":
+        return starter_signals(generated_at)
+
+    signals = ai_cache.get("signals")
+    if not isinstance(signals, dict):
+        return starter_signals(generated_at)
+
+    productivity = signals.get("ai_productivity")
+    bubble = signals.get("ai_capex_bubble_risk")
+    if not isinstance(productivity, dict) or not isinstance(bubble, dict):
+        return starter_signals(generated_at)
+
+    productivity_signal = ai_cache_signal(productivity, "ai_productivity", 0.35, observed_at, as_of)
+    bubble_signal = ai_cache_signal(bubble, "ai_bubble_risk", 0.35, observed_at, as_of)
+    if productivity_signal is None or bubble_signal is None:
+        return starter_signals(generated_at)
+
+    energy_signal = starter_signals(generated_at)[2]
+    return [productivity_signal, bubble_signal, energy_signal]
+
+
+def ai_score_summary(signals: List[Dict[str, Any]], regime: str, fallback_score: int, fallback_note: str) -> Dict[str, Any]:
+    signal = next((item for item in signals if item.get("regime") == regime), None)
+    if not isinstance(signal, dict) or signal.get("freshness") == "starter":
+        return {"score": fallback_score, "confidence": "low", "interpretation": fallback_note}
+    confidence = "medium" if signal.get("freshness") == "local_cache" else "low"
+    score = safe_float(signal.get("score"))
+    return {
+        "score": clamp_score(score if score is not None else fallback_score),
+        "confidence": confidence,
+        "interpretation": str(signal.get("note") or fallback_note),
+    }
+
+
+DASHBOARD_SIGNAL_ORDER = [
+    ("AI Productivity Score", "AI Productivity Starter"),
+    ("AI Capex Bubble Risk", "AI Capex Bubble Starter"),
+    ("BTC Power Law Fair Value Gap",),
+    ("BTC/Gold Ratio",),
+    ("World Credit Growth",),
+]
+
+
+def dashboard_signal_watchlist(cache: Dict[str, Any]) -> List[Dict[str, Any]]:
+    signals = cache.get("signals", []) if isinstance(cache, dict) else []
+    if not isinstance(signals, list):
+        return []
+    by_name = {signal.get("name"): signal for signal in signals if isinstance(signal, dict)}
+    watchlist = []
+    for slot in DASHBOARD_SIGNAL_ORDER:
+        for name in slot:
+            if name in by_name:
+                watchlist.append(by_name[name])
+                break
+    return watchlist
+
+
 def market_price(cache: Optional[Dict[str, Any]], asset_key: str) -> Tuple[Optional[float], Optional[date], str]:
     if not isinstance(cache, dict):
         return None, None, "market-cache.json not found"
@@ -814,14 +949,14 @@ def build_monetary_signals(cache: Dict[str, Any], as_of: date) -> Tuple[List[Dic
     if wm2_latest:
         signals.append(
             regime_signal(
-                "M2 Money Stock YoY",
+                "U.S. M2 Liquidity Context",
                 "monetary_reset",
                 score_m2(wm2_yoy),
-                0.28,
-                "higher can signal debasement pressure; contraction can signal credit stress",
+                0.03,
+                "domestic liquidity context; not the core world-credit thesis signal",
                 "FRED WM2NS",
                 wm2_latest[0].isoformat(),
-                f"US M2 is {format_pct(wm2_yoy)} YoY at {format_billions(wm2_latest[1])}.",
+                f"US M2 is {format_pct(wm2_yoy)} YoY at {format_billions(wm2_latest[1])}; useful context, but world credit is the monetary reset anchor.",
                 freshness=fred_freshness("WM2NS", wm2_latest[0], as_of),
                 age_days=signal_age_days(wm2_latest[0], as_of),
                 value_label=format_pct(wm2_yoy),
@@ -830,10 +965,10 @@ def build_monetary_signals(cache: Dict[str, Any], as_of: date) -> Tuple[List[Dic
     else:
         signals.append(
             missing_monetary_signal(
-                "M2 Money Stock YoY",
+                "U.S. M2 Liquidity Context",
                 "WM2NS",
                 as_of,
-                "US M2 YoY is unavailable because FRED WM2NS has no usable observations.",
+                "US M2 context is unavailable because FRED WM2NS has no usable observations.",
             )
         )
 
@@ -983,26 +1118,47 @@ def build_monetary_signals(cache: Dict[str, Any], as_of: date) -> Tuple[List[Dic
             )
         )
 
+    world_credit_observations = observations["Q5ACAMUSDA"]
+    world_credit_latest = latest(world_credit_observations)
+    world_credit_growth = three_year_annualized_growth_pct(world_credit_observations)
+    if world_credit_latest is None:
+        signals.append(
+            missing_monetary_signal(
+                "World Credit Growth",
+                "Q5ACAMUSDA",
+                as_of,
+                "World credit growth is unavailable because FRED Q5ACAMUSDA has no usable observations.",
+            )
+        )
+    else:
+        signals.append(
+            regime_signal(
+                "World Credit Growth",
+                "monetary_reset",
+                score_credit_growth(world_credit_growth),
+                0.28,
+                "higher means the global stock of paper claims is expanding",
+                "FRED Q5ACAMUSDA",
+                world_credit_latest[0].isoformat(),
+                (
+                    "Total reporting countries credit to the non-financial sector is "
+                    f"{format_pct(world_credit_growth)} 3Y annualized at {world_credit_latest[1]:,.1f}; "
+                    "this is the core monetary reset signal, with U.S. M2 demoted to context."
+                ),
+                freshness=fred_freshness("Q5ACAMUSDA", world_credit_latest[0], as_of),
+                age_days=signal_age_days(world_credit_latest[0], as_of),
+                value_label=f"{format_pct(world_credit_growth)} 3Y annualized",
+            )
+        )
     add_growth_signal(
         signals,
         observations,
         "QUSCAMUSDA",
-        "U.S. Total Credit Growth",
-        0.12,
+        "U.S. Credit Growth",
+        0.08,
         score_credit_growth,
-        "higher can signal credit expansion and monetary stress",
+        "higher can signal domestic credit expansion and monetary stress",
         "U.S. total credit to the non-financial sector",
-        as_of,
-    )
-    add_growth_signal(
-        signals,
-        observations,
-        "Q5ACAMUSDA",
-        "Global Reporting Credit Growth",
-        0.10,
-        score_credit_growth,
-        "higher can signal broad credit expansion outside the U.S. alone",
-        "Total reporting countries credit to the non-financial sector",
         as_of,
     )
     add_growth_signal(
@@ -1178,10 +1334,13 @@ def choose_posture(scores: Dict[str, Dict[str, Any]]) -> Dict[str, str]:
     }
 
 
-def build_cache(as_of: date) -> Dict[str, Any]:
+def build_cache(as_of: date, ai_signals_cache_path: Optional[Path] = None) -> Dict[str, Any]:
     generated_at = utc_day_stamp(as_of)
     fred_cache, fred_error = read_json(FRED_CACHE)
     market_cache, market_error = read_json(MARKET_CACHE)
+    ai_cache = None
+    if ai_signals_cache_path is not None:
+        ai_cache, _ai_error = read_json(ai_signals_cache_path)
 
     monetary_signals: List[Dict[str, Any]] = []
     newest_date: Optional[date] = None
@@ -1198,6 +1357,7 @@ def build_cache(as_of: date) -> Dict[str, Any]:
         ]
 
     hard_money_signals = build_hard_money_signals(market_cache, as_of, market_error)
+    ai_signals = build_ai_signals(ai_cache, generated_at, as_of)
 
     weighted_monetary = weighted_monetary_signals(monetary_signals)
     weighted_hard_money = weighted_hard_money_signals(hard_money_signals)
@@ -1236,16 +1396,18 @@ def build_cache(as_of: date) -> Dict[str, Any]:
         hard_money_note = "Local BTC and PAXG gold-proxy prices are available; hard-money repricing score is medium-confidence and simple."
 
     scores = {
-        "ai_productivity": {
-            "score": 55,
-            "confidence": "low",
-            "interpretation": "Evidence is real but monetization and broad productivity flow-through need more proof.",
-        },
-        "ai_bubble_risk": {
-            "score": 50,
-            "confidence": "low",
-            "interpretation": "Capex is large; returns, utilization, and financing quality are not yet fully proven.",
-        },
+        "ai_productivity": ai_score_summary(
+            ai_signals,
+            "ai_productivity",
+            55,
+            "Evidence is real but monetization and broad productivity flow-through need more proof.",
+        ),
+        "ai_bubble_risk": ai_score_summary(
+            ai_signals,
+            "ai_bubble_risk",
+            50,
+            "Capex is large; returns, utilization, and financing quality are not yet fully proven.",
+        ),
         "monetary_reset": {
             "score": monetary_score,
             "confidence": monetary_confidence,
@@ -1263,7 +1425,8 @@ def build_cache(as_of: date) -> Dict[str, Any]:
         },
     }
 
-    signals = starter_signals(generated_at) + hard_money_signals + monetary_signals
+    signals = ai_signals + hard_money_signals + monetary_signals
+    dashboard_signals = dashboard_signal_watchlist({"signals": signals})
 
     return {
         "schema_version": SCHEMA_VERSION,
@@ -1275,6 +1438,7 @@ def build_cache(as_of: date) -> Dict[str, Any]:
         "scores": scores,
         "aim5_allocation": AIM5_ALLOCATION,
         "signals": signals,
+        "dashboard_signals": dashboard_signals,
         "debate_question": DEBATE_QUESTION,
     }
 
@@ -1302,13 +1466,22 @@ def parse_args() -> argparse.Namespace:
             "Use YYYY-MM-DD; generated_at will be YYYY-MM-DDT00:00:00Z."
         ),
     )
+    parser.add_argument(
+        "--ai-signals-cache",
+        type=Path,
+        default=None,
+        help=(
+            "Optional ai-signals-cache.json input. Deliberately opt-in so ignored local API caches "
+            "cannot silently change the tracked aim-cache.json artifact."
+        ),
+    )
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
     as_of = args.as_of or default_as_of()
-    cache = build_cache(as_of)
+    cache = build_cache(as_of, ai_signals_cache_path=args.ai_signals_cache)
     write_cache(cache, AIM_CACHE)
 
     scores = cache["scores"]
