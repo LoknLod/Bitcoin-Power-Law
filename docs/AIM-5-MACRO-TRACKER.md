@@ -41,15 +41,16 @@ Source cache updaters:
 - `scripts/update_fred_cache.py`: refreshes `fred-cache.json` from public FRED graph CSV endpoints, with no API key.
 - `scripts/update_market_cache.py`: refreshes `market-cache.json` from public BTC/PAXG price endpoints, with no API key.
 
-For committed/cache generation, use explicit as-of dates for deterministic
-FRED/AIM scoring. Market prices are live spot data, so historical market-cache
-renders must use `--offline` against an existing cache; live online market
-refreshes only support today's UTC date.
+For committed/cache generation, use the pipeline runner. It writes a redacted
+`aim-pipeline-report.json` locally so a human or scheduled job can inspect which
+steps ran, failed, or were skipped. Market prices are live spot data, so
+historical market-cache renders use `--offline` against an existing cache; live
+online market refreshes only support today's UTC date.
 
 ```bash
-python3 scripts/update_fred_cache.py --as-of YYYY-MM-DD
-python3 scripts/update_market_cache.py --offline --as-of YYYY-MM-DD
-python3 scripts/score_aim_macro.py --as-of YYYY-MM-DD
+python3 scripts/run_aim_cache_pipeline.py --as-of YYYY-MM-DD
+python3 scripts/run_aim_cache_pipeline.py --as-of YYYY-MM-DD --include-ai --include-sec --include-filing-text --sec-user-agent "$SEC_EDGAR_USER_AGENT"
+python3 scripts/run_aim_cache_pipeline.py --as-of YYYY-MM-DD --include-ai --dry-run
 ```
 
 `--as-of` sets `generated_at` to exactly `YYYY-MM-DDT00:00:00Z`, filters local
@@ -75,13 +76,17 @@ Required compatible fields:
 Run:
 
 ```bash
-python3 scripts/update_fred_cache.py --as-of 2026-05-29
-python3 scripts/update_market_cache.py --offline --as-of 2026-05-29
-python3 scripts/score_aim_macro.py --as-of 2026-05-29
+python3 scripts/run_aim_cache_pipeline.py --as-of 2026-05-29
 ```
 
 To replace the starter AI signals with Alpha Vantage-derived financial scores,
 build the AI sidecar cache and opt in explicitly:
+
+```bash
+python3 scripts/run_aim_cache_pipeline.py --as-of 2026-05-29 --include-ai --include-sec --include-filing-text --sec-user-agent "$SEC_EDGAR_USER_AGENT"
+```
+
+Equivalent manual steps remain:
 
 ```bash
 python3 scripts/update_alpha_vantage_cache.py
