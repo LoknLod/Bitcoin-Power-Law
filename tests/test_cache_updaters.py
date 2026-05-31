@@ -12,6 +12,7 @@ import update_alpha_vantage_cache  # noqa: E402
 import update_market_cache  # noqa: E402
 import score_ai_signals  # noqa: E402
 import update_sec_edgar_cache  # noqa: E402
+import update_eia_cache  # noqa: E402
 
 
 class FredCacheUpdaterTests(unittest.TestCase):
@@ -34,6 +35,97 @@ class FredCacheUpdaterTests(unittest.TestCase):
                 {"date": "2026-01-03", "value": "2"},
             ],
         )
+
+
+class EiaCacheUpdaterTests(unittest.TestCase):
+    def test_collect_api_keys_prefers_eia_api_and_dedupes_alias(self):
+        env = {"EIA_API": "primary-key", "EIA_API_KEY": "primary-key"}
+
+        keys = update_eia_cache.collect_api_keys(env)
+
+        self.assertEqual(keys, ["primary-key"])
+
+    def test_normalize_electricity_rows_keeps_numeric_observations(self):
+        rows = [
+            {
+                "period": "2026-03",
+                "sectorid": "COM",
+                "sectorName": "commercial",
+                "price": "13.92",
+                "sales": "119621.52556",
+                "price-units": "cents per kilowatt-hour",
+                "sales-units": "million kilowatt hours",
+            },
+            {"period": "2026-02", "sectorid": "COM", "price": ".", "sales": "bad"},
+        ]
+
+        observations = update_eia_cache.normalize_electricity_rows(rows, "commercial_electricity")
+
+        self.assertEqual(
+            observations,
+            [
+                {
+                    "date": "2026-03",
+                    "price_cents_per_kwh": 13.92,
+                    "sales_million_kwh": 119621.52556,
+                    "sector_id": "COM",
+                    "sector_name": "commercial",
+                    "source_series": "commercial_electricity",
+                }
+            ],
+        )
+
+    def test_build_cache_fetches_curated_electricity_series_and_never_stores_key(self):
+        calls = []
+
+        def fake_fetch(series, api_key):
+            calls.append((series["key"], api_key))
+            return {
+                "response": {
+                    "data": [
+                        {
+                            "period": "2026-03",
+                            "sectorid": series["sector_id"],
+                            "sectorName": series["name"],
+                            "price": "13.92",
+                            "sales": "119621.52556",
+                            "price-units": "cents per kilowatt-hour",
+                            "sales-units": "million kilowatt hours",
+                        }
+                    ]
+                }
+            }
+
+        cache, stats = update_eia_cache.build_cache(
+            api_keys=["SECRET_EIA_KEY"],
+            fetcher=fake_fetch,
+            sleep_seconds=0,
+            generated_at="2026-05-31T00:00:00Z",
+        )
+
+        self.assertEqual(cache["schema_version"], "eia_energy_cache.v0.1")
+        self.assertEqual(cache["source"], "eia_api")
+        self.assertEqual(stats["series_count"], len(update_eia_cache.CURATED_SERIES))
+        self.assertEqual(stats["updated_series"], len(update_eia_cache.CURATED_SERIES))
+        self.assertEqual(cache["series"]["commercial_electricity"]["observations"][0]["price_cents_per_kwh"], 13.92)
+        serialized = json.dumps(cache)
+        self.assertNotIn("SECRET_EIA_KEY", serialized)
+
+    def test_build_cache_redacts_key_from_errors(self):
+        def fake_fetch(series, api_key):
+            raise RuntimeError(f"provider rejected {api_key}")
+
+        cache, stats = update_eia_cache.build_cache(
+            api_keys=["SECRET_EIA_KEY"],
+            fetcher=fake_fetch,
+            sleep_seconds=0,
+            generated_at="2026-05-31T00:00:00Z",
+        )
+
+        self.assertEqual(stats["error_count"], len(update_eia_cache.CURATED_SERIES))
+        serialized = json.dumps(cache)
+        self.assertNotIn("SECRET_EIA_KEY", serialized)
+        self.assertIn("[REDACTED]", serialized)
 
 
 class MarketCacheUpdaterTests(unittest.TestCase):
