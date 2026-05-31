@@ -61,6 +61,7 @@ def build_plan(
     include_ai: bool,
     include_sec: bool,
     include_filing_text: bool,
+    include_energy: bool,
     sec_user_agent: Optional[str],
     offline_market: bool,
     tickers: str = AI_TICKERS,
@@ -99,9 +100,14 @@ def build_plan(
             score_cmd.extend(["--sec-cache", "sec-edgar-cache.json"])
         plan.append(Step("score_ai_signals", score_cmd))
 
+    if include_energy:
+        plan.append(Step("update_eia_cache", [sys.executable, python_script("update_eia_cache.py")], timeout=600))
+
     aim_cmd = [sys.executable, python_script("score_aim_macro.py"), "--as-of", as_of]
     if include_ai:
         aim_cmd.extend(["--ai-signals-cache", "ai-signals-cache.json"])
+    if include_energy:
+        aim_cmd.extend(["--energy-cache", "energy-cache.json"])
     plan.append(Step("score_aim_macro", aim_cmd))
     return plan
 
@@ -127,6 +133,8 @@ def redaction_values(env: Mapping[str, str], sec_user_agent: Optional[str]) -> L
     names = [
         "ALPHA_VANTAGE_STOCK_API",
         "ALPHAVANTAGE_API_KEY",
+        "EIA_API",
+        "EIA_API_KEY",
         "SEC_EDGAR_USER_AGENT",
         "BWS_ACCESS_TOKEN",
         "GITHUB_TOKEN",
@@ -174,6 +182,7 @@ def run_pipeline(
     include_ai: bool,
     include_sec: bool,
     include_filing_text: bool,
+    include_energy: bool,
     sec_user_agent: Optional[str],
     offline_market: bool,
     dry_run: bool,
@@ -185,7 +194,7 @@ def run_pipeline(
     environment = env if env is not None else os.environ
     include_sec = include_sec or include_filing_text
     include_ai = include_ai or include_sec
-    plan = build_plan(as_of, include_ai, include_sec, include_filing_text, sec_user_agent, offline_market, tickers=tickers)
+    plan = build_plan(as_of, include_ai, include_sec, include_filing_text, include_energy, sec_user_agent, offline_market, tickers=tickers)
     redactions = redaction_values(environment, sec_user_agent)
     report_steps: List[Dict[str, object]] = []
     exit_code = 0
@@ -225,6 +234,7 @@ def run_pipeline(
             "include_ai": include_ai,
             "include_sec": include_sec,
             "include_filing_text": include_filing_text,
+            "include_energy": include_energy,
             "offline_market": offline_market,
             "dry_run": dry_run,
             "tickers": tickers,
@@ -241,6 +251,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--include-ai", action="store_true", help="Refresh Alpha Vantage AI fundamentals and feed ai-signals-cache.json into AIM.")
     parser.add_argument("--include-sec", action="store_true", help="Refresh SEC EDGAR cache and blend it into AI scoring. Implies --include-ai.")
     parser.add_argument("--include-filing-text", action="store_true", help="Download latest filing text for SEC language markers.")
+    parser.add_argument("--include-energy", action="store_true", help="Refresh EIA energy cache and feed energy-cache.json into AIM.")
     parser.add_argument("--sec-user-agent", default=os.environ.get("SEC_EDGAR_USER_AGENT"), help="Contactable SEC user-agent. Defaults to SEC_EDGAR_USER_AGENT.")
     parser.add_argument("--online-market", action="store_true", help="Use live market APIs. Without this, market cache is rendered in offline/replay mode.")
     parser.add_argument("--dry-run", action="store_true", help="Write planned commands without running them.")
@@ -262,6 +273,7 @@ def main() -> int:
         include_ai=include_ai,
         include_sec=include_sec,
         include_filing_text=args.include_filing_text,
+        include_energy=args.include_energy,
         sec_user_agent=args.sec_user_agent,
         offline_market=not args.online_market,
         dry_run=args.dry_run,

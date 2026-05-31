@@ -20,11 +20,13 @@ ROOT = Path(__file__).resolve().parents[1]
 FRED_CACHE = ROOT / "fred-cache.json"
 MARKET_CACHE = ROOT / "market-cache.json"
 AI_SIGNALS_CACHE = ROOT / "ai-signals-cache.json"
+ENERGY_CACHE = ROOT / "energy-cache.json"
 AIM_CACHE = ROOT / "aim-cache.json"
 SCHEMA_VERSION = "aim_macro_cache.v0.1"
-SCORING_VERSION = "aim_macro_scoring.v0.2"
+SCORING_VERSION = "aim_macro_scoring.v0.3"
 FRESHNESS_MAX_AGE_DAYS = 45
 QUARTERLY_FRESHNESS_MAX_AGE_DAYS = 370
+ENERGY_FRESHNESS_MAX_AGE_DAYS = 120
 MARKET_FRESHNESS_MAX_AGE_DAYS = 3
 NET_LIQUIDITY_LOOKBACK_DAYS = 90
 NET_LIQUIDITY_LOOKBACK_TOLERANCE_DAYS = 14
@@ -104,7 +106,9 @@ def parse_cache_date(value: Any) -> Optional[date]:
     text = str(value).strip()
     if not text:
         return None
-    if len(text) >= 10:
+    if len(text) == 7 and text[4] == "-":
+        text = f"{text}-01"
+    elif len(text) >= 10:
         text = text[:10]
     try:
         return date.fromisoformat(text)
@@ -531,6 +535,21 @@ def regime_signal(
     return signal
 
 
+def energy_starter_signal(generated_at: str) -> Dict[str, Any]:
+    as_of = generated_at[:10]
+    return regime_signal(
+        "Energy Bottleneck Starter",
+        "energy_bottleneck",
+        60,
+        0.30,
+        "higher means power constraints matter more",
+        "starter_static_assumption",
+        as_of,
+        "Qualitative starter: AI data centers and Bitcoin mining both expose power constraints.",
+        freshness="starter",
+    )
+
+
 def starter_signals(generated_at: str) -> List[Dict[str, Any]]:
     as_of = generated_at[:10]
     return [
@@ -556,18 +575,158 @@ def starter_signals(generated_at: str) -> List[Dict[str, Any]]:
             "Placeholder until hyperscaler capex, financing, and utilization data are added.",
             freshness="starter",
         ),
-        regime_signal(
-            "Energy Bottleneck Starter",
-            "energy_bottleneck",
-            60,
-            0.30,
-            "higher means power constraints matter more",
-            "starter_static_assumption",
-            as_of,
-            "Qualitative starter: AI data centers and Bitcoin mining both expose power constraints.",
-            freshness="starter",
-        ),
+        energy_starter_signal(generated_at),
     ]
+
+
+def parse_energy_observations(
+    energy_cache: Dict[str, Any],
+    series_id: str,
+    field: str,
+    through: Optional[date] = None,
+) -> List[Observation]:
+    series = energy_cache.get("series", {})
+    if not isinstance(series, dict):
+        return []
+    payload = series.get(series_id)
+    if not isinstance(payload, dict):
+        return []
+    raw_observations = payload.get("observations", [])
+    if not isinstance(raw_observations, list):
+        return []
+
+    observations: List[Observation] = []
+    for item in raw_observations:
+        if not isinstance(item, dict):
+            continue
+        observed_at = parse_cache_date(item.get("date"))
+        value = safe_float(item.get(field))
+        if observed_at is None or value is None:
+            continue
+        if through is not None and observed_at > through:
+            continue
+        observations.append((observed_at, value))
+    return sorted(observations, key=lambda row: row[0])
+
+
+def energy_growth(observations: List[Observation]) -> Optional[float]:
+    current = latest(observations)
+    if current is None:
+        return None
+    previous = closest_to_date(observations, current[0] - timedelta(days=365), 45)
+    if previous is None or previous[1] == 0:
+        return None
+    return (current[1] - previous[1]) / previous[1] * 100.0
+
+
+def energy_signal_summary(signal: Dict[str, Any]) -> Dict[str, Any]:
+    if signal.get("freshness") != "local_cache":
+        return {
+            "score": 60,
+            "confidence": "low",
+            "interpretation": "Starter qualitative score: AI and Bitcoin both expose power and grid constraints.",
+        }
+    return {
+        "score": clamp_score(safe_float(signal.get("score")) or 60),
+        "confidence": "medium",
+        "interpretation": str(signal.get("note") or "EIA electricity data is available; score remains first-pass directional."),
+    }
+
+
+def build_energy_signal(energy_cache: Optional[Dict[str, Any]], generated_at: str, as_of: date) -> Dict[str, Any]:
+    if not isinstance(energy_cache, dict) or energy_cache.get("schema_version") != "eia_energy_cache.v0.1":
+        return energy_starter_signal(generated_at)
+
+    commercial_price_all = parse_energy_observations(energy_cache, "commercial_electricity", "price_cents_per_kwh")
+    commercial_sales_all = parse_energy_observations(energy_cache, "commercial_electricity", "sales_million_kwh")
+    industrial_price_all = parse_energy_observations(energy_cache, "industrial_electricity", "price_cents_per_kwh")
+    all_latest_dates = [latest(obs)[0] for obs in (commercial_price_all, commercial_sales_all, industrial_price_all) if latest(obs)]
+
+    commercial_price = parse_energy_observations(energy_cache, "commercial_electricity", "price_cents_per_kwh", through=as_of)
+    commercial_sales = parse_energy_observations(energy_cache, "commercial_electricity", "sales_million_kwh", through=as_of)
+    industrial_price = parse_energy_observations(energy_cache, "industrial_electricity", "price_cents_per_kwh", through=as_of)
+    latest_dates = [latest(obs)[0] for obs in (commercial_price, commercial_sales, industrial_price) if latest(obs)]
+    if not latest_dates:
+        if all_latest_dates and max(all_latest_dates) > as_of:
+            observed_at = max(all_latest_dates)
+            return regime_signal(
+                "Energy Bottleneck Score",
+                "energy_bottleneck",
+                50,
+                0.0,
+                "future-dated EIA data is not scored",
+                "eia_energy_cache",
+                observed_at.isoformat(),
+                "EIA energy cache contains observations after the AIM as-of date; excluded from scoring.",
+                freshness="future",
+                age_days=signal_age_days(observed_at, as_of),
+            )
+        return energy_starter_signal(generated_at)
+
+    observed_at = max(latest_dates)
+    freshness = signal_freshness(observed_at, as_of, ENERGY_FRESHNESS_MAX_AGE_DAYS)
+    age_days = signal_age_days(observed_at, as_of)
+    if freshness == "future":
+        return regime_signal(
+            "Energy Bottleneck Score",
+            "energy_bottleneck",
+            50,
+            0.0,
+            "future-dated EIA data is not scored",
+            "eia_energy_cache",
+            observed_at.isoformat(),
+            "EIA energy cache contains observations after the AIM as-of date; excluded from scoring.",
+            freshness="future",
+            age_days=age_days,
+        )
+    if freshness != "local_cache":
+        return energy_starter_signal(generated_at)
+
+    def fresh_component(observations: List[Observation]) -> List[Observation]:
+        current = latest(observations)
+        if current is None:
+            return []
+        if signal_freshness(current[0], as_of, ENERGY_FRESHNESS_MAX_AGE_DAYS) != "local_cache":
+            return []
+        return observations
+
+    commercial_price = fresh_component(commercial_price)
+    commercial_sales = fresh_component(commercial_sales)
+    industrial_price = fresh_component(industrial_price)
+    commercial_price_yoy = energy_growth(commercial_price)
+    commercial_sales_yoy = energy_growth(commercial_sales)
+    industrial_price_yoy = energy_growth(industrial_price)
+    if commercial_price_yoy is None and commercial_sales_yoy is None and industrial_price_yoy is None:
+        return energy_starter_signal(generated_at)
+
+    score_value = 45.0
+    if commercial_price_yoy is not None:
+        score_value += commercial_price_yoy * 1.0
+    if commercial_sales_yoy is not None:
+        score_value += commercial_sales_yoy * 0.7
+    if industrial_price_yoy is not None:
+        score_value += industrial_price_yoy * 0.4
+    score = clamp_score(score_value)
+    parts = []
+    if commercial_price_yoy is not None:
+        parts.append(f"commercial electricity price {format_pct(commercial_price_yoy)} YoY")
+    if commercial_sales_yoy is not None:
+        parts.append(f"commercial electricity sales {format_pct(commercial_sales_yoy)} YoY")
+    if industrial_price_yoy is not None:
+        parts.append(f"industrial electricity price {format_pct(industrial_price_yoy)} YoY")
+    return regime_signal(
+        "Energy Bottleneck Score",
+        "energy_bottleneck",
+        score,
+        0.30,
+        "higher means power-cost/load pressure is rising",
+        "eia_energy_cache",
+        observed_at.isoformat(),
+        "EIA retail electricity data: " + "; ".join(parts) + ". First-pass proxy for AI/data-center energy bottleneck pressure.",
+        freshness="local_cache",
+        age_days=age_days,
+        value_label="; ".join(parts),
+    )
 
 
 def ai_cache_observed_at(ai_cache: Dict[str, Any]) -> Optional[date]:
@@ -1334,13 +1493,16 @@ def choose_posture(scores: Dict[str, Dict[str, Any]]) -> Dict[str, str]:
     }
 
 
-def build_cache(as_of: date, ai_signals_cache_path: Optional[Path] = None) -> Dict[str, Any]:
+def build_cache(as_of: date, ai_signals_cache_path: Optional[Path] = None, energy_cache_path: Optional[Path] = None) -> Dict[str, Any]:
     generated_at = utc_day_stamp(as_of)
     fred_cache, fred_error = read_json(FRED_CACHE)
     market_cache, market_error = read_json(MARKET_CACHE)
     ai_cache = None
     if ai_signals_cache_path is not None:
         ai_cache, _ai_error = read_json(ai_signals_cache_path)
+    energy_cache = None
+    if energy_cache_path is not None:
+        energy_cache, _energy_error = read_json(energy_cache_path)
 
     monetary_signals: List[Dict[str, Any]] = []
     newest_date: Optional[date] = None
@@ -1358,6 +1520,8 @@ def build_cache(as_of: date, ai_signals_cache_path: Optional[Path] = None) -> Di
 
     hard_money_signals = build_hard_money_signals(market_cache, as_of, market_error)
     ai_signals = build_ai_signals(ai_cache, generated_at, as_of)
+    energy_signal = build_energy_signal(energy_cache, generated_at, as_of)
+    ai_signals = [signal for signal in ai_signals if signal.get("regime") != "energy_bottleneck"] + [energy_signal]
 
     weighted_monetary = weighted_monetary_signals(monetary_signals)
     weighted_hard_money = weighted_hard_money_signals(hard_money_signals)
@@ -1413,11 +1577,7 @@ def build_cache(as_of: date, ai_signals_cache_path: Optional[Path] = None) -> Di
             "confidence": monetary_confidence,
             "interpretation": monetary_note,
         },
-        "energy_bottleneck": {
-            "score": 60,
-            "confidence": "low",
-            "interpretation": "Starter qualitative score: AI and Bitcoin both expose power and grid constraints.",
-        },
+        "energy_bottleneck": energy_signal_summary(energy_signal),
         "hard_money_repricing": {
             "score": hard_money_score,
             "confidence": hard_money_confidence,
@@ -1475,13 +1635,22 @@ def parse_args() -> argparse.Namespace:
             "cannot silently change the tracked aim-cache.json artifact."
         ),
     )
+    parser.add_argument(
+        "--energy-cache",
+        type=Path,
+        default=None,
+        help=(
+            "Optional energy-cache.json input. Deliberately opt-in so ignored local EIA API caches "
+            "cannot silently change the tracked aim-cache.json artifact."
+        ),
+    )
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
     as_of = args.as_of or default_as_of()
-    cache = build_cache(as_of, ai_signals_cache_path=args.ai_signals_cache)
+    cache = build_cache(as_of, ai_signals_cache_path=args.ai_signals_cache, energy_cache_path=args.energy_cache)
     write_cache(cache, AIM_CACHE)
 
     scores = cache["scores"]

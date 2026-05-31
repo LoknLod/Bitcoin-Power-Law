@@ -178,6 +178,138 @@ class ScoreAimMacroTests(unittest.TestCase):
         self.assertEqual(cache["scores"]["ai_bubble_risk"]["score"], 72)
         self.assertEqual(cache["scores"]["ai_productivity"]["confidence"], "medium")
 
+    def test_build_cache_replaces_energy_starter_with_eia_energy_cache(self):
+        as_of = date(2026, 5, 29)
+        energy_cache = {
+            "schema_version": "eia_energy_cache.v0.1",
+            "generated_at": "2026-05-29T00:00:00Z",
+            "series": {
+                "commercial_electricity": {
+                    "observations": [
+                        {"date": "2025-03", "price_cents_per_kwh": 12.0, "sales_million_kwh": 100000},
+                        {"date": "2026-03", "price_cents_per_kwh": 15.0, "sales_million_kwh": 118000},
+                    ]
+                },
+                "industrial_electricity": {
+                    "observations": [
+                        {"date": "2025-03", "price_cents_per_kwh": 7.5, "sales_million_kwh": 80000},
+                        {"date": "2026-03", "price_cents_per_kwh": 8.1, "sales_million_kwh": 82000},
+                    ]
+                },
+            },
+        }
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp = Path(tmpdir)
+            energy_path = tmp / "energy-cache.json"
+            energy_path.write_text(json.dumps(energy_cache), encoding="utf-8")
+            cache = score_aim_macro.build_cache(as_of, energy_cache_path=energy_path)
+
+        signal = next(s for s in cache["signals"] if s.get("regime") == "energy_bottleneck")
+        self.assertEqual(signal["name"], "Energy Bottleneck Score")
+        self.assertEqual(signal["freshness"], "local_cache")
+        self.assertEqual(signal["source"], "eia_energy_cache")
+        self.assertIn("commercial electricity", signal["note"])
+        self.assertIn("+25.0%", signal["value_label"])
+        self.assertGreater(cache["scores"]["energy_bottleneck"]["score"], 60)
+        self.assertEqual(cache["scores"]["energy_bottleneck"]["confidence"], "medium")
+
+    def test_build_cache_ignores_local_energy_cache_without_explicit_opt_in(self):
+        as_of = date(2026, 5, 29)
+        energy_cache = {
+            "schema_version": "eia_energy_cache.v0.1",
+            "series": {
+                "commercial_electricity": {
+                    "observations": [
+                        {"date": "2025-03", "price_cents_per_kwh": 10.0, "sales_million_kwh": 100000},
+                        {"date": "2026-03", "price_cents_per_kwh": 99.0, "sales_million_kwh": 200000},
+                    ]
+                }
+            },
+        }
+
+        original_energy_cache = score_aim_macro.ENERGY_CACHE
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp = Path(tmpdir)
+            score_aim_macro.ENERGY_CACHE = tmp / "energy-cache.json"
+            score_aim_macro.ENERGY_CACHE.write_text(json.dumps(energy_cache), encoding="utf-8")
+            try:
+                cache = score_aim_macro.build_cache(as_of)
+            finally:
+                score_aim_macro.ENERGY_CACHE = original_energy_cache
+
+        signal = next(s for s in cache["signals"] if s.get("regime") == "energy_bottleneck")
+        self.assertEqual(signal["name"], "Energy Bottleneck Starter")
+        self.assertEqual(cache["scores"]["energy_bottleneck"]["score"], 60)
+        self.assertEqual(cache["scores"]["energy_bottleneck"]["confidence"], "low")
+
+    def test_build_energy_signal_rejects_malformed_stale_and_future_cache(self):
+        as_of = date(2026, 5, 29)
+        generated_at = "2026-05-29T00:00:00Z"
+        malformed = {"schema_version": "eia_energy_cache.v0.1", "series": {}}
+        self.assertEqual(score_aim_macro.build_energy_signal(malformed, generated_at, as_of)["name"], "Energy Bottleneck Starter")
+
+        stale = {
+            "schema_version": "eia_energy_cache.v0.1",
+            "series": {"commercial_electricity": {"observations": [{"date": "2020-03", "price_cents_per_kwh": 12, "sales_million_kwh": 100000}]}}
+        }
+        self.assertEqual(score_aim_macro.build_energy_signal(stale, generated_at, as_of)["freshness"], "starter")
+
+        future = {
+            "schema_version": "eia_energy_cache.v0.1",
+            "series": {"commercial_electricity": {"observations": [{"date": "2027-03", "price_cents_per_kwh": 12, "sales_million_kwh": 100000}]}}
+        }
+        self.assertEqual(score_aim_macro.build_energy_signal(future, generated_at, as_of)["freshness"], "future")
+
+    def test_build_energy_signal_excludes_future_rows_during_historical_replay(self):
+        as_of = date(2026, 5, 29)
+        generated_at = "2026-05-29T00:00:00Z"
+        mixed = {
+            "schema_version": "eia_energy_cache.v0.1",
+            "series": {
+                "commercial_electricity": {
+                    "observations": [
+                        {"date": "2025-03", "price_cents_per_kwh": 12, "sales_million_kwh": 100000},
+                        {"date": "2026-03", "price_cents_per_kwh": 15, "sales_million_kwh": 118000},
+                        {"date": "2027-03", "price_cents_per_kwh": 99, "sales_million_kwh": 300000},
+                    ]
+                }
+            },
+        }
+
+        signal = score_aim_macro.build_energy_signal(mixed, generated_at, as_of)
+
+        self.assertEqual(signal["freshness"], "local_cache")
+        self.assertEqual(signal["as_of"], "2026-03-01")
+        self.assertNotIn("+560.0%", signal["value_label"])
+
+    def test_build_energy_signal_ignores_stale_component_series(self):
+        as_of = date(2026, 5, 29)
+        generated_at = "2026-05-29T00:00:00Z"
+        mixed = {
+            "schema_version": "eia_energy_cache.v0.1",
+            "series": {
+                "commercial_electricity": {
+                    "observations": [
+                        {"date": "2025-03", "price_cents_per_kwh": 12, "sales_million_kwh": 100000},
+                        {"date": "2026-03", "price_cents_per_kwh": 13, "sales_million_kwh": 104000},
+                    ]
+                },
+                "industrial_electricity": {
+                    "observations": [
+                        {"date": "2019-03", "price_cents_per_kwh": 1},
+                        {"date": "2020-03", "price_cents_per_kwh": 100},
+                    ]
+                },
+            },
+        }
+
+        signal = score_aim_macro.build_energy_signal(mixed, generated_at, as_of)
+
+        self.assertEqual(signal["freshness"], "local_cache")
+        self.assertNotIn("industrial electricity price", signal["value_label"])
+        self.assertLess(signal["score"], 70)
+
     def test_build_cache_ignores_local_ai_signal_cache_without_explicit_opt_in(self):
         as_of = date(2026, 5, 29)
         ai_cache = {
