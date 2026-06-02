@@ -78,6 +78,16 @@ def build_plan(
                 as_of,
             ],
         ),
+        Step(
+            "update_market_history_cache",
+            [
+                sys.executable,
+                python_script("update_market_history_cache.py"),
+                *( ["--offline"] if offline_market else [] ),
+                "--as-of",
+                as_of,
+            ],
+        ),
     ]
 
     if include_ai:

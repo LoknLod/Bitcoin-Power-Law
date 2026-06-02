@@ -65,7 +65,7 @@ jobs:
           import subprocess
 
           text = subprocess.check_output(
-              ["git", "diff", "--", "aim-cache.json", "fred-cache.json", "market-cache.json"],
+              ["git", "diff", "--", "aim-cache.json", "fred-cache.json", "market-cache.json", "market-history-cache.json"],
               text=True,
               errors="ignore",
           )
@@ -90,12 +90,12 @@ jobs:
       - name: Commit refreshed public caches
         run: |
           set -euo pipefail
-          if git diff --quiet -- aim-cache.json fred-cache.json market-cache.json; then
+          if git diff --quiet -- aim-cache.json fred-cache.json market-cache.json market-history-cache.json; then
             echo "No public cache changes to commit."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add aim-cache.json fred-cache.json market-cache.json
+          git add aim-cache.json fred-cache.json market-cache.json market-history-cache.json
           git commit -m "chore: refresh AIM cache data"
           git push

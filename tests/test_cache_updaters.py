@@ -10,6 +10,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import update_fred_cache  # noqa: E402
 import update_alpha_vantage_cache  # noqa: E402
 import update_market_cache  # noqa: E402
+import update_market_history_cache  # noqa: E402
 import score_ai_signals  # noqa: E402
 import update_sec_edgar_cache  # noqa: E402
 import update_eia_cache  # noqa: E402
@@ -143,6 +144,58 @@ class MarketCacheUpdaterTests(unittest.TestCase):
         self.assertEqual(assets["gold_usd"]["price"], 3350.25)
         self.assertEqual(assets["gold_usd"]["source"], "pax-gold proxy")
         self.assertEqual(update_market_cache.parse_coinbase_spot({"data": {"amount": "109001.75"}}), 109001.75)
+
+
+class MarketHistoryCacheUpdaterTests(unittest.TestCase):
+    def test_normalize_market_chart_payload_builds_utc_daily_series(self):
+        payload = {
+            "prices": [
+                [1780012800000, "108000.5"],
+                [1780099200000, 109500],
+                [1780185600000, "."],
+            ]
+        }
+
+        series = update_market_history_cache.normalize_price_series(payload)
+
+        self.assertEqual(series["2026-05-29"], 108000.5)
+        self.assertEqual(series["2026-05-30"], 109500)
+        self.assertNotIn("2026-05-31", series)
+
+    def test_build_ratio_series_uses_intersecting_dates_only(self):
+        rows = update_market_history_cache.build_ratio_series(
+            {"2026-05-28": 108000, "2026-05-29": 110000},
+            {"2026-05-28": 3600, "2026-05-30": 3700},
+        )
+
+        self.assertEqual(
+            rows,
+            [{"date": "2026-05-28", "btc_usd": 108000, "gold_usd": 3600, "btc_gold_ratio": 30.0}],
+        )
+
+    def test_build_cache_fetches_btc_and_paxg_history_without_secrets(self):
+        calls = []
+
+        def fake_fetch(url):
+            calls.append(url)
+            if "bitcoin" in url:
+                return {"prices": [[1780012800000, 108000], [1780099200000, 110000]]}
+            return {"prices": [[1780012800000, 3600], [1780099200000, 4000]]}
+
+        cache, stats = update_market_history_cache.build_cache(
+            output_path=ROOT / "missing-market-history-cache.json",
+            as_of=None,
+            days=90,
+            fetcher=fake_fetch,
+        )
+
+        self.assertEqual(cache["schema_version"], "market_history_cache.v0.1")
+        self.assertEqual(cache["source"], "coingecko_market_chart")
+        self.assertEqual(stats["rows"], 2)
+        self.assertEqual(cache["ratio_series"][0]["btc_gold_ratio"], 30.0)
+        self.assertEqual(cache["ratio_series"][1]["btc_gold_ratio"], 27.5)
+        self.assertEqual(len(calls), 2)
+        self.assertNotIn("api_key", json.dumps(cache).lower())
 
 
 class AlphaVantageCacheUpdaterTests(unittest.TestCase):

@@ -31,6 +31,7 @@ class AimCachePipelineTests(unittest.TestCase):
             [
                 "update_fred_cache",
                 "update_market_cache",
+                "update_market_history_cache",
                 "update_alpha_vantage_cache",
                 "update_sec_edgar_cache",
                 "score_ai_signals",
@@ -41,12 +42,14 @@ class AimCachePipelineTests(unittest.TestCase):
         commands = [" ".join(step.command) for step in plan]
         self.assertIn("--offline", commands[1])
         self.assertIn("--as-of 2026-05-29", commands[1])
-        self.assertIn("--include-filing-text", commands[3])
-        self.assertIn("--user-agent Doug Test doug@example.com", commands[3])
-        self.assertIn("--sec-cache sec-edgar-cache.json", commands[4])
-        self.assertIn("update_eia_cache.py", commands[5])
-        self.assertIn("--energy-cache energy-cache.json", commands[6])
-        self.assertIn("--ai-signals-cache ai-signals-cache.json", commands[6])
+        self.assertIn("--offline", commands[2])
+        self.assertIn("--as-of 2026-05-29", commands[2])
+        self.assertIn("--include-filing-text", commands[4])
+        self.assertIn("--user-agent Doug Test doug@example.com", commands[4])
+        self.assertIn("--sec-cache sec-edgar-cache.json", commands[5])
+        self.assertIn("update_eia_cache.py", commands[6])
+        self.assertIn("--energy-cache energy-cache.json", commands[7])
+        self.assertIn("--ai-signals-cache ai-signals-cache.json", commands[7])
 
     def test_pipeline_run_writes_report_with_statuses_and_redacts_secrets(self):
         calls = []
@@ -76,10 +79,10 @@ class AimCachePipelineTests(unittest.TestCase):
             report = json.loads(report_path.read_text())
 
         self.assertEqual(status, 0)
-        self.assertEqual(len(calls), 6)
+        self.assertEqual(len(calls), 7)
         self.assertEqual(report["status"], "success")
         self.assertEqual(report["as_of"], "2026-05-29")
-        self.assertEqual([step["status"] for step in report["steps"]], ["success"] * 6)
+        self.assertEqual([step["status"] for step in report["steps"]], ["success"] * 7)
         serialized = json.dumps(report)
         self.assertNotIn("SECRET_ALPHA", serialized)
         self.assertNotIn("Doug Test doug@example.com", serialized)

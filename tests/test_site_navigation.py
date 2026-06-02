@@ -87,6 +87,39 @@ class SiteNavigationTests(unittest.TestCase):
         self.assertIn("Monetary Reset Subset", html)
         self.assertNotIn("Global M2 Money Supply (US Proxy)", html)
 
+    def test_power_law_page_labels_raw_anchor_and_conservative_fair(self):
+        html = (ROOT / "power-law.html").read_text()
+        self.assertIn("CONSERVATIVE_FAIR_MULT = 0.71", html)
+        self.assertIn("TREND_MULT = 1.0", html)
+        self.assertIn("Conservative Fair", html)
+        self.assertIn("Trend Anchor", html)
+        self.assertIn("market-cache.json", html)
+        self.assertIn("AIM scoring uses the raw trend anchor", html)
+
+    def test_macro_page_does_not_duplicate_power_law_position_card(self):
+        html = (ROOT / "macro.html").read_text()
+        self.assertNotIn("Power Law Position", html)
+        self.assertNotIn('id="fair-value"', html)
+        self.assertNotIn('id="fair-diff"', html)
+        self.assertNotIn('id="pl-marker"', html)
+
+    def test_active_pages_include_inline_favicon_to_avoid_console_noise(self):
+        for page in ACTIVE_PAGES:
+            with self.subTest(page=page):
+                html = (ROOT / page).read_text()
+                self.assertIn('<link rel="icon" href="data:,">', html)
+
+    def test_macro_page_uses_local_caches_not_browser_live_market_fetches(self):
+        html = (ROOT / "macro.html").read_text()
+        self.assertIn("market-cache.json", html)
+        self.assertIn("market-history-cache.json", html)
+        self.assertIn("fred-cache.json", html)
+        self.assertNotIn("raw.githubusercontent.com", html)
+        self.assertNotIn("api.coingecko.com", html)
+        self.assertNotIn("api.coinbase.com", html)
+        self.assertNotIn("if (!btcPrice) btcPrice = 68000", html)
+        self.assertNotIn("goldPrice = 2950", html)
+
     def test_active_pages_do_not_embed_api_keys(self):
         key_patterns = [
             re.compile(r"[A-Za-z0-9]{32}"),
