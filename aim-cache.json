@@ -11,14 +11,14 @@
   },
   "scores": {
     "ai_productivity": {
-      "score": 55,
-      "confidence": "low",
-      "interpretation": "Evidence is real but monetization and broad productivity flow-through need more proof."
+      "score": 68,
+      "confidence": "medium",
+      "interpretation": "Revenue growth, margins, free cash flow margin, R&D intensity, and optional SEC filing-language monetization evidence. Leaders: META, NVDA, MSFT."
     },
     "ai_bubble_risk": {
-      "score": 50,
-      "confidence": "low",
-      "interpretation": "Capex is large; returns, utilization, and financing quality are not yet fully proven."
+      "score": 51,
+      "confidence": "medium",
+      "interpretation": "Capex growth, capex/revenue, debt growth, depreciation growth, free-cash-flow pressure, and optional SEC filing-language risk evidence. Leaders: GOOGL, AMZN, AMD."
     },
     "monetary_reset": {
       "score": 62,
@@ -26,9 +26,9 @@
       "interpretation": "Local FRED liquidity, credit, fiscal, rates, and spread proxies are available; score is still a simple first-pass model."
     },
     "energy_bottleneck": {
-      "score": 60,
-      "confidence": "low",
-      "interpretation": "Starter qualitative score: AI and Bitcoin both expose power and grid constraints."
+      "score": 56,
+      "confidence": "medium",
+      "interpretation": "EIA retail electricity data: commercial electricity price +5.8% YoY; commercial electricity sales +4.5% YoY; industrial electricity price +3.9% YoY. First-pass proxy for AI/data-center energy bottleneck pressure."
     },
     "hard_money_repricing": {
       "score": 54,
@@ -65,37 +65,43 @@
   ],
   "signals": [
     {
-      "name": "AI Productivity Starter",
+      "name": "AI Productivity Score",
       "regime": "ai_productivity",
-      "score": 55,
+      "score": 68,
       "weight": 0.35,
-      "direction": "higher supports productive AI boom",
-      "source": "starter_static_assumption",
-      "as_of": "2026-06-03",
-      "note": "Placeholder until verified AI revenue, margin, and productivity series are added.",
-      "freshness": "starter"
+      "direction": "higher_is_better",
+      "source": "alpha_vantage_cache+sec_edgar_cache",
+      "as_of": "2026-04-30",
+      "note": "Revenue growth, margins, free cash flow margin, R&D intensity, and optional SEC filing-language monetization evidence. Leaders: META, NVDA, MSFT.",
+      "freshness": "local_cache",
+      "age_days": 34,
+      "value_label": "score 68/100"
     },
     {
-      "name": "AI Capex Bubble Starter",
+      "name": "AI Capex Bubble Risk",
       "regime": "ai_bubble_risk",
-      "score": 50,
+      "score": 51,
       "weight": 0.35,
-      "direction": "higher means capex return risk is rising",
-      "source": "starter_static_assumption",
-      "as_of": "2026-06-03",
-      "note": "Placeholder until hyperscaler capex, financing, and utilization data are added.",
-      "freshness": "starter"
+      "direction": "higher_is_riskier",
+      "source": "alpha_vantage_cache+sec_edgar_cache",
+      "as_of": "2026-04-30",
+      "note": "Capex growth, capex/revenue, debt growth, depreciation growth, free-cash-flow pressure, and optional SEC filing-language risk evidence. Leaders: GOOGL, AMZN, AMD.",
+      "freshness": "local_cache",
+      "age_days": 34,
+      "value_label": "score 51/100"
     },
     {
-      "name": "Energy Bottleneck Starter",
+      "name": "Energy Bottleneck Score",
       "regime": "energy_bottleneck",
-      "score": 60,
+      "score": 56,
       "weight": 0.3,
-      "direction": "higher means power constraints matter more",
-      "source": "starter_static_assumption",
-      "as_of": "2026-06-03",
-      "note": "Qualitative starter: AI data centers and Bitcoin mining both expose power constraints.",
-      "freshness": "starter"
+      "direction": "higher means power-cost/load pressure is rising",
+      "source": "eia_energy_cache",
+      "as_of": "2026-03-01",
+      "note": "EIA retail electricity data: commercial electricity price +5.8% YoY; commercial electricity sales +4.5% YoY; industrial electricity price +3.9% YoY. First-pass proxy for AI/data-center energy bottleneck pressure.",
+      "freshness": "local_cache",
+      "age_days": 94,
+      "value_label": "commercial electricity price +5.8% YoY; commercial electricity sales +4.5% YoY; industrial electricity price +3.9% YoY"
     },
     {
       "name": "BTC Power Law Fair Value Gap",
@@ -105,10 +111,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-06-03",
-      "note": "BTC spot is $66,775 versus a power-law anchor of $133,697, a -50.1% gap.",
+      "note": "BTC spot is $65,001 versus a power-law anchor of $133,697, a -51.4% gap.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-50.1%"
+      "value_label": "-51.4%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -118,10 +124,10 @@
       "direction": "higher means BTC is repricing versus the gold proxy",
       "source": "market_cache BTC/USD over PAXG/USD",
       "as_of": "2026-06-03",
-      "note": "BTC buys roughly 15.0 ounces of the PAXG gold proxy.",
+      "note": "BTC buys roughly 14.7 ounces of the PAXG gold proxy.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "15.0 oz"
+      "value_label": "14.7 oz"
     },
     {
       "name": "Gold Proxy Price",
@@ -131,10 +137,10 @@
       "direction": "higher means the gold shield is repricing in USD terms",
       "source": "pax-gold proxy",
       "as_of": "2026-06-03",
-      "note": "PAXG gold proxy is $4,446.",
+      "note": "PAXG gold proxy is $4,426.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "$4,446"
+      "value_label": "$4,426"
     },
     {
       "name": "U.S. M2 Liquidity Context",
@@ -308,26 +314,30 @@
   ],
   "dashboard_signals": [
     {
-      "name": "AI Productivity Starter",
+      "name": "AI Productivity Score",
       "regime": "ai_productivity",
-      "score": 55,
+      "score": 68,
       "weight": 0.35,
-      "direction": "higher supports productive AI boom",
-      "source": "starter_static_assumption",
-      "as_of": "2026-06-03",
-      "note": "Placeholder until verified AI revenue, margin, and productivity series are added.",
-      "freshness": "starter"
+      "direction": "higher_is_better",
+      "source": "alpha_vantage_cache+sec_edgar_cache",
+      "as_of": "2026-04-30",
+      "note": "Revenue growth, margins, free cash flow margin, R&D intensity, and optional SEC filing-language monetization evidence. Leaders: META, NVDA, MSFT.",
+      "freshness": "local_cache",
+      "age_days": 34,
+      "value_label": "score 68/100"
     },
     {
-      "name": "AI Capex Bubble Starter",
+      "name": "AI Capex Bubble Risk",
       "regime": "ai_bubble_risk",
-      "score": 50,
+      "score": 51,
       "weight": 0.35,
-      "direction": "higher means capex return risk is rising",
-      "source": "starter_static_assumption",
-      "as_of": "2026-06-03",
-      "note": "Placeholder until hyperscaler capex, financing, and utilization data are added.",
-      "freshness": "starter"
+      "direction": "higher_is_riskier",
+      "source": "alpha_vantage_cache+sec_edgar_cache",
+      "as_of": "2026-04-30",
+      "note": "Capex growth, capex/revenue, debt growth, depreciation growth, free-cash-flow pressure, and optional SEC filing-language risk evidence. Leaders: GOOGL, AMZN, AMD.",
+      "freshness": "local_cache",
+      "age_days": 34,
+      "value_label": "score 51/100"
     },
     {
       "name": "BTC Power Law Fair Value Gap",
@@ -337,10 +347,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-06-03",
-      "note": "BTC spot is $66,775 versus a power-law anchor of $133,697, a -50.1% gap.",
+      "note": "BTC spot is $65,001 versus a power-law anchor of $133,697, a -51.4% gap.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-50.1%"
+      "value_label": "-51.4%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -350,10 +360,10 @@
       "direction": "higher means BTC is repricing versus the gold proxy",
       "source": "market_cache BTC/USD over PAXG/USD",
       "as_of": "2026-06-03",
-      "note": "BTC buys roughly 15.0 ounces of the PAXG gold proxy.",
+      "note": "BTC buys roughly 14.7 ounces of the PAXG gold proxy.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "15.0 oz"
+      "value_label": "14.7 oz"
     },
     {
       "name": "World Credit Growth",
