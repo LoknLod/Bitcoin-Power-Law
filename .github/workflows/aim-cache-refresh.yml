@@ -2,8 +2,9 @@ name: Refresh AIM caches
 
 on:
   schedule:
-    # Weekday pre-market refresh. GitHub schedules are UTC.
-    - cron: "17 10 * * 1-5"
+    # Weekday 8am / 4pm Central refreshes. GitHub schedules are UTC.
+    # During CDT this lands at 13:05 / 21:05 UTC; DST drift is acceptable for now.
+    - cron: "5 13,21 * * 1-5"
   workflow_dispatch:
 
 permissions:
