@@ -574,7 +574,15 @@
         const response = await fetch(PORTFOLIO_CACHE_FILE, { cache: "no-store" });
         if (!response.ok) throw new Error("Portfolio overlay unavailable");
         const data = await response.json();
-        if (!data || data.schema_version !== "shrike_portfolio_cockpit.v0.1" || data.mutation_allowed !== false) {
+        if (
+          !data ||
+          data.schema_version !== "shrike_portfolio_cockpit.v0.1" ||
+          data.mutation_allowed !== false ||
+          data.source !== "kubera_schwab_plus_aim_cache" ||
+          data.portfolio?.scope !== "schwab_employer_sponsored_visible_accounts_only" ||
+          !data.privacy_note ||
+          !Number.isFinite(Number(data.portfolio?.schwab_total))
+        ) {
           throw new Error("Portfolio overlay shape invalid");
         }
         return data;
