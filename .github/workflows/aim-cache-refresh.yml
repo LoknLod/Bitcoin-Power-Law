@@ -111,4 +111,12 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add aim-cache.json fred-cache.json market-cache.json market-history-cache.json
           git commit -m "chore: refresh AIM cache data"
+          for attempt in 1 2 3; do
+            if git push; then
+              exit 0
+            fi
+            echo "Push failed; rebasing onto latest origin/main before retry ${attempt}."
+            git fetch origin main
+            git rebase origin/main
+          done
           git push
