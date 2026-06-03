@@ -254,6 +254,7 @@ async function createWidget() {
   }
 
   addFooter(widget, data);
+  widget.refreshAfterDate = new Date(Date.now() + 30 * 60 * 1000);
   return widget;
 }
 
