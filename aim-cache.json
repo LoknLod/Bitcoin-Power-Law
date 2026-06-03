@@ -1,7 +1,7 @@
 {
   "schema_version": "aim_macro_cache.v0.1",
   "scoring_version": "aim_macro_scoring.v0.3",
-  "generated_at": "2026-06-02T00:00:00Z",
+  "generated_at": "2026-06-03T00:00:00Z",
   "source": "local_fred_and_market_cache",
   "freshness": "local_cache",
   "posture": {
@@ -11,14 +11,14 @@
   },
   "scores": {
     "ai_productivity": {
-      "score": 68,
-      "confidence": "medium",
-      "interpretation": "Revenue growth, margins, free cash flow margin, R&D intensity, and optional SEC filing-language monetization evidence. Leaders: META, NVDA, MSFT."
+      "score": 55,
+      "confidence": "low",
+      "interpretation": "Evidence is real but monetization and broad productivity flow-through need more proof."
     },
     "ai_bubble_risk": {
-      "score": 51,
-      "confidence": "medium",
-      "interpretation": "Capex growth, capex/revenue, debt growth, depreciation growth, free-cash-flow pressure, and optional SEC filing-language risk evidence. Leaders: GOOGL, AMZN, AMD."
+      "score": 50,
+      "confidence": "low",
+      "interpretation": "Capex is large; returns, utilization, and financing quality are not yet fully proven."
     },
     "monetary_reset": {
       "score": 62,
@@ -26,9 +26,9 @@
       "interpretation": "Local FRED liquidity, credit, fiscal, rates, and spread proxies are available; score is still a simple first-pass model."
     },
     "energy_bottleneck": {
-      "score": 56,
-      "confidence": "medium",
-      "interpretation": "EIA retail electricity data: commercial electricity price +5.8% YoY; commercial electricity sales +4.5% YoY; industrial electricity price +3.9% YoY. First-pass proxy for AI/data-center energy bottleneck pressure."
+      "score": 60,
+      "confidence": "low",
+      "interpretation": "Starter qualitative score: AI and Bitcoin both expose power and grid constraints."
     },
     "hard_money_repricing": {
       "score": 54,
@@ -65,43 +65,37 @@
   ],
   "signals": [
     {
-      "name": "AI Productivity Score",
+      "name": "AI Productivity Starter",
       "regime": "ai_productivity",
-      "score": 68,
+      "score": 55,
       "weight": 0.35,
-      "direction": "higher_is_better",
-      "source": "alpha_vantage_cache+sec_edgar_cache",
-      "as_of": "2026-04-30",
-      "note": "Revenue growth, margins, free cash flow margin, R&D intensity, and optional SEC filing-language monetization evidence. Leaders: META, NVDA, MSFT.",
-      "freshness": "local_cache",
-      "age_days": 33,
-      "value_label": "score 68/100"
+      "direction": "higher supports productive AI boom",
+      "source": "starter_static_assumption",
+      "as_of": "2026-06-03",
+      "note": "Placeholder until verified AI revenue, margin, and productivity series are added.",
+      "freshness": "starter"
     },
     {
-      "name": "AI Capex Bubble Risk",
+      "name": "AI Capex Bubble Starter",
       "regime": "ai_bubble_risk",
-      "score": 51,
+      "score": 50,
       "weight": 0.35,
-      "direction": "higher_is_riskier",
-      "source": "alpha_vantage_cache+sec_edgar_cache",
-      "as_of": "2026-04-30",
-      "note": "Capex growth, capex/revenue, debt growth, depreciation growth, free-cash-flow pressure, and optional SEC filing-language risk evidence. Leaders: GOOGL, AMZN, AMD.",
-      "freshness": "local_cache",
-      "age_days": 33,
-      "value_label": "score 51/100"
+      "direction": "higher means capex return risk is rising",
+      "source": "starter_static_assumption",
+      "as_of": "2026-06-03",
+      "note": "Placeholder until hyperscaler capex, financing, and utilization data are added.",
+      "freshness": "starter"
     },
     {
-      "name": "Energy Bottleneck Score",
+      "name": "Energy Bottleneck Starter",
       "regime": "energy_bottleneck",
-      "score": 56,
+      "score": 60,
       "weight": 0.3,
-      "direction": "higher means power-cost/load pressure is rising",
-      "source": "eia_energy_cache",
-      "as_of": "2026-03-01",
-      "note": "EIA retail electricity data: commercial electricity price +5.8% YoY; commercial electricity sales +4.5% YoY; industrial electricity price +3.9% YoY. First-pass proxy for AI/data-center energy bottleneck pressure.",
-      "freshness": "local_cache",
-      "age_days": 93,
-      "value_label": "commercial electricity price +5.8% YoY; commercial electricity sales +4.5% YoY; industrial electricity price +3.9% YoY"
+      "direction": "higher means power constraints matter more",
+      "source": "starter_static_assumption",
+      "as_of": "2026-06-03",
+      "note": "Qualitative starter: AI data centers and Bitcoin mining both expose power constraints.",
+      "freshness": "starter"
     },
     {
       "name": "BTC Power Law Fair Value Gap",
@@ -110,11 +104,11 @@
       "weight": 0.45,
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
-      "as_of": "2026-06-02",
-      "note": "BTC spot is $67,398 versus a power-law anchor of $133,574, a -49.5% gap.",
+      "as_of": "2026-06-03",
+      "note": "BTC spot is $66,775 versus a power-law anchor of $133,697, a -50.1% gap.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-49.5%"
+      "value_label": "-50.1%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -123,7 +117,7 @@
       "weight": 0.35,
       "direction": "higher means BTC is repricing versus the gold proxy",
       "source": "market_cache BTC/USD over PAXG/USD",
-      "as_of": "2026-06-02",
+      "as_of": "2026-06-03",
       "note": "BTC buys roughly 15.0 ounces of the PAXG gold proxy.",
       "freshness": "local_cache",
       "age_days": 0,
@@ -136,11 +130,11 @@
       "weight": 0.2,
       "direction": "higher means the gold shield is repricing in USD terms",
       "source": "pax-gold proxy",
-      "as_of": "2026-06-02",
-      "note": "PAXG gold proxy is $4,481.",
+      "as_of": "2026-06-03",
+      "note": "PAXG gold proxy is $4,446.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "$4,481"
+      "value_label": "$4,446"
     },
     {
       "name": "U.S. M2 Liquidity Context",
@@ -152,7 +146,7 @@
       "as_of": "2026-05-04",
       "note": "US M2 is +5.4% YoY at $22,879B; useful context, but world credit is the monetary reset anchor.",
       "freshness": "local_cache",
-      "age_days": 29,
+      "age_days": 30,
       "value_label": "+5.4%"
     },
     {
@@ -165,7 +159,7 @@
       "as_of": "2026-05-27",
       "note": "Fed assets are +0.2% YoY at $6,704B.",
       "freshness": "local_cache",
-      "age_days": 6,
+      "age_days": 7,
       "value_label": "+0.2%"
     },
     {
@@ -175,11 +169,11 @@
       "weight": 0.22,
       "direction": "lower means less residual liquidity buffer",
       "source": "FRED RRPONTSYD",
-      "as_of": "2026-05-29",
-      "note": "Overnight reverse repo is $12B, a thin remaining buffer.",
+      "as_of": "2026-06-01",
+      "note": "Overnight reverse repo is $1B, a thin remaining buffer.",
       "freshness": "local_cache",
-      "age_days": 4,
-      "value_label": "$12B"
+      "age_days": 2,
+      "value_label": "$1B"
     },
     {
       "name": "Treasury General Account",
@@ -191,7 +185,7 @@
       "as_of": "2026-05-27",
       "note": "TGA is $830B, which keeps liquidity conditions tighter.",
       "freshness": "local_cache",
-      "age_days": 6,
+      "age_days": 7,
       "value_label": "$830B"
     },
     {
@@ -202,10 +196,10 @@
       "direction": "higher supports risk appetite; lower supports stress",
       "source": "FRED WALCL-RRPONTSYD-WTREGEN",
       "as_of": "2026-05-27",
-      "note": "Simple WALCL minus RRP minus TGA proxy is $5,862B; roughly 90d change is +2.4%.",
+      "note": "Simple WALCL minus RRP minus TGA proxy is $5,873B; roughly 90d change is +2.6%.",
       "freshness": "local_cache",
-      "age_days": 6,
-      "value_label": "+2.4%"
+      "age_days": 7,
+      "value_label": "+2.6%"
     },
     {
       "name": "World Credit Growth",
@@ -217,7 +211,7 @@
       "as_of": "2025-07-01",
       "note": "Total reporting countries credit to the non-financial sector is +6.7% 3Y annualized at 257,926.8; this is the core monetary reset signal, with U.S. M2 demoted to context.",
       "freshness": "local_cache",
-      "age_days": 336,
+      "age_days": 337,
       "value_label": "+6.7% 3Y annualized"
     },
     {
@@ -230,7 +224,7 @@
       "as_of": "2025-07-01",
       "note": "U.S. total credit to the non-financial sector is +4.0% YoY at 75,951.1.",
       "freshness": "local_cache",
-      "age_days": 336,
+      "age_days": 337,
       "value_label": "+4.0% YoY"
     },
     {
@@ -243,7 +237,7 @@
       "as_of": "2025-10-01",
       "note": "Federal debt is +6.3% YoY at 38,514,009.0.",
       "freshness": "local_cache",
-      "age_days": 244,
+      "age_days": 245,
       "value_label": "+6.3% YoY"
     },
     {
@@ -256,7 +250,7 @@
       "as_of": "2026-01-01",
       "note": "Federal government interest payments is +6.5% YoY at 1,218.9.",
       "freshness": "local_cache",
-      "age_days": 152,
+      "age_days": 153,
       "value_label": "+6.5% YoY"
     },
     {
@@ -266,7 +260,7 @@
       "weight": 0.04,
       "direction": "higher yields tighten discount rates and debt-service conditions",
       "source": "FRED DGS10",
-      "as_of": "2026-05-28",
+      "as_of": "2026-05-29",
       "note": "10Y Treasury yield is 4.45%.",
       "freshness": "local_cache",
       "age_days": 5,
@@ -279,11 +273,11 @@
       "weight": 0.1,
       "direction": "higher real yields increase monetary and credit pressure",
       "source": "FRED DFII10",
-      "as_of": "2026-05-28",
-      "note": "10Y real yield is 2.06%.",
+      "as_of": "2026-05-29",
+      "note": "10Y real yield is 2.07%.",
       "freshness": "local_cache",
       "age_days": 5,
-      "value_label": "2.06%"
+      "value_label": "2.07%"
     },
     {
       "name": "10Y Breakeven Inflation",
@@ -292,11 +286,11 @@
       "weight": 0.04,
       "direction": "higher breakevens can signal inflation repricing pressure",
       "source": "FRED T10YIE",
-      "as_of": "2026-05-29",
-      "note": "10Y breakeven inflation is 2.38%.",
+      "as_of": "2026-06-01",
+      "note": "10Y breakeven inflation is 2.40%.",
       "freshness": "local_cache",
-      "age_days": 4,
-      "value_label": "2.38%"
+      "age_days": 2,
+      "value_label": "2.40%"
     },
     {
       "name": "High-Yield Option-Adjusted Spread",
@@ -305,39 +299,35 @@
       "weight": 0.12,
       "direction": "higher spreads mean credit stress is rising",
       "source": "FRED BAMLH0A0HYM2",
-      "as_of": "2026-05-28",
+      "as_of": "2026-06-01",
       "note": "High-yield option-adjusted spread is 2.72 percentage points.",
       "freshness": "local_cache",
-      "age_days": 5,
+      "age_days": 2,
       "value_label": "2.72%"
     }
   ],
   "dashboard_signals": [
     {
-      "name": "AI Productivity Score",
+      "name": "AI Productivity Starter",
       "regime": "ai_productivity",
-      "score": 68,
+      "score": 55,
       "weight": 0.35,
-      "direction": "higher_is_better",
-      "source": "alpha_vantage_cache+sec_edgar_cache",
-      "as_of": "2026-04-30",
-      "note": "Revenue growth, margins, free cash flow margin, R&D intensity, and optional SEC filing-language monetization evidence. Leaders: META, NVDA, MSFT.",
-      "freshness": "local_cache",
-      "age_days": 33,
-      "value_label": "score 68/100"
+      "direction": "higher supports productive AI boom",
+      "source": "starter_static_assumption",
+      "as_of": "2026-06-03",
+      "note": "Placeholder until verified AI revenue, margin, and productivity series are added.",
+      "freshness": "starter"
     },
     {
-      "name": "AI Capex Bubble Risk",
+      "name": "AI Capex Bubble Starter",
       "regime": "ai_bubble_risk",
-      "score": 51,
+      "score": 50,
       "weight": 0.35,
-      "direction": "higher_is_riskier",
-      "source": "alpha_vantage_cache+sec_edgar_cache",
-      "as_of": "2026-04-30",
-      "note": "Capex growth, capex/revenue, debt growth, depreciation growth, free-cash-flow pressure, and optional SEC filing-language risk evidence. Leaders: GOOGL, AMZN, AMD.",
-      "freshness": "local_cache",
-      "age_days": 33,
-      "value_label": "score 51/100"
+      "direction": "higher means capex return risk is rising",
+      "source": "starter_static_assumption",
+      "as_of": "2026-06-03",
+      "note": "Placeholder until hyperscaler capex, financing, and utilization data are added.",
+      "freshness": "starter"
     },
     {
       "name": "BTC Power Law Fair Value Gap",
@@ -346,11 +336,11 @@
       "weight": 0.45,
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
-      "as_of": "2026-06-02",
-      "note": "BTC spot is $67,398 versus a power-law anchor of $133,574, a -49.5% gap.",
+      "as_of": "2026-06-03",
+      "note": "BTC spot is $66,775 versus a power-law anchor of $133,697, a -50.1% gap.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-49.5%"
+      "value_label": "-50.1%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -359,7 +349,7 @@
       "weight": 0.35,
       "direction": "higher means BTC is repricing versus the gold proxy",
       "source": "market_cache BTC/USD over PAXG/USD",
-      "as_of": "2026-06-02",
+      "as_of": "2026-06-03",
       "note": "BTC buys roughly 15.0 ounces of the PAXG gold proxy.",
       "freshness": "local_cache",
       "age_days": 0,
@@ -375,7 +365,7 @@
       "as_of": "2025-07-01",
       "note": "Total reporting countries credit to the non-financial sector is +6.7% 3Y annualized at 257,926.8; this is the core monetary reset signal, with U.S. M2 demoted to context.",
       "freshness": "local_cache",
-      "age_days": 336,
+      "age_days": 337,
       "value_label": "+6.7% 3Y annualized"
     }
   ],

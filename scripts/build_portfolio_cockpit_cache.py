@@ -21,6 +21,8 @@ DEFAULT_PORTFOLIO_STATE = Path("/Volumes/ShrikeAI/Shrike/Portfolio/state/portfol
 DEFAULT_PRIVATE_PLAN = Path("/Volumes/ShrikeAI/Shrike/Portfolio/state/retirement_plan_private.json")
 DEFAULT_AIM_CACHE = ROOT / "aim-cache.json"
 DEFAULT_OUTPUT = ROOT / "portfolio-cockpit-cache.json"
+DEFAULT_KUBERA_RAW = Path("/Volumes/ShrikeAI/Shrike/Portfolio/private/kubera_raw_latest.json")
+DEFAULT_PRACTICE_CONFIG = Path("/Volumes/ShrikeAI/Shrike/Portfolio/practice/practice_portfolio_config.json")
 SCHEMA_VERSION = "shrike_portfolio_cockpit.v0.1"
 REQUIRED_SCOPE = "schwab_employer_sponsored_visible_accounts_only"
 
@@ -81,6 +83,115 @@ def account_rows(accounts: Any) -> List[Dict[str, Any]]:
             }
         )
     return rows
+
+
+
+
+def provider(row: Dict[str, Any]) -> str:
+    connection = row.get("connection")
+    if isinstance(connection, dict):
+        return str(connection.get("providerName") or "")
+    return str(connection or "")
+
+
+def row_amount(row: Dict[str, Any]) -> float:
+    value = row.get("value")
+    if isinstance(value, dict):
+        return money(value.get("amount"))
+    return money(value)
+
+
+def visible_schwab_account_ids(raw_detail: Dict[str, Any]) -> set[Any]:
+    data = raw_detail.get("data") if isinstance(raw_detail.get("data"), dict) else raw_detail
+    assets = data.get("asset", []) if isinstance(data, dict) else []
+    ids: set[Any] = set()
+    for row in assets:
+        if not isinstance(row, dict):
+            continue
+        if (
+            row.get("hidden") == 0
+            and not row.get("parent")
+            and "schwab" in provider(row).lower()
+            and row.get("type") == "investment"
+        ):
+            ids.add(row.get("id"))
+    return ids
+
+
+def parent_id(row: Dict[str, Any]) -> Any:
+    parent = row.get("parent")
+    if isinstance(parent, dict):
+        return parent.get("id")
+    return parent
+
+
+def ticker_to_sleeve(config: Dict[str, Any]) -> Dict[str, str]:
+    candidates = config.get("candidate_tickers", {}) if isinstance(config, dict) else {}
+    mapping: Dict[str, str] = {}
+    if not isinstance(candidates, dict):
+        return mapping
+    for sleeve, tickers in candidates.items():
+        if not isinstance(tickers, list):
+            continue
+        for ticker in tickers:
+            mapping[str(ticker).upper().strip()] = str(sleeve)
+    return mapping
+
+
+def sleeve_label(slug: str) -> str:
+    labels = {
+        "ai_productive_equity": "AI Productive Equity",
+        "hard_money": "Hard Money / Monetary Reset Hedge",
+        "energy_power_real_assets": "Energy / Power / Real Assets",
+        "runway_optionality": "Runway / Optionality",
+        "spec_aim_venture": "Spec AIM Venture Basket",
+        "unclassified": "Unclassified / Legacy Holdings",
+    }
+    return labels.get(slug, slug.replace("_", " ").title())
+
+
+def build_actual_allocation(raw_detail: Dict[str, Any], practice_config: Dict[str, Any]) -> Dict[str, Any]:
+    data = raw_detail.get("data") if isinstance(raw_detail.get("data"), dict) else raw_detail
+    assets = data.get("asset", []) if isinstance(data, dict) else []
+    if not isinstance(assets, list):
+        return {"available": False, "reason": "raw_asset_rows_unavailable"}
+    parent_ids = visible_schwab_account_ids(raw_detail)
+    if not parent_ids:
+        return {"available": False, "reason": "no_visible_schwab_accounts"}
+
+    mapping = ticker_to_sleeve(practice_config)
+    sleeve_values: Dict[str, float] = {}
+    classified_total = 0.0
+    for row in assets:
+        if not isinstance(row, dict) or parent_id(row) not in parent_ids:
+            continue
+        amount = row_amount(row)
+        if amount == 0:
+            continue
+        ticker = str(row.get("ticker") or "").upper().strip()
+        sleeve = mapping.get(ticker, "unclassified")
+        sleeve_values[sleeve] = money(sleeve_values.get(sleeve, 0.0) + amount)
+        classified_total = money(classified_total + amount)
+
+    sleeves = []
+    if classified_total > 0:
+        for sleeve, value in sorted(sleeve_values.items()):
+            sleeves.append({
+                "sleeve_key": sleeve,
+                "sleeve": sleeve_label(sleeve),
+                "actual_pct": pct(value / classified_total),
+            })
+
+    return {
+        "available": bool(sleeves),
+        "source": "kubera_raw_latest_private_cache",
+        "scope": REQUIRED_SCOPE,
+        "sleeves": sleeves,
+        "notes": [
+            "Actual sleeve mapping uses private Kubera holding rows matched to practice candidate tickers.",
+            "Unclassified/legacy holdings are shown separately instead of forcing them into AIM-5 buckets.",
+        ],
+    }
 
 
 def required_annual_growth(current: float, target: float, as_of: date, target_year: int) -> float:
@@ -147,6 +258,7 @@ def build_cache(
     btc_target: float,
     retirement_target: float,
     pension_annual: float,
+    actual_allocation: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     validate_portfolio_state(portfolio_state)
     today = as_of or datetime.now(timezone.utc).date()
@@ -209,6 +321,7 @@ def build_cache(
         "aim": {
             "posture": aim_cache.get("posture", {}),
             "hard_money_score": (aim_cache.get("scores", {}).get("hard_money_repricing", {}) if isinstance(aim_cache.get("scores"), dict) else {}).get("score"),
+            "actual_allocation": actual_allocation or {"available": False, "reason": "not_provided"},
         },
         "action_posture": "Hold / Watch / Research only — no broker or account mutation.",
         "shrike_read": shrike_read,
@@ -220,6 +333,8 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     parser.add_argument("--portfolio-state", type=Path, default=DEFAULT_PORTFOLIO_STATE)
     parser.add_argument("--private-plan", type=Path, default=DEFAULT_PRIVATE_PLAN)
     parser.add_argument("--aim-cache", type=Path, default=DEFAULT_AIM_CACHE)
+    parser.add_argument("--kubera-raw", type=Path, default=DEFAULT_KUBERA_RAW)
+    parser.add_argument("--practice-config", type=Path, default=DEFAULT_PRACTICE_CONFIG)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--as-of", type=parse_as_of, default=None)
     parser.add_argument("--btc-held", type=float, default=None)
@@ -234,6 +349,9 @@ def run(argv: Optional[List[str]] = None) -> str:
     portfolio_state = read_json(args.portfolio_state)
     aim_cache = read_json(args.aim_cache)
     private_plan = load_private_plan(args.private_plan)
+    actual_allocation = None
+    if args.kubera_raw.exists() and args.practice_config.exists():
+        actual_allocation = build_actual_allocation(read_json(args.kubera_raw), read_json(args.practice_config))
     cache = build_cache(
         portfolio_state,
         aim_cache,
@@ -242,6 +360,7 @@ def run(argv: Optional[List[str]] = None) -> str:
         btc_target=plan_value(private_plan, "btc_target", args.btc_target),
         retirement_target=plan_value(private_plan, "retirement_target", args.retirement_target),
         pension_annual=plan_value(private_plan, "pension_annual", args.pension_annual),
+        actual_allocation=actual_allocation,
     )
     args.output.write_text(json.dumps(cache, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     return f"Wrote {args.output.name} | source={cache['source']} | freshness={cache['freshness']} | private_overlay=true"

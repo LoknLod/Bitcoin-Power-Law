@@ -88,6 +88,37 @@ class PortfolioCockpitCacheTests(unittest.TestCase):
         self.assertNotIn("Synthetic Schwab Account", serialized)
         self.assertNotIn("999999", serialized)
 
+
+    def test_builds_actual_aim5_allocation_from_private_kubera_raw(self):
+        raw_detail = {
+            "data": {
+                "asset": [
+                    {"id": "acct-a", "hidden": 0, "parent": None, "connection": {"providerName": "Charles Schwab"}, "type": "investment", "value": {"amount": 300000}},
+                    {"ticker": "NVDA", "parent": {"id": "acct-a"}, "value": {"amount": 120000}},
+                    {"ticker": "IBIT", "parent": {"id": "acct-a"}, "value": {"amount": 60000}},
+                    {"ticker": "FAKELEGACY", "parent": {"id": "acct-a"}, "value": {"amount": 120000}},
+                    {"ticker": "MSFT", "parent": {"id": "other"}, "value": {"amount": 999999}},
+                ]
+            }
+        }
+        config = {
+            "candidate_tickers": {
+                "ai_productive_equity": ["NVDA"],
+                "hard_money": ["IBIT"],
+            }
+        }
+
+        actual = build_portfolio_cockpit_cache.build_actual_allocation(raw_detail, config)
+
+        self.assertTrue(actual["available"])
+        self.assertEqual(actual["scope"], "schwab_employer_sponsored_visible_accounts_only")
+        by_key = {item["sleeve_key"]: item for item in actual["sleeves"]}
+        self.assertEqual(by_key["ai_productive_equity"]["actual_pct"], 40.0)
+        self.assertEqual(by_key["hard_money"]["actual_pct"], 20.0)
+        self.assertEqual(by_key["unclassified"]["actual_pct"], 40.0)
+        self.assertNotIn("FAKELEGACY", json.dumps(actual))
+        self.assertNotIn("actual_value", json.dumps(actual))
+
     def test_rejects_mutable_or_wrong_scope_portfolio_state(self):
         bad = {
             "schema_version": "portfolio_state.v0.1",

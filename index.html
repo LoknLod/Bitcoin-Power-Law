@@ -301,6 +301,34 @@
       line-height: 1.35;
     }
 
+    .allocation-actual {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .allocation-actual-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: baseline;
+      margin-bottom: 5px;
+      color: var(--text-dim);
+      font-size: 11px;
+    }
+
+    .allocation-actual-pct {
+      color: var(--blue);
+      font-weight: 750;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .allocation-actual-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--blue), var(--btc));
+      border-radius: 6px;
+    }
+
     .signal-list {
       display: grid;
       gap: 8px;
@@ -674,14 +702,46 @@
       `;
     }
 
-    function renderAllocation(items) {
+    function sleeveKey(label) {
+      const normalized = String(label || "").toLowerCase();
+      if (normalized.includes("ai productive")) return "ai_productive_equity";
+      if (normalized.includes("hard money")) return "hard_money";
+      if (normalized.includes("energy")) return "energy_power_real_assets";
+      if (normalized.includes("runway")) return "runway_optionality";
+      if (normalized.includes("spec")) return "spec_aim_venture";
+      return slug(label).replaceAll("-", "_");
+    }
+
+    function actualAllocationMap(portfolioOverlay) {
+      const actual = portfolioOverlay?.aim?.actual_allocation;
+      if (!actual?.available || !Array.isArray(actual.sleeves)) return new Map();
+      return new Map(actual.sleeves.map(item => [item.sleeve_key, item]));
+    }
+
+    function renderActualAllocation(actual) {
+      const pct = clampScore(actual.actual_pct);
+      return `
+        <div class="allocation-actual">
+          <div class="allocation-actual-head">
+            <span>Actual</span>
+            <span class="allocation-actual-pct">${pct}%</span>
+          </div>
+          <div class="allocation-bar"><div class="allocation-actual-fill" style="width: ${pct}%"></div></div>
+        </div>
+      `;
+    }
+
+    function renderAllocation(items, portfolioOverlay) {
       const allocation = Array.isArray(items) ? items : SAMPLE_DATA.aim5_allocation;
+      const actualBySleeve = actualAllocationMap(portfolioOverlay);
+      const unclassified = actualBySleeve.get("unclassified");
       return `
         <section class="card">
           <div class="card-title">AIM-5 Allocation Frame</div>
           <div class="allocation-list">
             ${allocation.map(item => {
               const pct = clampScore(item.target_pct);
+              const actual = actualBySleeve.get(sleeveKey(item.sleeve));
               return `
                 <div class="allocation-item">
                   <div class="allocation-head">
@@ -691,10 +751,21 @@
                   <div class="allocation-bar">
                     <div class="allocation-fill" style="width: ${pct}%"></div>
                   </div>
+                  ${actual ? renderActualAllocation(actual) : ""}
                   <div class="allocation-role">${escapeHtml(item.role)}</div>
                 </div>
               `;
             }).join("")}
+            ${unclassified ? `
+              <div class="allocation-item">
+                <div class="allocation-head">
+                  <div class="allocation-name">${escapeHtml(unclassified.sleeve || "Unclassified / Legacy Holdings")}</div>
+                  <div class="allocation-pct">actual</div>
+                </div>
+                ${renderActualAllocation(unclassified)}
+                <div class="allocation-role">Actual private holdings not mapped to current AIM-5 candidate tickers yet.</div>
+              </div>
+            ` : ""}
           </div>
         </section>
       `;
@@ -758,7 +829,7 @@
         renderPosture(data),
         renderRetirementCockpit(portfolioOverlay),
         renderScores(data.scores),
-        renderAllocation(data.aim5_allocation),
+        renderAllocation(data.aim5_allocation, portfolioOverlay),
         renderSignals(data.dashboard_signals || data.signals),
         renderDebate(data.debate_question),
         renderRule()

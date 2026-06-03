@@ -155,6 +155,9 @@ class SiteNavigationTests(unittest.TestCase):
         self.assertIn("Retirement Cockpit", html)
         self.assertIn("Schwab Retirement", html)
         self.assertIn("BTC Stack", html)
+        self.assertIn("actualAllocationMap", html)
+        self.assertIn("allocation-actual-fill", html)
+        self.assertIn("Unclassified / Legacy Holdings", html)
         self.assertIn("2030", html)
         self.assertIn("2035", html)
         stale_private_sentinel = "108" + "0023"
