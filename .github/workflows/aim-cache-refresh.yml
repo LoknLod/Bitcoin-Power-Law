@@ -57,6 +57,19 @@ jobs:
       - name: Run tests
         run: python3 -m unittest discover -s tests -v
 
+      - name: Guard private portfolio overlay from publication
+        run: |
+          set -euo pipefail
+          if [ -e portfolio-cockpit-cache.json ]; then
+            echo "Refusing to publish private portfolio overlay."
+            exit 1
+          fi
+          if git ls-files --error-unmatch portfolio-cockpit-cache.json >/dev/null 2>&1; then
+            echo "portfolio-cockpit-cache.json must never be tracked."
+            exit 1
+          fi
+          echo "private portfolio overlay guard: clean"
+
       - name: Check generated public cache diff for secret-shaped values
         run: |
           set -euo pipefail

@@ -375,6 +375,45 @@
       line-height: 1.25;
     }
 
+    .cockpit-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .cockpit-metric {
+      background: var(--panel);
+      border-radius: 10px;
+      padding: 10px;
+      min-height: 72px;
+    }
+
+    .cockpit-metric span {
+      display: block;
+      color: var(--text-dim);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 5px;
+    }
+
+    .cockpit-metric strong {
+      display: block;
+      color: var(--text);
+      font-size: 18px;
+      font-weight: 750;
+      line-height: 1.1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .cockpit-read {
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.45;
+      margin-top: 8px;
+    }
+
     .rule-card {
       border-color: rgba(247,147,26,0.35);
       background: rgba(247,147,26,0.08);
@@ -529,6 +568,22 @@
       }
     }
 
+    async function loadPortfolioOverlay() {
+      const PORTFOLIO_CACHE_FILE = "portfolio-cockpit-cache.json";
+      try {
+        const response = await fetch(PORTFOLIO_CACHE_FILE, { cache: "no-store" });
+        if (!response.ok) throw new Error("Portfolio overlay unavailable");
+        const data = await response.json();
+        if (!data || data.schema_version !== "shrike_portfolio_cockpit.v0.1" || data.mutation_allowed !== false) {
+          throw new Error("Portfolio overlay shape invalid");
+        }
+        return data;
+      } catch (error) {
+        console.warn("Portfolio cockpit overlay suppressed:", error);
+        return null;
+      }
+    }
+
     function renderPosture(data) {
       const freshness = data.freshness || "unknown";
       return `
@@ -545,6 +600,42 @@
           </div>
           <p class="explanation">${escapeHtml(data.posture?.explanation || "")}</p>
           <p class="thesis-line">BTC is the spear. Gold is the shield. AIM stays barbelled unless the signal ledger earns a tilt.</p>
+        </section>
+      `;
+    }
+
+    function renderRetirementCockpit(portfolio) {
+      if (!portfolio) {
+        return `
+          <section class="card">
+            <div class="card-title">Retirement Cockpit</div>
+            <div class="empty-state">Private portfolio overlay unavailable. Run scripts/build_portfolio_cockpit_cache.py locally to show Schwab Retirement, BTC Stack, 2030, and 2035 readiness. Personal Kubera values stay out of the public cache.</div>
+          </section>
+        `;
+      }
+      const schwabTotal = portfolio.portfolio?.schwab_total_display || "Unavailable";
+      const btcHeld = portfolio.btc?.held ?? "--";
+      const btcGap = portfolio.btc?.target_gap ?? "--";
+      const targetGap = portfolio.retirement?.schwab_gap_to_target;
+      const gapText = Number.isFinite(Number(targetGap)) ? `$${Number(targetGap).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : "Unavailable";
+      const early = portfolio.retirement?.early_2030_readiness || "unknown";
+      const baseline = portfolio.retirement?.faa_2035_readiness || "unknown";
+      const growth2030 = portfolio.retirement?.required_annual_growth_to_2030 ?? "--";
+      const btcProvenance = portfolio.btc?.provenance || "unknown";
+      return `
+        <section class="card">
+          <div class="card-title">Retirement Cockpit</div>
+          <div class="cockpit-grid">
+            <div class="cockpit-metric"><span>Schwab Retirement</span><strong>${escapeHtml(schwabTotal)}</strong></div>
+            <div class="cockpit-metric"><span>BTC Stack</span><strong>${escapeHtml(btcHeld)} BTC</strong></div>
+            <div class="cockpit-metric"><span>BTC Target Gap</span><strong>${escapeHtml(btcGap)} BTC</strong></div>
+            <div class="cockpit-metric"><span>$4M Target Gap</span><strong>${escapeHtml(gapText)}</strong></div>
+            <div class="cockpit-metric"><span>2030 Optionality</span><strong>${escapeHtml(early)}</strong></div>
+            <div class="cockpit-metric"><span>2035 Baseline</span><strong>${escapeHtml(baseline)}</strong></div>
+            <div class="cockpit-metric"><span>2030 Required Growth</span><strong>${escapeHtml(growth2030)}%/yr</strong></div>
+            <div class="cockpit-metric"><span>BTC Provenance</span><strong>${escapeHtml(btcProvenance)}</strong></div>
+          </div>
+          <p class="cockpit-read">${escapeHtml(portfolio.shrike_read || "Actual portfolio overlay loaded. Decision support only.")}</p>
         </section>
       `;
     }
@@ -653,10 +744,11 @@
     }
 
     async function init() {
-      const { data, usedDemo } = await loadCache();
+      const [{ data, usedDemo }, portfolioOverlay] = await Promise.all([loadCache(), loadPortfolioOverlay()]);
       document.getElementById("demoWarning").classList.toggle("show", usedDemo);
       document.getElementById("app").innerHTML = [
         renderPosture(data),
+        renderRetirementCockpit(portfolioOverlay),
         renderScores(data.scores),
         renderAllocation(data.aim5_allocation),
         renderSignals(data.dashboard_signals || data.signals),

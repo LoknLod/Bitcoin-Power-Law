@@ -1,4 +1,5 @@
 import re
+import subprocess
 import unittest
 from pathlib import Path
 from urllib.parse import urlparse
@@ -67,6 +68,8 @@ class SiteNavigationTests(unittest.TestCase):
         for page in pages:
             html = page.read_text()
             for target in list(local_href_targets(html)) + list(static_fetch_targets(html)):
+                if target == "portfolio-cockpit-cache.json":
+                    continue
                 with self.subTest(page=page.relative_to(ROOT), target=target):
                     resolved = (page.parent / target).resolve()
                     self.assertTrue(
@@ -119,6 +122,43 @@ class SiteNavigationTests(unittest.TestCase):
         self.assertNotIn("api.coinbase.com", html)
         self.assertNotIn("if (!btcPrice) btcPrice = 68000", html)
         self.assertNotIn("goldPrice = 2950", html)
+
+    def test_dashboard_supports_private_portfolio_overlay_without_embedding_values(self):
+        html = (ROOT / "index.html").read_text()
+        self.assertIn("portfolio-cockpit-cache.json", html)
+        self.assertIn("loadPortfolioOverlay", html)
+        self.assertIn("cache: \"no-store\"", html)
+        self.assertIn("schema_version !== \"shrike_portfolio_cockpit.v0.1\"", html)
+        self.assertIn("mutation_allowed !== false", html)
+        self.assertIn("catch (error)", html)
+        self.assertIn("return null", html)
+        self.assertIn("Private portfolio overlay unavailable", html)
+        self.assertIn("Retirement Cockpit", html)
+        self.assertIn("Schwab Retirement", html)
+        self.assertIn("BTC Stack", html)
+        self.assertIn("2030", html)
+        self.assertIn("2035", html)
+        stale_private_sentinel = "108" + "0023"
+        self.assertNotIn(stale_private_sentinel, html)
+        self.assertNotIn("Kubera netWorth", html)
+
+    def test_tracked_files_do_not_embed_private_account_identifiers(self):
+        tracked = subprocess.check_output(["git", "ls-files"], cwd=ROOT, text=True).splitlines()
+        self.assertNotIn("portfolio-cockpit-cache.json", tracked)
+        forbidden_export_key = "kubera" + "_netWorth"
+        private_patterns = [
+            re.compile(r"PCRA Trust - \d{4}"),
+            re.compile("whole" + r"_portfolio_total"),
+            re.compile(re.escape(forbidden_export_key)),
+        ]
+        for relative_path in tracked:
+            path = ROOT / relative_path
+            if path.suffix.lower() not in {".html", ".js", ".py", ".json", ".yml", ".yaml", ".md"}:
+                continue
+            text = path.read_text(errors="ignore")
+            for pattern in private_patterns:
+                with self.subTest(path=relative_path, pattern=pattern.pattern):
+                    self.assertIsNone(pattern.search(text))
 
     def test_active_pages_do_not_embed_api_keys(self):
         key_patterns = [
