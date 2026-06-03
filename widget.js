@@ -1,154 +1,262 @@
-// BTC Power Law Widget for Scriptable
-// iPhone home screen widget — shows BTC price (7d change) + hash rate (7d change)
-// v5.0 - Compact layout for small iOS widgets
+// BTC Power Law + AIM Cockpit Widget for Scriptable
+// Copy this entire file into Scriptable on iPhone.
+// Optional: set the widget parameter to your private cockpit base URL.
+// Example parameter format: http://tailnet-ip-or-magicdns-name:8766/
+// v6.0 - Power Law, AIM posture, optional private 2030/2035 readiness.
+
+const PUBLIC_DASHBOARD_URL = 'https://loknlod.github.io/Bitcoin-Power-Law/';
+const PRIVATE_DASHBOARD_URL = normalizeBaseUrl(args.widgetParameter || '');
+const PRIVATE_CACHE_BASE = PRIVATE_DASHBOARD_URL;
+const PUBLIC_CACHE_BASE = PUBLIC_DASHBOARD_URL;
+
+function normalizeBaseUrl(value) {
+  const trimmed = String(value || '').trim();
+  if (!trimmed) return '';
+  return trimmed.endsWith('/') ? trimmed : trimmed + '/';
+}
 
 const GENESIS = new Date('2009-01-03T18:15:05Z');
+const PL_A = -17.01;
+const PL_B = 5.82;
+const SUPPORT_MULT = 0.35;
+const CONSERVATIVE_FAIR_MULT = 0.71;
+const RESIST_MULT = 3.5;
 
 function formatPrice(price) {
+  if (!Number.isFinite(price) || price <= 0) return '—';
   if (price >= 1000000) return '$' + (price / 1000000).toFixed(2) + 'M';
   if (price >= 1000) return '$' + Math.round(price).toLocaleString();
   return '$' + price.toFixed(2);
 }
 
-async function fetchBTCPriceAndChange() {
-  try {
-    const req = new Request('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=7&interval=daily');
-    const data = await req.loadJSON();
-    const prices = data.prices || [];
-    if (prices.length >= 2) {
-      const currentPrice = prices[prices.length - 1][1];
-      const pastPrice = prices[0][1];
-      const change7d = ((currentPrice - pastPrice) / pastPrice) * 100;
-      return { price: currentPrice, change7d: change7d };
-    }
-  } catch (e) {}
-  
-  try {
-    const req = new Request('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
-    const data = await req.loadJSON();
-    return { price: data.bitcoin.usd, change7d: null };
-  } catch (e) {}
-  
-  try {
-    const req = new Request('https://api.coinbase.com/v2/prices/BTC-USD/spot');
-    const data = await req.loadJSON();
-    return { price: parseFloat(data.data.amount), change7d: null };
-  } catch (e2) {
-    return { price: null, change7d: null };
-  }
+function formatPct(value) {
+  if (!Number.isFinite(value)) return '—';
+  return (value >= 0 ? '+' : '') + value.toFixed(1) + '%';
 }
 
-async function fetchHashRate() {
-  try {
-    const req = new Request('https://mempool.space/api/v1/mining/hashrate/7d');
-    const data = await req.loadJSON();
-    const current = data.currentHashrate / 1e18;
-    
-    const now = Date.now() / 1000;
-    const sevenDaysAgo = now - (7 * 24 * 60 * 60);
-    const hashrates = data.hashrates || [];
-    let past = current;
-    for (const h of hashrates) {
-      if (h.timestamp <= sevenDaysAgo) {
-        past = h.avgHashrate / 1e18;
-        break;
-      }
+function daysSinceGenesis(d = new Date()) {
+  return (d - GENESIS) / 864e5;
+}
+
+function powerLawPrice(days) {
+  return Math.pow(10, PL_A + PL_B * Math.log10(days));
+}
+
+function powerLawModel(d = new Date()) {
+  const trend = powerLawPrice(daysSinceGenesis(d));
+  return {
+    support: trend * SUPPORT_MULT,
+    conservativeFair: trend * CONSERVATIVE_FAIR_MULT,
+    trend,
+    resistance: trend * RESIST_MULT
+  };
+}
+
+function powerLawStatus(price, model) {
+  if (!Number.isFinite(price)) return { text: 'Signal pending', color: '#888888' };
+  if (price < model.support) return { text: 'Deep value', color: '#00d395' };
+  if (price < model.conservativeFair * 0.70) return { text: 'Undervalued', color: '#00d395' };
+  if (price < model.conservativeFair * 1.30) return { text: 'Fair zone', color: '#4da6ff' };
+  if (price < model.resistance) return { text: 'Above fair', color: '#ffab40' };
+  return { text: 'Hot', color: '#ff6b6b' };
+}
+
+function colorForPct(value) {
+  if (!Number.isFinite(value)) return new Color('#888888');
+  return value >= 0 ? new Color('#00d395') : new Color('#ff6b6b');
+}
+
+async function loadJson(url) {
+  const req = new Request(url);
+  req.timeoutInterval = 8;
+  req.headers = { 'Cache-Control': 'no-cache' };
+  return await req.loadJSON();
+}
+
+async function loadFirst(paths) {
+  let lastError = null;
+  for (const path of paths) {
+    try {
+      const data = await loadJson(path.url);
+      return { data, source: path.label, base: path.base };
+    } catch (error) {
+      lastError = error;
     }
-    
-    const change = ((current - past) / past) * 100;
-    return { ehs: current.toFixed(0), change: change.toFixed(1) };
-  } catch (e) {
+  }
+  throw lastError || new Error('No cache source available');
+}
+
+async function loadMarketCache() {
+  const paths = [];
+  if (PRIVATE_CACHE_BASE) paths.push({ url: PRIVATE_CACHE_BASE + 'market-cache.json', label: 'Private', base: PRIVATE_CACHE_BASE });
+  paths.push({ url: PUBLIC_CACHE_BASE + 'market-cache.json', label: 'GitHub Pages', base: PUBLIC_CACHE_BASE });
+  return await loadFirst(paths);
+}
+
+async function loadAimCache() {
+  const paths = [];
+  if (PRIVATE_CACHE_BASE) paths.push({ url: PRIVATE_CACHE_BASE + 'aim-cache.json', label: 'Private', base: PRIVATE_CACHE_BASE });
+  paths.push({ url: PUBLIC_CACHE_BASE + 'aim-cache.json', label: 'GitHub Pages', base: PUBLIC_CACHE_BASE });
+  return await loadFirst(paths);
+}
+
+async function loadPrivatePortfolioCache() {
+  if (!PRIVATE_CACHE_BASE) return null;
+  try {
+    const data = await loadJson(PRIVATE_CACHE_BASE + 'portfolio-cockpit-cache.json');
+    if (
+      !data ||
+      data.schema_version !== 'shrike_portfolio_cockpit.v0.1' ||
+      data.mutation_allowed !== false ||
+      !data.privacy_note ||
+      !Number.isFinite(Number(data.retirement?.required_annual_growth_to_2030))
+    ) {
+      throw new Error('Private cockpit cache failed validation');
+    }
+    return data;
+  } catch (error) {
     return null;
   }
 }
 
-async function createWidget() {
-  const [{ price, change7d }, hashData] = await Promise.all([
-    fetchBTCPriceAndChange(),
-    fetchHashRate()
+async function loadWidgetData() {
+  const [marketResult, aimResult, portfolio] = await Promise.all([
+    loadMarketCache(),
+    loadAimCache(),
+    loadPrivatePortfolioCache()
   ]);
-  const hashRate = hashData ? hashData.ehs : null;
-  const hashChange = hashData ? hashData.change : null;
+
+  const btcAsset = marketResult.data.assets && marketResult.data.assets.btc_usd;
+  const price = Number(btcAsset && btcAsset.price);
+  const model = powerLawModel();
+  const gapToFair = Number.isFinite(price) ? ((price - model.conservativeFair) / model.conservativeFair) * 100 : NaN;
+  const status = powerLawStatus(price, model);
+
+  return {
+    price,
+    fair: model.conservativeFair,
+    trend: model.trend,
+    gapToFair,
+    status,
+    marketSource: marketResult.source,
+    observedAt: btcAsset?.as_of || marketResult.data.generated_at,
+    posture: aimResult.data.posture?.label || 'AIM',
+    hardMoneyScore: aimResult.data.scores?.hard_money_repricing?.score,
+    early2030: portfolio?.retirement?.early_2030_readiness || null,
+    baseline2035: portfolio?.retirement?.faa_2035_readiness || null,
+    dashboardUrl: portfolio ? PRIVATE_DASHBOARD_URL : PUBLIC_DASHBOARD_URL,
+    privateLoaded: Boolean(portfolio)
+  };
+}
+
+function addLabelValue(row, label, value, valueColor) {
+  row.layoutHorizontally();
+  row.centerAlignContent();
+
+  const left = row.addText(label);
+  left.font = Font.systemFont(10);
+  left.textColor = new Color('#777777');
+
+  row.addSpacer();
+
+  const right = row.addText(value);
+  right.font = Font.semiboldSystemFont(10);
+  right.textColor = valueColor || new Color('#ffffff');
+}
+
+function addFooter(widget, data) {
+  widget.addSpacer();
+  const footer = widget.addStack();
+  footer.layoutHorizontally();
+  footer.centerAlignContent();
+
+  const dot = footer.addText(data.privateLoaded ? '●' : '○');
+  dot.font = Font.systemFont(8);
+  dot.textColor = data.privateLoaded ? new Color('#00d395') : new Color('#888888');
+
+  footer.addSpacer(4);
+
+  const now = new Date();
+  const stamp = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  const text = footer.addText((data.privateLoaded ? 'Private' : 'Public') + ' · ' + stamp);
+  text.font = Font.systemFont(9);
+  text.textColor = new Color('#555555');
+}
+
+async function createWidget() {
+  let data;
+  try {
+    data = await loadWidgetData();
+  } catch (error) {
+    data = {
+      price: NaN,
+      fair: powerLawModel().conservativeFair,
+      gapToFair: NaN,
+      status: { text: 'Offline', color: '#ff6b6b' },
+      posture: 'AIM',
+      hardMoneyScore: null,
+      early2030: null,
+      baseline2035: null,
+      dashboardUrl: PUBLIC_DASHBOARD_URL,
+      privateLoaded: false
+    };
+  }
 
   const widget = new ListWidget();
   widget.backgroundColor = new Color('#0a0a0a');
   widget.setPadding(12, 14, 12, 14);
+  widget.url = data.dashboardUrl;
 
-  // Header row: ₿ Bitcoin
-  const headerStack = widget.addStack();
-  headerStack.centerAlignContent();
+  const header = widget.addStack();
+  header.layoutHorizontally();
+  header.centerAlignContent();
 
-  const logo = headerStack.addText('₿');
+  const logo = header.addText('₿');
   logo.font = Font.boldSystemFont(14);
   logo.textColor = new Color('#f7931a');
 
-  headerStack.addSpacer(5);
+  header.addSpacer(5);
 
-  const title = headerStack.addText('Bitcoin');
+  const title = header.addText('Power Law');
   title.font = Font.mediumSystemFont(12);
   title.textColor = new Color('#aaaaaa');
 
-  widget.addSpacer(6);
+  header.addSpacer();
 
-  // BTC Price — big
-  const priceText = widget.addText(price ? formatPrice(price) : '—');
-  priceText.font = Font.boldSystemFont(26);
+  const posture = header.addText(data.posture);
+  posture.font = Font.semiboldSystemFont(10);
+  posture.textColor = new Color('#4da6ff');
+
+  widget.addSpacer(5);
+
+  const priceText = widget.addText(formatPrice(data.price));
+  priceText.font = Font.boldSystemFont(25);
   priceText.textColor = new Color('#ffffff');
+  priceText.minimumScaleFactor = 0.75;
 
-  // 7d change directly under price, left aligned
-  if (change7d !== null && change7d !== undefined) {
-    widget.addSpacer(2);
-    const sign = change7d >= 0 ? '+' : '';
-    const pChange = widget.addText(sign + change7d.toFixed(1) + '% (7d avg)');
-    pChange.font = Font.systemFont(11);
-    pChange.textColor = change7d >= 0 ? new Color('#00d395') : new Color('#ff6b6b');
+  widget.addSpacer(2);
+
+  const statusText = widget.addText(data.status.text + ' · ' + formatPct(data.gapToFair) + ' vs Conservative Fair');
+  statusText.font = Font.systemFont(10);
+  statusText.textColor = new Color(data.status.color);
+  statusText.minimumScaleFactor = 0.75;
+
+  widget.addSpacer(8);
+
+  addLabelValue(widget.addStack(), 'Conservative Fair', formatPrice(data.fair), new Color('#4da6ff'));
+  widget.addSpacer(4);
+  addLabelValue(widget.addStack(), 'Hard Money', data.hardMoneyScore == null ? '—' : String(data.hardMoneyScore) + '/100', new Color('#f7931a'));
+
+  if (data.early2030 || data.baseline2035) {
+    widget.addSpacer(4);
+    const line = '2030 ' + (data.early2030 || '—') + ' · 2035 ' + (data.baseline2035 || '—');
+    addLabelValue(widget.addStack(), 'Retirement', line, new Color('#00d395'));
   }
 
-  widget.addSpacer(10);
-
-  // Hash Rate row (Icon + Label on left, Value + % on right)
-  const hashRow = widget.addStack();
-  hashRow.layoutHorizontally();
-  hashRow.centerAlignContent();
-
-  const hashIcon = hashRow.addText('⛏ ');
-  hashIcon.font = Font.systemFont(11);
-
-  const hashLabel = hashRow.addText('Hash');
-  hashLabel.font = Font.systemFont(11);
-  hashLabel.textColor = new Color('#666666');
-
-  hashRow.addSpacer();
-
-  const hashValStr = hashRate ? `${hashRate} EH/s` : '—';
-  const hashPctStr = hashChange !== null ? ` (${hashChange >= 0 ? '+' : ''}${hashChange}%)` : '';
-  
-  const hashValue = hashRow.addText(hashValStr + hashPctStr);
-  hashValue.font = Font.boldSystemFont(11);
-  
-  // Color the hash rate text based on the change trajectory
-  if (hashChange !== null) {
-      hashValue.textColor = hashChange >= 0 ? new Color('#00d395') : new Color('#ff6b6b');
-  } else {
-      hashValue.textColor = new Color('#f7931a');
-  }
-
-  widget.addSpacer(6);
-
-  // Last updated
-  const now = new Date();
-  const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-  const updatedText = widget.addText('Updated ' + timeStr);
-  updatedText.font = Font.systemFont(9);
-  updatedText.textColor = new Color('#444444');
-
-  // Tap opens the simplified dashboard
-  widget.url = 'https://loknlod.github.io/Bitcoin-Power-Law/';
-
+  addFooter(widget, data);
   return widget;
 }
 
-// Run
 const widget = await createWidget();
 
 if (config.runsInWidget) {

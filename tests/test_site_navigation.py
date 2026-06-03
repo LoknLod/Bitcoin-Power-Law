@@ -82,6 +82,21 @@ class SiteNavigationTests(unittest.TestCase):
         self.assertNotIn("/quick.html", widget)
         self.assertIn("Bitcoin-Power-Law/", widget)
 
+    def test_widget_uses_private_tailscale_cockpit_with_public_fallback(self):
+        widget = (ROOT / "widget.js").read_text()
+        self.assertIn("PRIVATE_DASHBOARD_URL", widget)
+        self.assertIn("args.widgetParameter", widget)
+        private_tailnet_ip_sentinel = ".".join(["100", "122", "204", "74"])
+        self.assertNotIn(private_tailnet_ip_sentinel, widget)
+        self.assertIn("PUBLIC_DASHBOARD_URL", widget)
+        self.assertIn("market-cache.json", widget)
+        self.assertIn("portfolio-cockpit-cache.json", widget)
+        self.assertIn("Power Law", widget)
+        self.assertIn("Conservative Fair", widget)
+        self.assertIn("2030", widget)
+        self.assertNotIn("mempool.space", widget)
+        self.assertNotIn("Hash", widget)
+
     def test_macro_page_uses_world_credit_not_m2_as_monetary_reset_headline(self):
         html = (ROOT / "macro.html").read_text()
         self.assertIn("World Credit Growth", html)
