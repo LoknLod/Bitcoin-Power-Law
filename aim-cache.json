@@ -111,10 +111,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-06-08",
-      "note": "BTC spot is $63,533 versus a power-law anchor of $134,310, a -52.7% gap.",
+      "note": "BTC spot is $63,278 versus a power-law anchor of $134,310, a -52.9% gap.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-52.7%"
+      "value_label": "-52.9%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -137,10 +137,10 @@
       "direction": "higher means the gold shield is repricing in USD terms",
       "source": "pax-gold proxy",
       "as_of": "2026-06-08",
-      "note": "PAXG gold proxy is $4,333.",
+      "note": "PAXG gold proxy is $4,318.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "$4,333"
+      "value_label": "$4,318"
     },
     {
       "name": "U.S. M2 Liquidity Context",
@@ -305,11 +305,11 @@
       "weight": 0.12,
       "direction": "higher spreads mean credit stress is rising",
       "source": "FRED BAMLH0A0HYM2",
-      "as_of": "2026-06-01",
-      "note": "High-yield option-adjusted spread is 2.72 percentage points.",
+      "as_of": "2026-06-05",
+      "note": "High-yield option-adjusted spread is 2.76 percentage points.",
       "freshness": "local_cache",
-      "age_days": 7,
-      "value_label": "2.72%"
+      "age_days": 3,
+      "value_label": "2.76%"
     }
   ],
   "dashboard_signals": [
@@ -347,10 +347,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-06-08",
-      "note": "BTC spot is $63,533 versus a power-law anchor of $134,310, a -52.7% gap.",
+      "note": "BTC spot is $63,278 versus a power-law anchor of $134,310, a -52.9% gap.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-52.7%"
+      "value_label": "-52.9%"
     },
     {
       "name": "BTC/Gold Ratio",

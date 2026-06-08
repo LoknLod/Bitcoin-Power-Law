@@ -6,9 +6,9 @@
   "metadata": {
     "as_of": "2026-06-08",
     "series_requested": 12,
-    "series_fetched": 7,
-    "series_preserved": 5,
-    "series_with_errors": 5,
+    "series_fetched": 8,
+    "series_preserved": 4,
+    "series_with_errors": 4,
     "observation_count": 7806,
     "endpoint": "https://fred.stlouisfed.org/graph/fredgraph.csv?id={series_id}"
   },
@@ -28213,28 +28213,12 @@
     },
     "BAMLH0A0HYM2": {
       "desc": "ICE BofA US High Yield Index Option-Adjusted Spread",
-      "source": "existing_cache_after_refresh_error",
+      "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2",
       "fetched_at": "2026-06-08T00:00:00Z",
       "observation_count": 785,
-      "latest_date": "2026-06-01",
+      "latest_date": "2026-06-05",
       "observations": [
-        {
-          "date": "2023-06-05",
-          "value": "4.39"
-        },
-        {
-          "date": "2023-06-06",
-          "value": "4.39"
-        },
-        {
-          "date": "2023-06-07",
-          "value": "4.33"
-        },
-        {
-          "date": "2023-06-08",
-          "value": "4.39"
-        },
         {
           "date": "2023-06-09",
           "value": "4.29"
@@ -31358,9 +31342,24 @@
         {
           "date": "2026-06-01",
           "value": "2.72"
+        },
+        {
+          "date": "2026-06-02",
+          "value": "2.71"
+        },
+        {
+          "date": "2026-06-03",
+          "value": "2.75"
+        },
+        {
+          "date": "2026-06-04",
+          "value": "2.74"
+        },
+        {
+          "date": "2026-06-05",
+          "value": "2.76"
         }
-      ],
-      "error": "refresh failed: curl failed: Command '['curl', '-fsSL', '--connect-timeout', '8', '--max-time', '20', '--retry', '1', '--retry-delay', '1', 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2&cosd=2020-06-08&coed=2026-06-08']' timed out after 25 seconds; urllib fallback failed: The read operation timed out"
+      ]
     }
   },
   "errors": [
@@ -31379,10 +31378,6 @@
     {
       "series": "T10YIE",
       "error": "refresh failed: curl failed: Command '['curl', '-fsSL', '--connect-timeout', '8', '--max-time', '20', '--retry', '1', '--retry-delay', '1', 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=T10YIE&cosd=2020-06-08&coed=2026-06-08']' timed out after 25 seconds; urllib fallback failed: The read operation timed out"
-    },
-    {
-      "series": "BAMLH0A0HYM2",
-      "error": "refresh failed: curl failed: Command '['curl', '-fsSL', '--connect-timeout', '8', '--max-time', '20', '--retry', '1', '--retry-delay', '1', 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2&cosd=2020-06-08&coed=2026-06-08']' timed out after 25 seconds; urllib fallback failed: The read operation timed out"
     }
   ]
 }
