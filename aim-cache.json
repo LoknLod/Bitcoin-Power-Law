@@ -111,10 +111,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-06-09",
-      "note": "BTC spot is $61,020 versus a power-law anchor of $134,432, a -54.6% gap.",
+      "note": "BTC spot is $61,813 versus a power-law anchor of $134,432, a -54.0% gap.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-54.6%"
+      "value_label": "-54.0%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -124,10 +124,10 @@
       "direction": "higher means BTC is repricing versus the gold proxy",
       "source": "market_cache BTC/USD over PAXG/USD",
       "as_of": "2026-06-09",
-      "note": "BTC buys roughly 14.3 ounces of the PAXG gold proxy.",
+      "note": "BTC buys roughly 14.6 ounces of the PAXG gold proxy.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "14.3 oz"
+      "value_label": "14.6 oz"
     },
     {
       "name": "Gold Proxy Price",
@@ -137,10 +137,10 @@
       "direction": "higher means the gold shield is repricing in USD terms",
       "source": "pax-gold proxy",
       "as_of": "2026-06-09",
-      "note": "PAXG gold proxy is $4,260.",
+      "note": "PAXG gold proxy is $4,243.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "$4,260"
+      "value_label": "$4,243"
     },
     {
       "name": "U.S. M2 Liquidity Context",
@@ -347,10 +347,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-06-09",
-      "note": "BTC spot is $61,020 versus a power-law anchor of $134,432, a -54.6% gap.",
+      "note": "BTC spot is $61,813 versus a power-law anchor of $134,432, a -54.0% gap.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-54.6%"
+      "value_label": "-54.0%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -360,10 +360,10 @@
       "direction": "higher means BTC is repricing versus the gold proxy",
       "source": "market_cache BTC/USD over PAXG/USD",
       "as_of": "2026-06-09",
-      "note": "BTC buys roughly 14.3 ounces of the PAXG gold proxy.",
+      "note": "BTC buys roughly 14.6 ounces of the PAXG gold proxy.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "14.3 oz"
+      "value_label": "14.6 oz"
     },
     {
       "name": "World Credit Growth",
