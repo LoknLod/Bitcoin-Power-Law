@@ -66,6 +66,37 @@ function colorForPct(value) {
   return value >= 0 ? new Color('#00d395') : new Color('#ff6b6b');
 }
 
+// Display-only staleness labeling: the price cron refreshes every 30 minutes,
+// so data older than 3 missed cycles is flagged. This is a UI label, not an alert.
+const STALE_AFTER_MINUTES = 90;
+// AIM caches refresh weekdays 8am/4pm CT only, so weekend posture data is
+// legitimately old; flag it for display only once past 72h.
+const AIM_STALE_AFTER_HOURS = 72;
+
+function dataAgeMinutes(observedAt) {
+  if (!observedAt) return NaN;
+  const t = new Date(observedAt);
+  if (Number.isNaN(t.getTime())) return NaN;
+  return (Date.now() - t.getTime()) / 60000;
+}
+
+function dataAgeLabel(observedAt) {
+  const mins = dataAgeMinutes(observedAt);
+  if (!Number.isFinite(mins)) return 'age unknown';
+  if (mins < 1) return 'now';
+  if (mins < 60) return Math.round(mins) + 'm ago';
+  const hours = mins / 60;
+  if (hours < 48) return (hours < 10 ? hours.toFixed(1) : Math.round(hours)) + 'h ago';
+  return Math.round(hours / 24) + 'd ago';
+}
+
+function readinessColor(labels) {
+  const values = labels.filter(Boolean).map(v => String(v).toLowerCase());
+  if (values.includes('red')) return new Color('#ff6b6b');
+  if (values.includes('yellow')) return new Color('#ffab40');
+  return new Color('#00d395');
+}
+
 async function loadJson(url) {
   const req = new Request(url);
   req.timeoutInterval = 8;
@@ -141,6 +172,7 @@ async function loadWidgetData() {
     marketSource: marketResult.source,
     observedAt: btcAsset?.as_of || marketResult.data.generated_at,
     posture: aimResult.data.posture?.label || 'AIM',
+    aimGeneratedAt: aimResult.data.generated_at || null,
     hardMoneyScore: aimResult.data.scores?.hard_money_repricing?.score,
     early2030: portfolio?.retirement?.early_2030_readiness || null,
     baseline2035: portfolio?.retirement?.faa_2035_readiness || null,
@@ -176,11 +208,16 @@ function addFooter(widget, data) {
 
   footer.addSpacer(4);
 
-  const now = new Date();
-  const stamp = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-  const text = footer.addText((data.privateLoaded ? 'Private' : 'Public') + ' · ' + stamp);
+  // Show the age of the market DATA, not the render clock: a widget rendering
+  // a stale cache must not look freshly updated.
+  const ageMinutes = dataAgeMinutes(data.observedAt);
+  const isStale = Number.isFinite(ageMinutes) ? ageMinutes > STALE_AFTER_MINUTES : true;
+  const label = (isStale ? 'STALE · ' : '')
+    + (data.privateLoaded ? 'Private' : 'Public')
+    + ' · ' + dataAgeLabel(data.observedAt);
+  const text = footer.addText(label);
   text.font = Font.systemFont(9);
-  text.textColor = new Color('#555555');
+  text.textColor = isStale ? new Color('#ffab40') : new Color('#555555');
 }
 
 async function createWidget() {
@@ -194,10 +231,12 @@ async function createWidget() {
       gapToFair: NaN,
       status: { text: 'Offline', color: '#ff6b6b' },
       posture: 'AIM',
+      aimGeneratedAt: null,
       hardMoneyScore: null,
       early2030: null,
       baseline2035: null,
-      dashboardUrl: PUBLIC_DASHBOARD_URL,
+      observedAt: null,
+      dashboardUrl: PRIVATE_DASHBOARD_URL || PUBLIC_DASHBOARD_URL,
       privateLoaded: false
     };
   }
@@ -223,9 +262,18 @@ async function createWidget() {
 
   header.addSpacer();
 
-  const posture = header.addText(data.posture);
+  // Display-only AIM cache age: posture/hard-money can be days old over
+  // weekends; an old regime read must not look current. No behavior change.
+  const aimAgeMinutes = dataAgeMinutes(data.aimGeneratedAt);
+  const aimStale = !Number.isFinite(aimAgeMinutes) || aimAgeMinutes > AIM_STALE_AFTER_HOURS * 60;
+  const postureLabel = data.aimGeneratedAt && aimStale
+    ? data.posture + ' · ' + dataAgeLabel(data.aimGeneratedAt)
+    : data.posture;
+  const posture = header.addText(postureLabel);
   posture.font = Font.semiboldSystemFont(10);
-  posture.textColor = new Color('#4da6ff');
+  posture.textColor = aimStale ? new Color('#ffab40') : new Color('#4da6ff');
+  posture.minimumScaleFactor = 0.7;
+  posture.lineLimit = 1;
 
   widget.addSpacer(5);
 
@@ -250,7 +298,9 @@ async function createWidget() {
   if (data.early2030 || data.baseline2035) {
     widget.addSpacer(4);
     const line = '2030 ' + (data.early2030 || '—') + ' · 2035 ' + (data.baseline2035 || '—');
-    addLabelValue(widget.addStack(), 'Retirement', line, new Color('#00d395'));
+    // Color must follow the worst readiness label; "red" rendered in green
+    // inverts the signal at a glance.
+    addLabelValue(widget.addStack(), 'Retirement', line, readinessColor([data.early2030, data.baseline2035]));
   }
 
   addFooter(widget, data);
