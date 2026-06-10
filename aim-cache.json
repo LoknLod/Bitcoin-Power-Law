@@ -111,10 +111,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-06-10",
-      "note": "BTC spot is $62,220 versus a power-law anchor of $134,555, a -53.8% gap.",
+      "note": "BTC spot is $61,373 versus a power-law anchor of $134,555, a -54.4% gap.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-53.8%"
+      "value_label": "-54.4%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -137,10 +137,10 @@
       "direction": "higher means the gold shield is repricing in USD terms",
       "source": "pax-gold proxy",
       "as_of": "2026-06-10",
-      "note": "PAXG gold proxy is $4,124.",
+      "note": "PAXG gold proxy is $4,054.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "$4,124"
+      "value_label": "$4,054"
     },
     {
       "name": "U.S. M2 Liquidity Context",
@@ -347,10 +347,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-06-10",
-      "note": "BTC spot is $62,220 versus a power-law anchor of $134,555, a -53.8% gap.",
+      "note": "BTC spot is $61,373 versus a power-law anchor of $134,555, a -54.4% gap.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-53.8%"
+      "value_label": "-54.4%"
     },
     {
       "name": "BTC/Gold Ratio",
