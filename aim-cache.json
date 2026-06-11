@@ -111,10 +111,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-06-11",
-      "note": "BTC spot is $62,505 versus a power-law anchor of $134,678, a -53.6% gap.",
+      "note": "BTC spot is $63,480 versus a power-law anchor of $134,678, a -52.9% gap.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-53.6%"
+      "value_label": "-52.9%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -124,10 +124,10 @@
       "direction": "higher means BTC is repricing versus the gold proxy",
       "source": "market_cache BTC/USD over PAXG/USD",
       "as_of": "2026-06-11",
-      "note": "BTC buys roughly 15.3 ounces of the PAXG gold proxy.",
+      "note": "BTC buys roughly 15.0 ounces of the PAXG gold proxy.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "15.3 oz"
+      "value_label": "15.0 oz"
     },
     {
       "name": "Gold Proxy Price",
@@ -137,10 +137,10 @@
       "direction": "higher means the gold shield is repricing in USD terms",
       "source": "pax-gold proxy",
       "as_of": "2026-06-11",
-      "note": "PAXG gold proxy is $4,076.",
+      "note": "PAXG gold proxy is $4,223.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "$4,076"
+      "value_label": "$4,223"
     },
     {
       "name": "U.S. M2 Liquidity Context",
@@ -162,11 +162,11 @@
       "weight": 0.18,
       "direction": "higher adds liquidity; sustained runoff keeps pressure on credit",
       "source": "FRED WALCL",
-      "as_of": "2026-06-03",
-      "note": "Fed assets are +0.6% YoY at $6,711B.",
+      "as_of": "2026-06-10",
+      "note": "Fed assets are +0.8% YoY at $6,725B.",
       "freshness": "local_cache",
-      "age_days": 8,
-      "value_label": "+0.6%"
+      "age_days": 1,
+      "value_label": "+0.8%"
     },
     {
       "name": "Reverse Repo Buffer",
@@ -188,11 +188,11 @@
       "weight": 0.22,
       "direction": "higher can drain private liquidity",
       "source": "FRED WTREGEN",
-      "as_of": "2026-06-03",
-      "note": "TGA is $876B, which keeps liquidity conditions tighter.",
+      "as_of": "2026-06-10",
+      "note": "TGA is $828B, which keeps liquidity conditions tighter.",
       "freshness": "local_cache",
-      "age_days": 8,
-      "value_label": "$876B"
+      "age_days": 1,
+      "value_label": "$828B"
     },
     {
       "name": "Net Liquidity Proxy",
@@ -202,10 +202,10 @@
       "direction": "higher supports risk appetite; lower supports stress",
       "source": "FRED WALCL-RRPONTSYD-WTREGEN",
       "as_of": "2026-06-01",
-      "note": "Simple WALCL minus RRP minus TGA proxy is $5,834B; roughly 90d change is +0.7%.",
+      "note": "Simple WALCL minus RRP minus TGA proxy is $5,896B; roughly 90d change is +1.7%.",
       "freshness": "local_cache",
       "age_days": 10,
-      "value_label": "+0.7%"
+      "value_label": "+1.7%"
     },
     {
       "name": "World Credit Growth",
@@ -347,10 +347,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-06-11",
-      "note": "BTC spot is $62,505 versus a power-law anchor of $134,678, a -53.6% gap.",
+      "note": "BTC spot is $63,480 versus a power-law anchor of $134,678, a -52.9% gap.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-53.6%"
+      "value_label": "-52.9%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -360,10 +360,10 @@
       "direction": "higher means BTC is repricing versus the gold proxy",
       "source": "market_cache BTC/USD over PAXG/USD",
       "as_of": "2026-06-11",
-      "note": "BTC buys roughly 15.3 ounces of the PAXG gold proxy.",
+      "note": "BTC buys roughly 15.0 ounces of the PAXG gold proxy.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "15.3 oz"
+      "value_label": "15.0 oz"
     },
     {
       "name": "World Credit Growth",
