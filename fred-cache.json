@@ -6,10 +6,10 @@
   "metadata": {
     "as_of": "2026-06-12",
     "series_requested": 12,
-    "series_fetched": 8,
-    "series_preserved": 4,
-    "series_with_errors": 4,
-    "observation_count": 7807,
+    "series_fetched": 10,
+    "series_preserved": 2,
+    "series_with_errors": 2,
+    "observation_count": 7809,
     "endpoint": "https://fred.stlouisfed.org/graph/fredgraph.csv?id={series_id}"
   },
   "series": {
@@ -10184,44 +10184,12 @@
     },
     "DGS10": {
       "desc": "10-Year Treasury Constant Maturity Rate",
-      "source": "existing_cache_after_refresh_error",
+      "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10",
       "fetched_at": "2026-06-12T00:00:00Z",
-      "observation_count": 1499,
-      "latest_date": "2026-05-29",
+      "observation_count": 1500,
+      "latest_date": "2026-06-11",
       "observations": [
-        {
-          "date": "2020-06-02",
-          "value": "0.68"
-        },
-        {
-          "date": "2020-06-03",
-          "value": "0.77"
-        },
-        {
-          "date": "2020-06-04",
-          "value": "0.82"
-        },
-        {
-          "date": "2020-06-05",
-          "value": "0.91"
-        },
-        {
-          "date": "2020-06-08",
-          "value": "0.88"
-        },
-        {
-          "date": "2020-06-09",
-          "value": "0.84"
-        },
-        {
-          "date": "2020-06-10",
-          "value": "0.75"
-        },
-        {
-          "date": "2020-06-11",
-          "value": "0.66"
-        },
         {
           "date": "2020-06-12",
           "value": "0.71"
@@ -16185,50 +16153,53 @@
         {
           "date": "2026-05-29",
           "value": "4.45"
+        },
+        {
+          "date": "2026-06-01",
+          "value": "4.47"
+        },
+        {
+          "date": "2026-06-02",
+          "value": "4.46"
+        },
+        {
+          "date": "2026-06-03",
+          "value": "4.49"
+        },
+        {
+          "date": "2026-06-04",
+          "value": "4.47"
+        },
+        {
+          "date": "2026-06-05",
+          "value": "4.55"
+        },
+        {
+          "date": "2026-06-08",
+          "value": "4.56"
+        },
+        {
+          "date": "2026-06-09",
+          "value": "4.53"
+        },
+        {
+          "date": "2026-06-10",
+          "value": "4.55"
+        },
+        {
+          "date": "2026-06-11",
+          "value": "4.45"
         }
-      ],
-      "error": "refresh failed: curl failed: Command '['curl', '-fsSL', '--connect-timeout', '8', '--max-time', '20', '--retry', '1', '--retry-delay', '1', 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10&cosd=2020-06-12&coed=2026-06-12']' timed out after 25 seconds; urllib fallback failed: The read operation timed out"
+      ]
     },
     "DFII10": {
       "desc": "10-Year Treasury Inflation-Indexed Constant Maturity Rate",
-      "source": "existing_cache_after_refresh_error",
+      "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFII10",
       "fetched_at": "2026-06-12T00:00:00Z",
-      "observation_count": 1499,
-      "latest_date": "2026-05-29",
+      "observation_count": 1500,
+      "latest_date": "2026-06-11",
       "observations": [
-        {
-          "date": "2020-06-02",
-          "value": "-0.5"
-        },
-        {
-          "date": "2020-06-03",
-          "value": "-0.44"
-        },
-        {
-          "date": "2020-06-04",
-          "value": "-0.4"
-        },
-        {
-          "date": "2020-06-05",
-          "value": "-0.36"
-        },
-        {
-          "date": "2020-06-08",
-          "value": "-0.4"
-        },
-        {
-          "date": "2020-06-09",
-          "value": "-0.42"
-        },
-        {
-          "date": "2020-06-10",
-          "value": "-0.52"
-        },
-        {
-          "date": "2020-06-11",
-          "value": "-0.55"
-        },
         {
           "date": "2020-06-12",
           "value": "-0.5"
@@ -22192,9 +22163,44 @@
         {
           "date": "2026-05-29",
           "value": "2.07"
+        },
+        {
+          "date": "2026-06-01",
+          "value": "2.07"
+        },
+        {
+          "date": "2026-06-02",
+          "value": "2.07"
+        },
+        {
+          "date": "2026-06-03",
+          "value": "2.11"
+        },
+        {
+          "date": "2026-06-04",
+          "value": "2.11"
+        },
+        {
+          "date": "2026-06-05",
+          "value": "2.19"
+        },
+        {
+          "date": "2026-06-08",
+          "value": "2.21"
+        },
+        {
+          "date": "2026-06-09",
+          "value": "2.2"
+        },
+        {
+          "date": "2026-06-10",
+          "value": "2.21"
+        },
+        {
+          "date": "2026-06-11",
+          "value": "2.16"
         }
-      ],
-      "error": "refresh failed: curl failed: Command '['curl', '-fsSL', '--connect-timeout', '8', '--max-time', '20', '--retry', '1', '--retry-delay', '1', 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFII10&cosd=2020-06-12&coed=2026-06-12']' timed out after 25 seconds; urllib fallback failed: The read operation timed out"
+      ]
     },
     "T10YIE": {
       "desc": "10-Year Breakeven Inflation Rate",
@@ -28213,12 +28219,8 @@
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2",
       "fetched_at": "2026-06-12T00:00:00Z",
       "observation_count": 787,
-      "latest_date": "2026-06-10",
+      "latest_date": "2026-06-11",
       "observations": [
-        {
-          "date": "2023-06-12",
-          "value": "4.34"
-        },
         {
           "date": "2023-06-13",
           "value": "4.18"
@@ -31362,6 +31364,10 @@
         {
           "date": "2026-06-10",
           "value": "2.8"
+        },
+        {
+          "date": "2026-06-11",
+          "value": "2.78"
         }
       ]
     }
@@ -31370,14 +31376,6 @@
     {
       "series": "RRPONTSYD",
       "error": "refresh failed: curl failed: Command '['curl', '-fsSL', '--connect-timeout', '8', '--max-time', '20', '--retry', '1', '--retry-delay', '1', 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=RRPONTSYD&cosd=2020-06-12&coed=2026-06-12']' timed out after 25 seconds; urllib fallback failed: The read operation timed out"
-    },
-    {
-      "series": "DGS10",
-      "error": "refresh failed: curl failed: Command '['curl', '-fsSL', '--connect-timeout', '8', '--max-time', '20', '--retry', '1', '--retry-delay', '1', 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10&cosd=2020-06-12&coed=2026-06-12']' timed out after 25 seconds; urllib fallback failed: The read operation timed out"
-    },
-    {
-      "series": "DFII10",
-      "error": "refresh failed: curl failed: Command '['curl', '-fsSL', '--connect-timeout', '8', '--max-time', '20', '--retry', '1', '--retry-delay', '1', 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFII10&cosd=2020-06-12&coed=2026-06-12']' timed out after 25 seconds; urllib fallback failed: The read operation timed out"
     },
     {
       "series": "T10YIE",
