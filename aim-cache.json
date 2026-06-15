@@ -111,10 +111,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-06-15",
-      "note": "BTC spot is $66,811 versus a power-law anchor of $135,171, a -50.6% gap.",
+      "note": "BTC spot is $66,201 versus a power-law anchor of $135,171, a -51.0% gap.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-50.6%"
+      "value_label": "-51.0%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -124,10 +124,10 @@
       "direction": "higher means BTC is repricing versus the gold proxy",
       "source": "market_cache BTC/USD over PAXG/USD",
       "as_of": "2026-06-15",
-      "note": "BTC buys roughly 15.5 ounces of the PAXG gold proxy.",
+      "note": "BTC buys roughly 15.4 ounces of the PAXG gold proxy.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "15.5 oz"
+      "value_label": "15.4 oz"
     },
     {
       "name": "Gold Proxy Price",
@@ -137,10 +137,10 @@
       "direction": "higher means the gold shield is repricing in USD terms",
       "source": "pax-gold proxy",
       "as_of": "2026-06-15",
-      "note": "PAXG gold proxy is $4,312.",
+      "note": "PAXG gold proxy is $4,304.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "$4,312"
+      "value_label": "$4,304"
     },
     {
       "name": "U.S. M2 Liquidity Context",
@@ -214,24 +214,24 @@
       "weight": 0.28,
       "direction": "higher means the global stock of paper claims is expanding",
       "source": "FRED Q5ACAMUSDA",
-      "as_of": "2025-07-01",
-      "note": "Total reporting countries credit to the non-financial sector is +6.7% 3Y annualized at 257,926.8; this is the core monetary reset signal, with U.S. M2 demoted to context.",
+      "as_of": "2025-10-01",
+      "note": "Total reporting countries credit to the non-financial sector is +5.7% 3Y annualized at 262,666.1; this is the core monetary reset signal, with U.S. M2 demoted to context.",
       "freshness": "local_cache",
-      "age_days": 349,
-      "value_label": "+6.7% 3Y annualized"
+      "age_days": 257,
+      "value_label": "+5.7% 3Y annualized"
     },
     {
       "name": "U.S. Credit Growth",
       "regime": "monetary_reset",
-      "score": 55,
+      "score": 64,
       "weight": 0.08,
       "direction": "higher can signal domestic credit expansion and monetary stress",
       "source": "FRED QUSCAMUSDA",
-      "as_of": "2025-07-01",
-      "note": "U.S. total credit to the non-financial sector is +4.0% YoY at 75,951.1.",
+      "as_of": "2025-10-01",
+      "note": "U.S. total credit to the non-financial sector is +6.0% YoY at 77,279.7.",
       "freshness": "local_cache",
-      "age_days": 349,
-      "value_label": "+4.0% YoY"
+      "age_days": 257,
+      "value_label": "+6.0% YoY"
     },
     {
       "name": "Federal Debt Growth",
@@ -305,11 +305,11 @@
       "weight": 0.12,
       "direction": "higher spreads mean credit stress is rising",
       "source": "FRED BAMLH0A0HYM2",
-      "as_of": "2026-06-11",
-      "note": "High-yield option-adjusted spread is 2.78 percentage points.",
+      "as_of": "2026-06-12",
+      "note": "High-yield option-adjusted spread is 2.71 percentage points.",
       "freshness": "local_cache",
-      "age_days": 4,
-      "value_label": "2.78%"
+      "age_days": 3,
+      "value_label": "2.71%"
     }
   ],
   "dashboard_signals": [
@@ -347,10 +347,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-06-15",
-      "note": "BTC spot is $66,811 versus a power-law anchor of $135,171, a -50.6% gap.",
+      "note": "BTC spot is $66,201 versus a power-law anchor of $135,171, a -51.0% gap.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-50.6%"
+      "value_label": "-51.0%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -360,10 +360,10 @@
       "direction": "higher means BTC is repricing versus the gold proxy",
       "source": "market_cache BTC/USD over PAXG/USD",
       "as_of": "2026-06-15",
-      "note": "BTC buys roughly 15.5 ounces of the PAXG gold proxy.",
+      "note": "BTC buys roughly 15.4 ounces of the PAXG gold proxy.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "15.5 oz"
+      "value_label": "15.4 oz"
     },
     {
       "name": "World Credit Growth",
@@ -372,11 +372,11 @@
       "weight": 0.28,
       "direction": "higher means the global stock of paper claims is expanding",
       "source": "FRED Q5ACAMUSDA",
-      "as_of": "2025-07-01",
-      "note": "Total reporting countries credit to the non-financial sector is +6.7% 3Y annualized at 257,926.8; this is the core monetary reset signal, with U.S. M2 demoted to context.",
+      "as_of": "2025-10-01",
+      "note": "Total reporting countries credit to the non-financial sector is +5.7% 3Y annualized at 262,666.1; this is the core monetary reset signal, with U.S. M2 demoted to context.",
       "freshness": "local_cache",
-      "age_days": 349,
-      "value_label": "+6.7% 3Y annualized"
+      "age_days": 257,
+      "value_label": "+5.7% 3Y annualized"
     }
   ],
   "debate_question": "Is AI producing real productivity faster than credit/fiscal stress is degrading money?"

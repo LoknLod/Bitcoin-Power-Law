@@ -6,9 +6,9 @@
   "metadata": {
     "as_of": "2026-06-15",
     "series_requested": 12,
-    "series_fetched": 7,
-    "series_preserved": 5,
-    "series_with_errors": 5,
+    "series_fetched": 8,
+    "series_preserved": 4,
+    "series_with_errors": 4,
     "observation_count": 7809,
     "endpoint": "https://fred.stlouisfed.org/graph/fredgraph.csv?id={series_id}"
   },
@@ -9783,96 +9783,100 @@
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=QUSCAMUSDA",
       "fetched_at": "2026-06-15T00:00:00Z",
-      "observation_count": 22,
-      "latest_date": "2025-07-01",
+      "observation_count": 23,
+      "latest_date": "2025-10-01",
       "observations": [
         {
           "date": "2020-04-01",
-          "value": "61219.756999999998"
+          "value": "61224.095000000001"
         },
         {
           "date": "2020-07-01",
-          "value": "61899.720000000001"
+          "value": "61905.538999999997"
         },
         {
           "date": "2020-10-01",
-          "value": "62702.593999999997"
+          "value": "62709.057999999997"
         },
         {
           "date": "2021-01-01",
-          "value": "62602.338000000003"
+          "value": "62611.779999999999"
         },
         {
           "date": "2021-04-01",
-          "value": "63880.699000000001"
+          "value": "63890.256999999998"
         },
         {
           "date": "2021-07-01",
-          "value": "64486.059999999998"
+          "value": "64494.440000000002"
         },
         {
           "date": "2021-10-01",
-          "value": "66021.282000000007"
+          "value": "66022.163"
         },
         {
           "date": "2022-01-01",
-          "value": "66236.207999999999"
+          "value": "66230.400999999998"
         },
         {
           "date": "2022-04-01",
-          "value": "65881.808999999994"
+          "value": "65871.876000000004"
         },
         {
           "date": "2022-07-01",
-          "value": "65713.805999999997"
+          "value": "65708.376999999993"
         },
         {
           "date": "2022-10-01",
-          "value": "66417.304000000004"
+          "value": "66413.764999999999"
         },
         {
           "date": "2023-01-01",
-          "value": "67595.362999999998"
+          "value": "67592.676000000007"
         },
         {
           "date": "2023-04-01",
-          "value": "67862.225000000006"
+          "value": "67861.679000000004"
         },
         {
           "date": "2023-07-01",
-          "value": "68336.448000000004"
+          "value": "68337.606"
         },
         {
           "date": "2023-10-01",
-          "value": "70223.381999999998"
+          "value": "70225.399000000005"
         },
         {
           "date": "2024-01-01",
-          "value": "70794.235000000001"
+          "value": "70797.819000000003"
         },
         {
           "date": "2024-04-01",
-          "value": "71097.850000000006"
+          "value": "71100.441000000006"
         },
         {
           "date": "2024-07-01",
-          "value": "73017.797999999995"
+          "value": "73017.197"
         },
         {
           "date": "2024-10-01",
-          "value": "72879.251999999993"
+          "value": "72880.274999999994"
         },
         {
           "date": "2025-01-01",
-          "value": "73858.171000000002"
+          "value": "73841.577000000005"
         },
         {
           "date": "2025-04-01",
-          "value": "74088.782999999996"
+          "value": "74143.975999999995"
         },
         {
           "date": "2025-07-01",
-          "value": "75951.051999999996"
+          "value": "76001.008000000002"
+        },
+        {
+          "date": "2025-10-01",
+          "value": "77279.663"
         }
       ]
     },
@@ -9881,96 +9885,100 @@
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=Q5ACAMUSDA",
       "fetched_at": "2026-06-15T00:00:00Z",
-      "observation_count": 22,
-      "latest_date": "2025-07-01",
+      "observation_count": 23,
+      "latest_date": "2025-10-01",
       "observations": [
         {
           "date": "2020-04-01",
-          "value": "204341.491000000009"
+          "value": "204460.176000000007"
         },
         {
           "date": "2020-07-01",
-          "value": "212063.962"
+          "value": "212201.991999999998"
         },
         {
           "date": "2020-10-01",
-          "value": "221794.545000000013"
+          "value": "222037.170000000013"
         },
         {
           "date": "2021-01-01",
-          "value": "219441.916999999987"
+          "value": "219668.978000000003"
         },
         {
           "date": "2021-04-01",
-          "value": "225296.310999999987"
+          "value": "225570.250999999989"
         },
         {
           "date": "2021-07-01",
-          "value": "225208.307000000001"
+          "value": "225532.269"
         },
         {
           "date": "2021-10-01",
-          "value": "227928.154999999999"
+          "value": "228289.527999999991"
         },
         {
           "date": "2022-01-01",
-          "value": "228419.280999999988"
+          "value": "228754.915000000008"
         },
         {
           "date": "2022-04-01",
-          "value": "220142.920000000013"
+          "value": "220417.714000000007"
         },
         {
           "date": "2022-07-01",
-          "value": "212311.627000000008"
+          "value": "212546.399000000005"
         },
         {
           "date": "2022-10-01",
-          "value": "222340.991000000009"
+          "value": "222587.494999999995"
         },
         {
           "date": "2023-01-01",
-          "value": "227637.671999999991"
+          "value": "227913.926000000007"
         },
         {
           "date": "2023-04-01",
-          "value": "225381.668999999994"
+          "value": "225661.587999999989"
         },
         {
           "date": "2023-07-01",
-          "value": "224267.893000000011"
+          "value": "224564.690000000002"
         },
         {
           "date": "2023-10-01",
-          "value": "234559.535000000003"
+          "value": "234883.901000000013"
         },
         {
           "date": "2024-01-01",
-          "value": "233669.511999999988"
+          "value": "233982.763000000006"
         },
         {
           "date": "2024-04-01",
-          "value": "233983.521000000008"
+          "value": "234281.736999999994"
         },
         {
           "date": "2024-07-01",
-          "value": "245576.489000000001"
+          "value": "245892.946999999986"
         },
         {
           "date": "2024-10-01",
-          "value": "236597.581999999995"
+          "value": "236903.15400000001"
         },
         {
           "date": "2025-01-01",
-          "value": "244348.215999999986"
+          "value": "244695.606"
         },
         {
           "date": "2025-04-01",
-          "value": "254491.606999999989"
+          "value": "254986.798999999999"
         },
         {
           "date": "2025-07-01",
-          "value": "257926.820000000007"
+          "value": "258520.728000000003"
+        },
+        {
+          "date": "2025-10-01",
+          "value": "262666.113000000012"
         }
       ]
     },
@@ -28217,24 +28225,12 @@
     },
     "BAMLH0A0HYM2": {
       "desc": "ICE BofA US High Yield Index Option-Adjusted Spread",
-      "source": "existing_cache_after_refresh_error",
+      "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2",
       "fetched_at": "2026-06-15T00:00:00Z",
-      "observation_count": 787,
-      "latest_date": "2026-06-11",
+      "observation_count": 785,
+      "latest_date": "2026-06-12",
       "observations": [
-        {
-          "date": "2023-06-13",
-          "value": "4.18"
-        },
-        {
-          "date": "2023-06-14",
-          "value": "4.18"
-        },
-        {
-          "date": "2023-06-15",
-          "value": "4.21"
-        },
         {
           "date": "2023-06-16",
           "value": "4.15"
@@ -31370,9 +31366,12 @@
         {
           "date": "2026-06-11",
           "value": "2.78"
+        },
+        {
+          "date": "2026-06-12",
+          "value": "2.71"
         }
-      ],
-      "error": "refresh failed: curl failed: Command '['curl', '-fsSL', '--connect-timeout', '8', '--max-time', '20', '--retry', '1', '--retry-delay', '1', 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2&cosd=2020-06-15&coed=2026-06-15']' timed out after 25 seconds; urllib fallback failed: The read operation timed out"
+      ]
     }
   },
   "errors": [
@@ -31391,10 +31390,6 @@
     {
       "series": "T10YIE",
       "error": "refresh failed: curl failed: Command '['curl', '-fsSL', '--connect-timeout', '8', '--max-time', '20', '--retry', '1', '--retry-delay', '1', 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=T10YIE&cosd=2020-06-15&coed=2026-06-15']' timed out after 25 seconds; urllib fallback failed: The read operation timed out"
-    },
-    {
-      "series": "BAMLH0A0HYM2",
-      "error": "refresh failed: curl failed: Command '['curl', '-fsSL', '--connect-timeout', '8', '--max-time', '20', '--retry', '1', '--retry-delay', '1', 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2&cosd=2020-06-15&coed=2026-06-15']' timed out after 25 seconds; urllib fallback failed: The read operation timed out"
     }
   ]
 }
