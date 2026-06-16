@@ -1,15 +1,15 @@
 {
   "schema_version": "fred_cache.v0.1",
-  "generated": "2026-06-15T00:00:00Z",
-  "generated_at": "2026-06-15T00:00:00Z",
+  "generated": "2026-06-16T00:00:00Z",
+  "generated_at": "2026-06-16T00:00:00Z",
   "source": "fred_graph_csv",
   "metadata": {
-    "as_of": "2026-06-15",
+    "as_of": "2026-06-16",
     "series_requested": 12,
-    "series_fetched": 8,
-    "series_preserved": 4,
-    "series_with_errors": 4,
-    "observation_count": 7809,
+    "series_fetched": 12,
+    "series_preserved": 0,
+    "series_with_errors": 0,
+    "observation_count": 7807,
     "endpoint": "https://fred.stlouisfed.org/graph/fredgraph.csv?id={series_id}"
   },
   "series": {
@@ -17,7 +17,7 @@
       "desc": "Fed Balance Sheet (Weekly, millions USD)",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=WALCL",
-      "fetched_at": "2026-06-15T00:00:00Z",
+      "fetched_at": "2026-06-16T00:00:00Z",
       "observation_count": 313,
       "latest_date": "2026-06-10",
       "observations": [
@@ -1277,52 +1277,12 @@
     },
     "RRPONTSYD": {
       "desc": "Overnight Reverse Repo (Daily, billions USD)",
-      "source": "existing_cache_after_refresh_error",
+      "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=RRPONTSYD",
-      "fetched_at": "2026-06-15T00:00:00Z",
-      "observation_count": 1497,
-      "latest_date": "2026-06-01",
+      "fetched_at": "2026-06-16T00:00:00Z",
+      "observation_count": 1498,
+      "latest_date": "2026-06-16",
       "observations": [
-        {
-          "date": "2020-06-02",
-          "value": "2.013"
-        },
-        {
-          "date": "2020-06-03",
-          "value": "0.013"
-        },
-        {
-          "date": "2020-06-04",
-          "value": "0"
-        },
-        {
-          "date": "2020-06-05",
-          "value": "0"
-        },
-        {
-          "date": "2020-06-08",
-          "value": "0"
-        },
-        {
-          "date": "2020-06-09",
-          "value": "1.252"
-        },
-        {
-          "date": "2020-06-10",
-          "value": "0.012"
-        },
-        {
-          "date": "2020-06-11",
-          "value": "0.375"
-        },
-        {
-          "date": "2020-06-12",
-          "value": "0"
-        },
-        {
-          "date": "2020-06-15",
-          "value": "0.003"
-        },
         {
           "date": "2020-06-16",
           "value": "4"
@@ -7270,15 +7230,58 @@
         {
           "date": "2026-06-01",
           "value": "1.302"
+        },
+        {
+          "date": "2026-06-02",
+          "value": "2.502"
+        },
+        {
+          "date": "2026-06-03",
+          "value": "2.062"
+        },
+        {
+          "date": "2026-06-04",
+          "value": "1.122"
+        },
+        {
+          "date": "2026-06-05",
+          "value": "0.761"
+        },
+        {
+          "date": "2026-06-08",
+          "value": "1.832"
+        },
+        {
+          "date": "2026-06-09",
+          "value": "0.577"
+        },
+        {
+          "date": "2026-06-10",
+          "value": "0.387"
+        },
+        {
+          "date": "2026-06-11",
+          "value": "0.46"
+        },
+        {
+          "date": "2026-06-12",
+          "value": "0.454"
+        },
+        {
+          "date": "2026-06-15",
+          "value": "0.581"
+        },
+        {
+          "date": "2026-06-16",
+          "value": "10.721"
         }
-      ],
-      "error": "refresh failed: curl failed: Command '['curl', '-fsSL', '--connect-timeout', '8', '--max-time', '20', '--retry', '1', '--retry-delay', '1', 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=RRPONTSYD&cosd=2020-06-15&coed=2026-06-15']' timed out after 25 seconds; urllib fallback failed: The read operation timed out"
+      ]
     },
     "WTREGEN": {
       "desc": "Treasury General Account (Weekly, millions USD)",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=WTREGEN",
-      "fetched_at": "2026-06-15T00:00:00Z",
+      "fetched_at": "2026-06-16T00:00:00Z",
       "observation_count": 313,
       "latest_date": "2026-06-10",
       "observations": [
@@ -8540,14 +8543,10 @@
       "desc": "M2 Money Stock (Weekly, billions USD)",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=WM2NS",
-      "fetched_at": "2026-06-15T00:00:00Z",
-      "observation_count": 308,
+      "fetched_at": "2026-06-16T00:00:00Z",
+      "observation_count": 307,
       "latest_date": "2026-05-04",
       "observations": [
-        {
-          "date": "2020-06-15",
-          "value": "18161.799999999999"
-        },
         {
           "date": "2020-06-22",
           "value": "18152.099999999999"
@@ -9782,7 +9781,7 @@
       "desc": "U.S. total credit to non-financial sector, adjusted for breaks",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=QUSCAMUSDA",
-      "fetched_at": "2026-06-15T00:00:00Z",
+      "fetched_at": "2026-06-16T00:00:00Z",
       "observation_count": 23,
       "latest_date": "2025-10-01",
       "observations": [
@@ -9884,7 +9883,7 @@
       "desc": "Total reporting countries total credit to non-financial sector, adjusted for breaks",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=Q5ACAMUSDA",
-      "fetched_at": "2026-06-15T00:00:00Z",
+      "fetched_at": "2026-06-16T00:00:00Z",
       "observation_count": 23,
       "latest_date": "2025-10-01",
       "observations": [
@@ -9986,7 +9985,7 @@
       "desc": "Federal Debt: Total Public Debt",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=GFDEBTN",
-      "fetched_at": "2026-06-15T00:00:00Z",
+      "fetched_at": "2026-06-16T00:00:00Z",
       "observation_count": 23,
       "latest_date": "2025-10-01",
       "observations": [
@@ -10088,7 +10087,7 @@
       "desc": "Federal government current expenditures: interest payments",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=A091RC1Q027SBEA",
-      "fetched_at": "2026-06-15T00:00:00Z",
+      "fetched_at": "2026-06-16T00:00:00Z",
       "observation_count": 24,
       "latest_date": "2026-01-01",
       "observations": [
@@ -10192,20 +10191,12 @@
     },
     "DGS10": {
       "desc": "10-Year Treasury Constant Maturity Rate",
-      "source": "existing_cache_after_refresh_error",
+      "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10",
-      "fetched_at": "2026-06-15T00:00:00Z",
-      "observation_count": 1500,
-      "latest_date": "2026-06-11",
+      "fetched_at": "2026-06-16T00:00:00Z",
+      "observation_count": 1499,
+      "latest_date": "2026-06-12",
       "observations": [
-        {
-          "date": "2020-06-12",
-          "value": "0.71"
-        },
-        {
-          "date": "2020-06-15",
-          "value": "0.71"
-        },
         {
           "date": "2020-06-16",
           "value": "0.75"
@@ -16197,26 +16188,21 @@
         {
           "date": "2026-06-11",
           "value": "4.45"
+        },
+        {
+          "date": "2026-06-12",
+          "value": "4.48"
         }
-      ],
-      "error": "refresh failed: curl failed: Command '['curl', '-fsSL', '--connect-timeout', '8', '--max-time', '20', '--retry', '1', '--retry-delay', '1', 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10&cosd=2020-06-15&coed=2026-06-15']' timed out after 25 seconds; urllib fallback failed: The read operation timed out"
+      ]
     },
     "DFII10": {
       "desc": "10-Year Treasury Inflation-Indexed Constant Maturity Rate",
-      "source": "existing_cache_after_refresh_error",
+      "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFII10",
-      "fetched_at": "2026-06-15T00:00:00Z",
-      "observation_count": 1500,
-      "latest_date": "2026-06-11",
+      "fetched_at": "2026-06-16T00:00:00Z",
+      "observation_count": 1499,
+      "latest_date": "2026-06-12",
       "observations": [
-        {
-          "date": "2020-06-12",
-          "value": "-0.5"
-        },
-        {
-          "date": "2020-06-15",
-          "value": "-0.52"
-        },
         {
           "date": "2020-06-16",
           "value": "-0.52"
@@ -22208,58 +22194,21 @@
         {
           "date": "2026-06-11",
           "value": "2.16"
+        },
+        {
+          "date": "2026-06-12",
+          "value": "2.17"
         }
-      ],
-      "error": "refresh failed: curl failed: Command '['curl', '-fsSL', '--connect-timeout', '8', '--max-time', '20', '--retry', '1', '--retry-delay', '1', 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFII10&cosd=2020-06-15&coed=2026-06-15']' timed out after 25 seconds; urllib fallback failed: The read operation timed out"
+      ]
     },
     "T10YIE": {
       "desc": "10-Year Breakeven Inflation Rate",
-      "source": "existing_cache_after_refresh_error",
+      "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=T10YIE",
-      "fetched_at": "2026-06-15T00:00:00Z",
+      "fetched_at": "2026-06-16T00:00:00Z",
       "observation_count": 1500,
-      "latest_date": "2026-06-01",
+      "latest_date": "2026-06-15",
       "observations": [
-        {
-          "date": "2020-06-02",
-          "value": "1.18"
-        },
-        {
-          "date": "2020-06-03",
-          "value": "1.21"
-        },
-        {
-          "date": "2020-06-04",
-          "value": "1.22"
-        },
-        {
-          "date": "2020-06-05",
-          "value": "1.27"
-        },
-        {
-          "date": "2020-06-08",
-          "value": "1.28"
-        },
-        {
-          "date": "2020-06-09",
-          "value": "1.26"
-        },
-        {
-          "date": "2020-06-10",
-          "value": "1.27"
-        },
-        {
-          "date": "2020-06-11",
-          "value": "1.21"
-        },
-        {
-          "date": "2020-06-12",
-          "value": "1.21"
-        },
-        {
-          "date": "2020-06-15",
-          "value": "1.23"
-        },
         {
           "date": "2020-06-16",
           "value": "1.27"
@@ -28219,22 +28168,57 @@
         {
           "date": "2026-06-01",
           "value": "2.4"
+        },
+        {
+          "date": "2026-06-02",
+          "value": "2.39"
+        },
+        {
+          "date": "2026-06-03",
+          "value": "2.38"
+        },
+        {
+          "date": "2026-06-04",
+          "value": "2.36"
+        },
+        {
+          "date": "2026-06-05",
+          "value": "2.36"
+        },
+        {
+          "date": "2026-06-08",
+          "value": "2.35"
+        },
+        {
+          "date": "2026-06-09",
+          "value": "2.33"
+        },
+        {
+          "date": "2026-06-10",
+          "value": "2.34"
+        },
+        {
+          "date": "2026-06-11",
+          "value": "2.29"
+        },
+        {
+          "date": "2026-06-12",
+          "value": "2.31"
+        },
+        {
+          "date": "2026-06-15",
+          "value": "2.32"
         }
-      ],
-      "error": "refresh failed: curl failed: Command '['curl', '-fsSL', '--connect-timeout', '8', '--max-time', '20', '--retry', '1', '--retry-delay', '1', 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=T10YIE&cosd=2020-06-15&coed=2026-06-15']' timed out after 25 seconds; urllib fallback failed: The read operation timed out"
+      ]
     },
     "BAMLH0A0HYM2": {
       "desc": "ICE BofA US High Yield Index Option-Adjusted Spread",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2",
-      "fetched_at": "2026-06-15T00:00:00Z",
+      "fetched_at": "2026-06-16T00:00:00Z",
       "observation_count": 785,
-      "latest_date": "2026-06-12",
+      "latest_date": "2026-06-15",
       "observations": [
-        {
-          "date": "2023-06-16",
-          "value": "4.15"
-        },
         {
           "date": "2023-06-19",
           "value": "4.15"
@@ -31370,26 +31354,13 @@
         {
           "date": "2026-06-12",
           "value": "2.71"
+        },
+        {
+          "date": "2026-06-15",
+          "value": "2.66"
         }
       ]
     }
   },
-  "errors": [
-    {
-      "series": "RRPONTSYD",
-      "error": "refresh failed: curl failed: Command '['curl', '-fsSL', '--connect-timeout', '8', '--max-time', '20', '--retry', '1', '--retry-delay', '1', 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=RRPONTSYD&cosd=2020-06-15&coed=2026-06-15']' timed out after 25 seconds; urllib fallback failed: The read operation timed out"
-    },
-    {
-      "series": "DGS10",
-      "error": "refresh failed: curl failed: Command '['curl', '-fsSL', '--connect-timeout', '8', '--max-time', '20', '--retry', '1', '--retry-delay', '1', 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10&cosd=2020-06-15&coed=2026-06-15']' timed out after 25 seconds; urllib fallback failed: The read operation timed out"
-    },
-    {
-      "series": "DFII10",
-      "error": "refresh failed: curl failed: Command '['curl', '-fsSL', '--connect-timeout', '8', '--max-time', '20', '--retry', '1', '--retry-delay', '1', 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFII10&cosd=2020-06-15&coed=2026-06-15']' timed out after 25 seconds; urllib fallback failed: The read operation timed out"
-    },
-    {
-      "series": "T10YIE",
-      "error": "refresh failed: curl failed: Command '['curl', '-fsSL', '--connect-timeout', '8', '--max-time', '20', '--retry', '1', '--retry-delay', '1', 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=T10YIE&cosd=2020-06-15&coed=2026-06-15']' timed out after 25 seconds; urllib fallback failed: The read operation timed out"
-    }
-  ]
+  "errors": []
 }
