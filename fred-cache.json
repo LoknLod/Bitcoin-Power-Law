@@ -9,7 +9,7 @@
     "series_fetched": 12,
     "series_preserved": 0,
     "series_with_errors": 0,
-    "observation_count": 7807,
+    "observation_count": 7810,
     "endpoint": "https://fred.stlouisfed.org/graph/fredgraph.csv?id={series_id}"
   },
   "series": {
@@ -10194,8 +10194,8 @@
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10",
       "fetched_at": "2026-06-16T00:00:00Z",
-      "observation_count": 1499,
-      "latest_date": "2026-06-12",
+      "observation_count": 1500,
+      "latest_date": "2026-06-15",
       "observations": [
         {
           "date": "2020-06-16",
@@ -16192,6 +16192,10 @@
         {
           "date": "2026-06-12",
           "value": "4.48"
+        },
+        {
+          "date": "2026-06-15",
+          "value": "4.47"
         }
       ]
     },
@@ -16200,8 +16204,8 @@
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFII10",
       "fetched_at": "2026-06-16T00:00:00Z",
-      "observation_count": 1499,
-      "latest_date": "2026-06-12",
+      "observation_count": 1500,
+      "latest_date": "2026-06-15",
       "observations": [
         {
           "date": "2020-06-16",
@@ -22198,6 +22202,10 @@
         {
           "date": "2026-06-12",
           "value": "2.17"
+        },
+        {
+          "date": "2026-06-15",
+          "value": "2.15"
         }
       ]
     },
@@ -22206,8 +22214,8 @@
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=T10YIE",
       "fetched_at": "2026-06-16T00:00:00Z",
-      "observation_count": 1500,
-      "latest_date": "2026-06-15",
+      "observation_count": 1501,
+      "latest_date": "2026-06-16",
       "observations": [
         {
           "date": "2020-06-16",
@@ -28208,6 +28216,10 @@
         {
           "date": "2026-06-15",
           "value": "2.32"
+        },
+        {
+          "date": "2026-06-16",
+          "value": "2.29"
         }
       ]
     },

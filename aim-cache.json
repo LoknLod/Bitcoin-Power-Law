@@ -111,10 +111,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-06-16",
-      "note": "BTC spot is $66,058 versus a power-law anchor of $135,295, a -51.2% gap.",
+      "note": "BTC spot is $65,715 versus a power-law anchor of $135,295, a -51.4% gap.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-51.2%"
+      "value_label": "-51.4%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -124,10 +124,10 @@
       "direction": "higher means BTC is repricing versus the gold proxy",
       "source": "market_cache BTC/USD over PAXG/USD",
       "as_of": "2026-06-16",
-      "note": "BTC buys roughly 15.3 ounces of the PAXG gold proxy.",
+      "note": "BTC buys roughly 15.2 ounces of the PAXG gold proxy.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "15.3 oz"
+      "value_label": "15.2 oz"
     },
     {
       "name": "Gold Proxy Price",
@@ -137,10 +137,10 @@
       "direction": "higher means the gold shield is repricing in USD terms",
       "source": "pax-gold proxy",
       "as_of": "2026-06-16",
-      "note": "PAXG gold proxy is $4,331.",
+      "note": "PAXG gold proxy is $4,323.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "$4,331"
+      "value_label": "$4,323"
     },
     {
       "name": "U.S. M2 Liquidity Context",
@@ -266,11 +266,11 @@
       "weight": 0.04,
       "direction": "higher yields tighten discount rates and debt-service conditions",
       "source": "FRED DGS10",
-      "as_of": "2026-06-12",
-      "note": "10Y Treasury yield is 4.48%.",
+      "as_of": "2026-06-15",
+      "note": "10Y Treasury yield is 4.47%.",
       "freshness": "local_cache",
-      "age_days": 4,
-      "value_label": "4.48%"
+      "age_days": 1,
+      "value_label": "4.47%"
     },
     {
       "name": "10Y Real Yield",
@@ -279,11 +279,11 @@
       "weight": 0.1,
       "direction": "higher real yields increase monetary and credit pressure",
       "source": "FRED DFII10",
-      "as_of": "2026-06-12",
-      "note": "10Y real yield is 2.17%.",
+      "as_of": "2026-06-15",
+      "note": "10Y real yield is 2.15%.",
       "freshness": "local_cache",
-      "age_days": 4,
-      "value_label": "2.17%"
+      "age_days": 1,
+      "value_label": "2.15%"
     },
     {
       "name": "10Y Breakeven Inflation",
@@ -292,11 +292,11 @@
       "weight": 0.04,
       "direction": "higher breakevens can signal inflation repricing pressure",
       "source": "FRED T10YIE",
-      "as_of": "2026-06-15",
-      "note": "10Y breakeven inflation is 2.32%.",
+      "as_of": "2026-06-16",
+      "note": "10Y breakeven inflation is 2.29%.",
       "freshness": "local_cache",
-      "age_days": 1,
-      "value_label": "2.32%"
+      "age_days": 0,
+      "value_label": "2.29%"
     },
     {
       "name": "High-Yield Option-Adjusted Spread",
@@ -347,10 +347,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-06-16",
-      "note": "BTC spot is $66,058 versus a power-law anchor of $135,295, a -51.2% gap.",
+      "note": "BTC spot is $65,715 versus a power-law anchor of $135,295, a -51.4% gap.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-51.2%"
+      "value_label": "-51.4%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -360,10 +360,10 @@
       "direction": "higher means BTC is repricing versus the gold proxy",
       "source": "market_cache BTC/USD over PAXG/USD",
       "as_of": "2026-06-16",
-      "note": "BTC buys roughly 15.3 ounces of the PAXG gold proxy.",
+      "note": "BTC buys roughly 15.2 ounces of the PAXG gold proxy.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "15.3 oz"
+      "value_label": "15.2 oz"
     },
     {
       "name": "World Credit Growth",
