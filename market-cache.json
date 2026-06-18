@@ -4,18 +4,18 @@
   "source": "coingecko_simple_price",
   "assets": {
     "btc_usd": {
-      "price": 62609.0,
+      "price": 62823.0,
       "source": "coingecko bitcoin",
       "label": "BTC/USD spot",
       "provider": "coingecko",
-      "as_of": "2026-06-18T16:40:13Z"
+      "as_of": "2026-06-18T23:00:06Z"
     },
     "gold_usd": {
-      "price": 4212.4,
+      "price": 4201.98,
       "source": "pax-gold proxy",
       "label": "pax-gold proxy",
       "provider": "coingecko",
-      "as_of": "2026-06-18T16:40:11Z"
+      "as_of": "2026-06-18T22:59:48Z"
     }
   },
   "errors": [],
