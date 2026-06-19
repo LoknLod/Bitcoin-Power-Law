@@ -1,7 +1,7 @@
 {
   "schema_version": "market_history_cache.v0.1",
   "generated_at": "2026-06-19T00:00:00Z",
-  "source": "coingecko_market_chart",
+  "source": "existing_market_history_cache",
   "days": 90,
   "assets": {
     "btc_usd": {
@@ -559,7 +559,8 @@
   "metadata": {
     "as_of": "2026-06-19",
     "row_count": 90,
-    "preserved_existing": false,
-    "error_count": 0
+    "preserved_existing": true,
+    "error_count": 0,
+    "offline_replay": true
   }
 }
