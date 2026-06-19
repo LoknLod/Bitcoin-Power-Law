@@ -518,11 +518,13 @@
         hard_money_repricing: { score: 50, confidence: "demo", interpretation: "Embedded demo placeholder; generate aim-cache.json for scored data." }
       },
       aim5_allocation: [
-        { sleeve: "AI Productive Equity", target_pct: 40, role: "Own profitable AI platforms and infrastructure." },
-        { sleeve: "Hard Money / Monetary Reset Hedge", target_pct: 25, role: "BTC spear, gold shield." },
-        { sleeve: "Energy / Power / Real Assets", target_pct: 15, role: "Own physical bottlenecks behind AI and hard money." },
-        { sleeve: "Runway / Optionality", target_pct: 15, role: "Dry powder and forced-selling protection." },
-        { sleeve: "Spec AIM Venture Basket", target_pct: 5, role: "Small sandbox for asymmetric moonshots." }
+        { sleeve: "AI Productive Equity", target_pct: 46, role: "Semiconductors, AI platform, and test infrastructure bottlenecks." },
+        { sleeve: "Agent Toll Collectors", target_pct: 11, role: "Toll collectors every agent needs: payments, trust, proprietary data." },
+        { sleeve: "Energy / Power / Real Assets", target_pct: 9.5, role: "Power generation and grid bottleneck behind AI electrification." },
+        { sleeve: "Hard Money / Monetary Reset Hedge", target_pct: 7.5, role: "Gold hedge. BTC lives outside per v0.4 doctrine." },
+        { sleeve: "Healthcare / Defense", target_pct: 13, role: "Secular growth and geopolitical hedge." },
+        { sleeve: "Critical Minerals", target_pct: 6, role: "Rare-earth optionality for electrification and semiconductor supply." },
+        { sleeve: "Runway / Dry Powder", target_pct: 7, role: "T-bills for drawdown ammunition and deployment triggers." }
       ],
       signals: [
         {
@@ -705,10 +707,13 @@
     function sleeveKey(label) {
       const normalized = String(label || "").toLowerCase();
       if (normalized.includes("ai productive")) return "ai_productive_equity";
+      if (normalized.includes("agent toll")) return "agent_toll_collectors";
       if (normalized.includes("hard money")) return "hard_money";
-      if (normalized.includes("energy")) return "energy_power_real_assets";
-      if (normalized.includes("runway")) return "runway_optionality";
-      if (normalized.includes("spec")) return "spec_aim_venture";
+      if (normalized.includes("energy") || normalized.includes("power")) return "energy_power_real_assets";
+      if (normalized.includes("healthcare") || normalized.includes("defense")) return "healthcare_defense";
+      if (normalized.includes("critical minerals")) return "critical_minerals";
+      if (normalized.includes("spec") || normalized.includes("test bottleneck")) return "spec_aim_venture";
+      if (normalized.includes("runway") || normalized.includes("dry powder")) return "runway_optionality";
       return slug(label).replaceAll("-", "_");
     }
 

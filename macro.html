@@ -58,17 +58,15 @@
         }
         
         .price-label { color: #aaa; font-size: 0.9em; }
-        
-        .price-value {
-            font-size: 1.3em;
-            font-weight: 600;
-        }
+        .price-value { font-size: 1.3em; font-weight: 600; }
         
         .btc { color: #f7931a; }
         .gold { color: #ffd700; }
         .ratio { color: #4ade80; }
         .neutral { color: #fff; }
         .liquidity { color: #60a5fa; }
+        .stress { color: #ef4444; }
+        .safe { color: #4ade80; }
         
         .highlight-card {
             background: linear-gradient(135deg, rgba(247,147,26,0.15) 0%, rgba(247,147,26,0.05) 100%);
@@ -87,34 +85,6 @@
             font-size: 0.85em;
             color: #aaa;
             margin-top: 5px;
-        }
-        
-        .change {
-            font-size: 0.8em;
-            padding: 3px 8px;
-            border-radius: 8px;
-            margin-left: 8px;
-        }
-        
-        .change.up { background: rgba(74,222,128,0.2); color: #4ade80; }
-        .change.down { background: rgba(239,68,68,0.2); color: #ef4444; }
-        
-        .mini-chart {
-            height: 60px;
-            background: rgba(255,255,255,0.03);
-            border-radius: 8px;
-            margin-top: 15px;
-            display: flex;
-            align-items: flex-end;
-            padding: 5px;
-            gap: 2px;
-        }
-        
-        .bar {
-            flex: 1;
-            background: linear-gradient(to top, #f7931a, #ffab40);
-            border-radius: 2px 2px 0 0;
-            min-height: 5px;
         }
         
         .metrics-grid {
@@ -193,6 +163,24 @@
             opacity: 0.88;
         }
         
+        .mini-chart {
+            height: 60px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+            margin-top: 15px;
+            display: flex;
+            align-items: flex-end;
+            padding: 5px;
+            gap: 2px;
+        }
+        
+        .bar {
+            flex: 1;
+            background: linear-gradient(to top, #f7931a, #ffab40);
+            border-radius: 2px 2px 0 0;
+            min-height: 5px;
+        }
+        
         .update-time {
             text-align: center;
             font-size: 0.7em;
@@ -221,62 +209,108 @@
             color: #f7931a;
             background: rgba(247,147,26,0.15);
         }
+
+        /* Thesis Break Watch */
+        .thesis-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .thesis-item:last-child { border-bottom: none; }
+        
+        .thesis-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-top: 4px;
+            flex-shrink: 0;
+        }
+        .thesis-dot.green { background: #4ade80; box-shadow: 0 0 6px rgba(74,222,128,0.4); }
+        .thesis-dot.yellow { background: #fbbf24; box-shadow: 0 0 6px rgba(251,191,36,0.4); }
+        .thesis-dot.red { background: #ef4444; box-shadow: 0 0 6px rgba(239,68,68,0.4); }
+        .thesis-dot.gray { background: #555; }
+        
+        .thesis-content { flex: 1; }
+        .thesis-label { font-size: 0.85em; color: #ddd; line-height: 1.35; }
+        .thesis-status { font-size: 0.7em; color: #888; margin-top: 2px; }
+
+        /* Signal gauge */
+        .signal-bar {
+            height: 6px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+        .signal-fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 400ms ease;
+        }
+        .signal-fill.low { background: linear-gradient(90deg, #4ade80, #22c55e); }
+        .signal-fill.med { background: linear-gradient(90deg, #fbbf24, #f59e0b); }
+        .signal-fill.high { background: linear-gradient(90deg, #ef4444, #dc2626); }
+
+        .debate-card {
+            background: linear-gradient(135deg, rgba(96,165,250,0.1) 0%, rgba(247,147,26,0.08) 100%);
+            border-color: rgba(96,165,250,0.2);
+        }
+        .debate-text {
+            font-size: 0.95em;
+            font-weight: 600;
+            line-height: 1.4;
+            text-align: center;
+        }
+        .debate-sub {
+            font-size: 0.75em;
+            color: #888;
+            text-align: center;
+            margin-top: 8px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>BTC/AIM Macro Regime</h1>
-        <p class="subtitle">Liquidity • Credit Stress • Hard Money • Energy Bottlenecks</p>
+        <p class="subtitle">Thesis health • Credit & liquidity stress • Hard money</p>
         
-                <div class="nav-links">
+        <div class="nav-links">
             <a href="index.html">Dashboard</a>
             <a href="power-law.html">Power Law</a>
             <a href="macro.html" class="active">Macro</a>
         </div>
         
-        <!-- BTC/Gold Ratio Card -->
-        <div class="card highlight-card">
-            <div class="card-title">₿ Bitcoin / Gold Ratio</div>
-            <div class="big-number" id="btc-gold-ratio">--</div>
-            <div class="big-label">ounces of gold per BTC</div>
+        <!-- Thesis Debate Question -->
+        <div class="card debate-card">
+            <div class="card-title">⚖️ Thesis Debate</div>
+            <div class="debate-text">Is AI producing real productivity faster than credit/fiscal stress is degrading money?</div>
+            <div class="debate-sub">Every signal below maps to one side of this question.</div>
         </div>
         
-        <!-- BTC/Gold Ratio Chart -->
+        <!-- Thesis Break Watch -->
         <div class="card">
-            <div class="card-title">📈 BTC/Gold Ratio (90 Days)</div>
-            <div class="empty-chart" id="ratio-chart-note">
-                Historical BTC/gold chart is not available from the local cache yet.
+            <div class="card-title">🚨 Thesis Break Watch (v0.4)</div>
+            <div id="thesis-break-list">
+                <div class="info-text">Loading thesis break conditions...</div>
             </div>
-            <div class="info-text" id="chart-info">Current ratio is computed from market-cache.json.</div>
+            <div class="source-note">Conditions from retirement_buildout_thesis_v0.4.json, embedded in macro.html for static rendering. Manual items require periodic review until automated data sources are wired.</div>
         </div>
         
-        <!-- Price Comparison -->
+        <!-- Credit & Liquidity Stress -->
         <div class="card">
-            <div class="card-title">💰 Current Prices</div>
-            <div class="price-row">
-                <span class="price-label">Bitcoin (BTC)</span>
-                <span class="price-value btc" id="btc-price">$--</span>
+            <div class="card-title">📊 Credit & Liquidity Stress</div>
+            <div id="credit-stress">
+                <div class="info-text">Loading FRED credit data...</div>
             </div>
-            <div class="price-row">
-                <span class="price-label">Gold (XAU/oz)</span>
-                <span class="price-value gold" id="gold-price">$--</span>
-            </div>
-            <div class="price-row">
-                <span class="price-label">Silver (XAG/oz)</span>
-                <span class="price-value neutral" id="silver-price">$--</span>
-            </div>
-            
-            <div class="section-divider"></div>
-            
-            <div class="metrics-grid">
-                <div class="metric-box">
-                    <div class="metric-value" id="btc-oz-ratio">--</div>
-                    <div class="metric-label">BTC in Gold oz</div>
-                </div>
-                <div class="metric-box">
-                    <div class="metric-value" id="btc-silver-ratio">--</div>
-                    <div class="metric-label">BTC in Silver oz</div>
-                </div>
+        </div>
+        
+        <!-- Monetary Reset Signals -->
+        <div class="card">
+            <div class="card-title">💵 Monetary Reset: Fiscal & Credit Growth</div>
+            <div id="monetary-reset">
+                <div class="info-text">Loading monetary reset data...</div>
             </div>
         </div>
         
@@ -300,16 +334,16 @@
                 <span class="price-label"><strong>= Net Liquidity</strong></span>
                 <span class="price-value liquidity" id="net-liquidity" style="font-size: 1.5em;">$--</span>
             </div>
-            <div class="info-text" id="liquidity-info">
+            <div class="info-text">
                 💡 Net Liquidity = Fed Balance Sheet − RRP − TGA<br>
                 Bitcoin correlates strongly with Fed liquidity flows.
             </div>
             <div class="source-note" id="liquidity-source"></div>
         </div>
         
-        <!-- Monetary Reset Subset -->
+        <!-- World Credit Growth -->
         <div class="card">
-            <div class="card-title">💵 Monetary Reset Subset: World Credit Growth</div>
+            <div class="card-title">🌍 World Credit Growth</div>
             <div class="price-row">
                 <span class="price-label">World Credit Latest</span>
                 <span class="price-value liquidity" id="world-credit-value">$--</span>
@@ -330,96 +364,48 @@
                 Uses FRED series Q5ACAMUSDA; M2 becomes secondary domestic context.
             </div>
         </div>
-
-        <!-- BTC vs Software Stocks (IGV) -->
-        <div class="card">
-            <div class="card-title">💻 BTC vs Software Stocks (IGV)</div>
-            <div class="metrics-grid">
-                <div class="metric-box">
-                    <div class="metric-value" style="color: #f97316;">0.73</div>
-                    <div class="metric-label">30d BTC/IGV Correlation</div>
-                </div>
-                <div class="metric-box">
-                    <div class="metric-value" style="color: #ef4444;">~-20%</div>
-                    <div class="metric-label">IGV YTD</div>
-                </div>
-                <div class="metric-box">
-                    <div class="metric-value" style="color: #ef4444;">~-16%</div>
-                    <div class="metric-label">BTC YTD</div>
-                </div>
-                <div class="metric-box">
-                    <a href="https://www.ishares.com/us/products/239769/ishares-expanded-techsoftware-sector-etf" target="_blank" style="color: #60a5fa; text-decoration: none;">
-                        <div class="metric-value">📈</div>
-                        <div class="metric-label">IGV Chart</div>
-                    </a>
-                </div>
-            </div>
-            <div class="section-divider"></div>
-            <div style="background: rgba(249,115,22,0.1); border-left: 3px solid #f97316; padding: 12px; border-radius: 0 8px 8px 0; margin: 10px 0;">
-                <div style="font-size: 0.85em; color: #f97316; font-weight: 600; margin-bottom: 6px;">Jordi Visser's Thesis</div>
-                <div style="font-size: 0.8em; color: #ccc; line-height: 1.5;">
-                    Market currently treats BTC as <strong>"open-source software"</strong> — selling it alongside SaaS stocks.<br>
-                    <strong>Bull case:</strong> BTC decouples when market realizes it's <em>scarce</em>, not software.
-                </div>
-            </div>
-            <div class="metrics-grid" style="margin-top: 12px;">
-                <div class="metric-box">
-                    <a href="https://www.coindesk.com/markets/2026/02/04/bitcoin-s-correlation-with-troubled-software-stock-sector-is-growing" target="_blank" style="color: #60a5fa; text-decoration: none;">
-                        <div class="metric-value" style="font-size: 0.9em;">📰</div>
-                        <div class="metric-label">CoinDesk Article</div>
-                    </a>
-                </div>
-                <div class="metric-box">
-                    <a href="https://beincrypto.com/correlation-between-bitcoin-and-software-stocks/" target="_blank" style="color: #60a5fa; text-decoration: none;">
-                        <div class="metric-value" style="font-size: 0.9em;">📰</div>
-                        <div class="metric-label">BeInCrypto</div>
-                    </a>
-                </div>
-            </div>
-            <div class="info-text">
-                Data: ByteTree, Feb 2026. 30-day rolling correlation between BTC and iShares Expanded Tech-Software ETF (IGV).
-            </div>
-        </div>
-
-        <!-- ISM PMI -->
-        <div class="card">
-            <div class="card-title">🏭 ISM Manufacturing PMI</div>
-            <div class="metrics-grid">
-                <div class="metric-box">
-                    <a href="https://www.investing.com/economic-calendar/ism-manufacturing-pmi-173" target="_blank" style="color: #60a5fa; text-decoration: none;">
-                        <div class="metric-value">📊</div>
-                        <div class="metric-label">Latest PMI</div>
-                    </a>
-                </div>
-                <div class="metric-box">
-                    <a href="https://tradingview.com/symbols/ECONOMICS-USBCOI/" target="_blank" style="color: #ffd700; text-decoration: none;">
-                        <div class="metric-value">📈</div>
-                        <div class="metric-label">Chart History</div>
-                    </a>
-                </div>
-            </div>
-            <div class="info-text">
-                💡 PMI > 50 = expansion, < 50 = contraction<br>
-                ISM data is proprietary — links to free sources above
-            </div>
+        
+        <!-- BTC/Gold Ratio -->
+        <div class="card highlight-card">
+            <div class="card-title">₿ Bitcoin / Gold Ratio</div>
+            <div class="big-number" id="btc-gold-ratio">--</div>
+            <div class="big-label">ounces of gold per BTC</div>
         </div>
         
-        <!-- Market Context -->
+        <!-- BTC/Gold Ratio Chart -->
         <div class="card">
-            <div class="card-title">📈 Market Context</div>
+            <div class="card-title">📈 BTC/Gold Ratio (90 Days)</div>
+            <div class="empty-chart" id="ratio-chart-note">
+                Historical BTC/gold chart is not available from the local cache yet.
+            </div>
+            <div class="info-text" id="chart-info">Current ratio is computed from market-cache.json.</div>
+        </div>
+        
+        <!-- Current Prices -->
+        <div class="card">
+            <div class="card-title">💰 Current Prices</div>
+            <div class="price-row">
+                <span class="price-label">Bitcoin (BTC)</span>
+                <span class="price-value btc" id="btc-price">$--</span>
+            </div>
+            <div class="price-row">
+                <span class="price-label">Gold (XAU/oz)</span>
+                <span class="price-value gold" id="gold-price">$--</span>
+            </div>
+            <div class="price-row">
+                <span class="price-label">Silver (XAG/oz)</span>
+                <span class="price-value neutral" id="silver-price">$--</span>
+            </div>
+            <div class="section-divider"></div>
             <div class="metrics-grid">
                 <div class="metric-box">
-                    <div class="metric-value" id="gold-btc-mcap">--</div>
-                    <div class="metric-label">Gold vs BTC MCap</div>
+                    <div class="metric-value" id="btc-oz-ratio">--</div>
+                    <div class="metric-label">BTC in Gold oz</div>
                 </div>
                 <div class="metric-box">
-                    <div class="metric-value" id="btc-dominance">--</div>
-                    <div class="metric-label">BTC Dominance</div>
+                    <div class="metric-value" id="btc-silver-ratio">--</div>
+                    <div class="metric-label">BTC in Silver oz</div>
                 </div>
-            </div>
-            <div class="info-text" id="market-context-info" style="margin-top: 12px;">
-                Gold market cap: ~$17T | BTC market cap: ~$1.7T<br>
-                BTC = ~10% of gold.
             </div>
         </div>
         
@@ -493,6 +479,205 @@
             return candidate;
         }
 
+        function yoy(obs) {
+            if (obs.length < 2) return null;
+            const latest = obs[obs.length - 1];
+            const target = new Date(latest.date);
+            target.setFullYear(target.getFullYear() - 1);
+            const prior = priorObservationNear(obs, target);
+            if (!prior || prior.val === 0) return null;
+            return ((latest.val / prior.val) - 1) * 100;
+        }
+
+        function signalClass(score) {
+            if (score < 50) return 'low';
+            if (score < 70) return 'med';
+            return 'high';
+        }
+
+        function renderThesisBreak() {
+            // v0.4 thesis break conditions
+            const conditions = [
+                {
+                    label: 'Hyperscaler capex cut for multiple quarters',
+                    status: 'manual',
+                    detail: 'Requires SEC EDGAR earnings data — not yet automated'
+                },
+                {
+                    label: 'NVDA or AVGO guides down on demand (not supply)',
+                    status: 'manual',
+                    detail: 'Requires earnings guidance data — not yet automated'
+                },
+                {
+                    label: 'TSMC advanced-node utilization weakens',
+                    status: 'manual',
+                    detail: 'Requires TSMC monthly revenue data — not yet automated'
+                },
+                {
+                    label: 'TER says AI test demand is normalizing',
+                    status: 'manual',
+                    detail: 'Requires TER earnings commentary — not yet automated'
+                },
+                {
+                    label: 'GEV backlog deteriorates',
+                    status: 'manual',
+                    detail: 'Requires GEV quarterly backlog data — not yet automated'
+                },
+                {
+                    label: 'Data-center financing freezes / GPU credit stress',
+                    status: 'auto',
+                    detail: 'HY OAS spread proxy',
+                    fredSeries: 'BAMLH0A0HYM2',
+                    threshold: 5.0
+                },
+                {
+                    label: 'China domestic-silicon share accelerates',
+                    status: 'manual',
+                    detail: 'Requires semiconductor market share data — not yet automated'
+                }
+            ];
+
+            const html = conditions.map(c => {
+                let dotClass = 'gray';
+                let statusText = c.detail;
+
+                if (c.status === 'auto' && c.fredSeries) {
+                    const obs = latestObservation(c.fredSeries);
+                    if (obs) {
+                        const val = obs.val;
+                        if (val >= c.threshold) {
+                            dotClass = 'red';
+                            statusText = `${val.toFixed(2)}% HY spread (above ${c.threshold}% threshold) — as of ${obs.date}`;
+                        } else if (val >= c.threshold * 0.7) {
+                            dotClass = 'yellow';
+                            statusText = `${val.toFixed(2)}% HY spread — as of ${obs.date}`;
+                        } else {
+                            dotClass = 'green';
+                            statusText = `${val.toFixed(2)}% HY spread — as of ${obs.date}`;
+                        }
+                    }
+                }
+
+                return `
+                    <div class="thesis-item">
+                        <div class="thesis-dot ${dotClass}"></div>
+                        <div class="thesis-content">
+                            <div class="thesis-label">${c.label}</div>
+                            <div class="thesis-status">${statusText}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            byId('thesis-break-list').innerHTML = html;
+        }
+
+        function renderCreditStress() {
+            const hy = latestObservation('BAMLH0A0HYM2');
+            const y10 = latestObservation('DGS10');
+            const y10real = latestObservation('DFII10');
+            const breakeven = latestObservation('T10YIE');
+
+            const items = [
+                { label: 'HY OAS Spread', obs: hy, suffix: '%', threshold: 5.0, note: 'Credit stress — >5% = stress, >7% = crisis' },
+                { label: '10Y Treasury Yield', obs: y10, suffix: '%', threshold: 5.0, note: 'Discount rate pressure on risk assets' },
+                { label: '10Y Real Yield', obs: y10real, suffix: '%', threshold: 2.5, note: 'Real rates pressure on BTC/gold' },
+                { label: '10Y Breakeven Inflation', obs: breakeven, suffix: '%', threshold: 3.0, note: 'Inflation repricing pressure' }
+            ];
+
+            const html = items.map(item => {
+                if (!item.obs) {
+                    return `<div class="price-row"><span class="price-label">${item.label}</span><span class="price-value neutral">--</span></div>`;
+                }
+                const val = item.obs.val;
+                const cls = val >= item.threshold ? 'stress' : val >= item.threshold * 0.7 ? 'neutral' : 'safe';
+                const fillPct = Math.min(100, (val / (item.threshold * 1.5)) * 100);
+                const fillClass = val >= item.threshold ? 'high' : val >= item.threshold * 0.7 ? 'med' : 'low';
+                return `
+                    <div class="price-row">
+                        <span class="price-label">${item.label}</span>
+                        <span class="price-value ${cls}">${val.toFixed(2)}${item.suffix}</span>
+                    </div>
+                    <div class="signal-bar"><div class="signal-fill ${fillClass}" style="width:${fillPct.toFixed(0)}%"></div></div>
+                    <div style="font-size:0.68em;color:#666;margin:2px 0 8px;">${item.note} · as of ${item.obs.date}</div>
+                `;
+            }).join('');
+
+            byId('credit-stress').innerHTML = html;
+        }
+
+        function renderMonetaryReset() {
+            const worldCredit = observations('Q5ACAMUSDA');
+            const usCredit = observations('QUSCAMUSDA');
+            const fedDebt = observations('GFDEBTN');
+            const fedInterest = observations('A091RC1Q027SBEA');
+            const m2 = observations('WM2NS');
+
+            const items = [
+                {
+                    label: 'World Credit Growth (3Y ann.)',
+                    obs: worldCredit,
+                    compute: obs => {
+                        if (obs.length < 2) return null;
+                        const latest = obs[obs.length - 1];
+                        const target = new Date(latest.date);
+                        target.setFullYear(target.getFullYear() - 3);
+                        const prior = priorObservationNear(obs, target);
+                        const years = Math.max((new Date(latest.date) - new Date(prior.date)) / (365.25 * 86400000), 0.01);
+                        return (Math.pow(latest.val / prior.val, 1 / years) - 1) * 100;
+                    },
+                    suffix: '%',
+                    note: 'Core monetary reset signal — paper claims expanding'
+                },
+                {
+                    label: 'US Credit Growth (YoY)',
+                    obs: usCredit,
+                    compute: obs => yoy(obs),
+                    suffix: '%',
+                    note: 'Domestic credit expansion'
+                },
+                {
+                    label: 'Federal Debt Growth (YoY)',
+                    obs: fedDebt,
+                    compute: obs => yoy(obs),
+                    suffix: '%',
+                    note: 'Fiscal stress — debt compounding faster'
+                },
+                {
+                    label: 'Federal Interest Payments (YoY)',
+                    obs: fedInterest,
+                    compute: obs => yoy(obs),
+                    suffix: '%',
+                    note: 'Debt service spiral risk'
+                },
+                {
+                    label: 'US M2 Growth (YoY)',
+                    obs: m2,
+                    compute: obs => yoy(obs),
+                    suffix: '%',
+                    note: 'Domestic liquidity context (secondary)'
+                }
+            ];
+
+            const html = items.map(item => {
+                const val = item.compute(item.obs);
+                if (val === null) {
+                    return `<div class="price-row"><span class="price-label">${item.label}</span><span class="price-value neutral">--</span></div>`;
+                }
+                const cls = val >= 6 ? 'stress' : val >= 4 ? 'neutral' : 'safe';
+                const latest = item.obs.length ? item.obs[item.obs.length - 1] : null;
+                return `
+                    <div class="price-row">
+                        <span class="price-label">${item.label}</span>
+                        <span class="price-value ${cls}">${val >= 0 ? '+' : ''}${val.toFixed(1)}${item.suffix}</span>
+                    </div>
+                    <div style="font-size:0.68em;color:#666;margin:2px 0 8px;">${item.note}${latest ? ` · as of ${latest.date}` : ''}</div>
+                `;
+            }).join('');
+
+            byId('monetary-reset').innerHTML = html;
+        }
+
         function renderWorldCreditSparkline(items) {
             const el = byId('world-credit-sparkline');
             if (!el || !items.length) return;
@@ -548,7 +733,6 @@
             const silverPrice = goldPrice / GOLD_SILVER_RATIO;
             const btcGoldRatio = btcPrice / goldPrice;
             const btcSilverRatio = btcPrice / silverPrice;
-            const btcMcapT = (btcPrice * BTC_SUPPLY_ESTIMATE) / 1e12;
 
             byId('btc-price').textContent = formatUSD(btcPrice, 0);
             byId('gold-price').textContent = formatUSD(goldPrice, 2);
@@ -556,12 +740,6 @@
             byId('btc-gold-ratio').textContent = btcGoldRatio.toFixed(1);
             byId('btc-oz-ratio').textContent = `${btcGoldRatio.toFixed(1)} oz`;
             byId('btc-silver-ratio').textContent = `${btcSilverRatio.toFixed(0)} oz`;
-
-            byId('gold-btc-mcap').textContent = `${(GOLD_MCAP_ASSUMPTION_T / btcMcapT).toFixed(1)}x`;
-            byId('btc-dominance').textContent = 'cache pending';
-            byId('market-context-info').innerHTML =
-                `Gold market cap assumption: ~$${GOLD_MCAP_ASSUMPTION_T}T | BTC market cap from cache: ~$${btcMcapT.toFixed(2)}T<br>` +
-                `BTC is ~${((btcMcapT / GOLD_MCAP_ASSUMPTION_T) * 100).toFixed(1)}% of the gold market-cap assumption. BTC dominance needs a dedicated local crypto-market cache.`;
 
             byId('chart-info').innerHTML =
                 `Current ratio: ${btcGoldRatio.toFixed(1)} oz/BTC from ${btc?.source || 'BTC cache'} and ${gold?.source || 'gold proxy cache'}.`;
@@ -626,6 +804,9 @@
                     byId('chart-info').textContent =
                         `Current ratio ${currentRatio.toFixed(1)} oz/BTC. Historical cache unavailable: ${historyError.message}`;
                 }
+                renderThesisBreak();
+                renderCreditStress();
+                renderMonetaryReset();
                 renderLiquidity();
                 renderWorldCredit();
                 byId('update-time').textContent =

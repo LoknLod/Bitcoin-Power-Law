@@ -46,28 +46,38 @@ QUARTERLY_SERIES = {
 AIM5_ALLOCATION = [
     {
         "sleeve": "AI Productive Equity",
-        "target_pct": 40,
-        "role": "Own profitable AI platforms and infrastructure.",
+        "target_pct": 46,
+        "role": "Semiconductors, AI platform, and test infrastructure bottlenecks.",
     },
     {
-        "sleeve": "Hard Money / Monetary Reset Hedge",
-        "target_pct": 25,
-        "role": "BTC spear, gold shield.",
+        "sleeve": "Agent Toll Collectors",
+        "target_pct": 11,
+        "role": "Toll collectors every agent needs: payments, trust, proprietary data.",
     },
     {
         "sleeve": "Energy / Power / Real Assets",
-        "target_pct": 15,
-        "role": "Own physical bottlenecks behind AI and hard money.",
+        "target_pct": 9.5,
+        "role": "Power generation and grid bottleneck behind AI electrification.",
     },
     {
-        "sleeve": "Runway / Optionality",
-        "target_pct": 15,
-        "role": "Dry powder and forced-selling protection.",
+        "sleeve": "Hard Money / Monetary Reset Hedge",
+        "target_pct": 7.5,
+        "role": "Gold hedge. BTC lives outside per v0.4 doctrine.",
     },
     {
-        "sleeve": "Spec AIM Venture Basket",
-        "target_pct": 5,
-        "role": "Small sandbox for asymmetric moonshots.",
+        "sleeve": "Healthcare / Defense",
+        "target_pct": 13,
+        "role": "Secular growth and geopolitical hedge.",
+    },
+    {
+        "sleeve": "Critical Minerals",
+        "target_pct": 6,
+        "role": "Rare-earth optionality for electrification and semiconductor supply.",
+    },
+    {
+        "sleeve": "Runway / Dry Powder",
+        "target_pct": 7,
+        "role": "T-bills for drawdown ammunition and deployment triggers.",
     },
 ]
 

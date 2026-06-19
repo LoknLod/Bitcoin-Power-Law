@@ -102,7 +102,7 @@ class SiteNavigationTests(unittest.TestCase):
         self.assertIn("World Credit Growth", html)
         self.assertIn("Q5ACAMUSDA", html)
         self.assertIn("3Y Annualized", html)
-        self.assertIn("Monetary Reset Subset", html)
+        self.assertIn("Monetary Reset", html)
         self.assertNotIn("Global M2 Money Supply (US Proxy)", html)
 
     def test_power_law_page_labels_raw_anchor_and_conservative_fair(self):

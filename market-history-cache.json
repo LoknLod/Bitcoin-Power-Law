@@ -1,8 +1,8 @@
 {
   "schema_version": "market_history_cache.v0.1",
   "generated_at": "2026-06-19T00:00:00Z",
-  "source": "existing_market_history_cache",
-  "days": 90,
+  "source": "coingecko_market_chart",
+  "days": 365,
   "assets": {
     "btc_usd": {
       "coin_id": "bitcoin",
@@ -14,6 +14,1656 @@
     }
   },
   "ratio_series": [
+    {
+      "date": "2025-06-20",
+      "btc_usd": 104690.65,
+      "gold_usd": 3390.73,
+      "btc_gold_ratio": 30.8755
+    },
+    {
+      "date": "2025-06-21",
+      "btc_usd": 103290.11,
+      "gold_usd": 3394.89,
+      "btc_gold_ratio": 30.4252
+    },
+    {
+      "date": "2025-06-22",
+      "btc_usd": 101532.57,
+      "gold_usd": 3392.34,
+      "btc_gold_ratio": 29.9299
+    },
+    {
+      "date": "2025-06-23",
+      "btc_usd": 100852.58,
+      "gold_usd": 3407.12,
+      "btc_gold_ratio": 29.6005
+    },
+    {
+      "date": "2025-06-24",
+      "btc_usd": 105511.62,
+      "gold_usd": 3373.6,
+      "btc_gold_ratio": 31.2756
+    },
+    {
+      "date": "2025-06-25",
+      "btc_usd": 105976.07,
+      "gold_usd": 3345.59,
+      "btc_gold_ratio": 31.6763
+    },
+    {
+      "date": "2025-06-26",
+      "btc_usd": 107238.53,
+      "gold_usd": 3353.14,
+      "btc_gold_ratio": 31.9815
+    },
+    {
+      "date": "2025-06-27",
+      "btc_usd": 106984.01,
+      "gold_usd": 3335.58,
+      "btc_gold_ratio": 32.0736
+    },
+    {
+      "date": "2025-06-28",
+      "btc_usd": 107078.92,
+      "gold_usd": 3296.85,
+      "btc_gold_ratio": 32.4792
+    },
+    {
+      "date": "2025-06-29",
+      "btc_usd": 107331.59,
+      "gold_usd": 3290.66,
+      "btc_gold_ratio": 32.617
+    },
+    {
+      "date": "2025-06-30",
+      "btc_usd": 108396.62,
+      "gold_usd": 3280.93,
+      "btc_gold_ratio": 33.0384
+    },
+    {
+      "date": "2025-07-01",
+      "btc_usd": 107132.8,
+      "gold_usd": 3319.69,
+      "btc_gold_ratio": 32.2719
+    },
+    {
+      "date": "2025-07-02",
+      "btc_usd": 105613.4,
+      "gold_usd": 3347.28,
+      "btc_gold_ratio": 31.5521
+    },
+    {
+      "date": "2025-07-03",
+      "btc_usd": 108824.44,
+      "gold_usd": 3355.34,
+      "btc_gold_ratio": 32.4332
+    },
+    {
+      "date": "2025-07-04",
+      "btc_usd": 109602.2,
+      "gold_usd": 3335.87,
+      "btc_gold_ratio": 32.8557
+    },
+    {
+      "date": "2025-07-05",
+      "btc_usd": 108040.89,
+      "gold_usd": 3343.65,
+      "btc_gold_ratio": 32.3123
+    },
+    {
+      "date": "2025-07-06",
+      "btc_usd": 108217.47,
+      "gold_usd": 3343.91,
+      "btc_gold_ratio": 32.3626
+    },
+    {
+      "date": "2025-07-07",
+      "btc_usd": 109215.2,
+      "gold_usd": 3334.49,
+      "btc_gold_ratio": 32.7532
+    },
+    {
+      "date": "2025-07-08",
+      "btc_usd": 108300.72,
+      "gold_usd": 3336.9,
+      "btc_gold_ratio": 32.4555
+    },
+    {
+      "date": "2025-07-09",
+      "btc_usd": 108953.19,
+      "gold_usd": 3308.49,
+      "btc_gold_ratio": 32.9314
+    },
+    {
+      "date": "2025-07-10",
+      "btc_usd": 111327.53,
+      "gold_usd": 3320.17,
+      "btc_gold_ratio": 33.5307
+    },
+    {
+      "date": "2025-07-11",
+      "btc_usd": 115879.65,
+      "gold_usd": 3323.55,
+      "btc_gold_ratio": 34.8662
+    },
+    {
+      "date": "2025-07-12",
+      "btc_usd": 117571.03,
+      "gold_usd": 3346.58,
+      "btc_gold_ratio": 35.1317
+    },
+    {
+      "date": "2025-07-13",
+      "btc_usd": 117418.96,
+      "gold_usd": 3350.96,
+      "btc_gold_ratio": 35.0404
+    },
+    {
+      "date": "2025-07-14",
+      "btc_usd": 119117.56,
+      "gold_usd": 3355.99,
+      "btc_gold_ratio": 35.494
+    },
+    {
+      "date": "2025-07-15",
+      "btc_usd": 119833.67,
+      "gold_usd": 3350.13,
+      "btc_gold_ratio": 35.7698
+    },
+    {
+      "date": "2025-07-16",
+      "btc_usd": 117678.19,
+      "gold_usd": 3338.0,
+      "btc_gold_ratio": 35.2541
+    },
+    {
+      "date": "2025-07-17",
+      "btc_usd": 118748.16,
+      "gold_usd": 3352.32,
+      "btc_gold_ratio": 35.4227
+    },
+    {
+      "date": "2025-07-18",
+      "btc_usd": 119445.37,
+      "gold_usd": 3343.11,
+      "btc_gold_ratio": 35.7288
+    },
+    {
+      "date": "2025-07-19",
+      "btc_usd": 117988.95,
+      "gold_usd": 3352.84,
+      "btc_gold_ratio": 35.1908
+    },
+    {
+      "date": "2025-07-20",
+      "btc_usd": 117901.63,
+      "gold_usd": 3358.91,
+      "btc_gold_ratio": 35.1011
+    },
+    {
+      "date": "2025-07-21",
+      "btc_usd": 117256.92,
+      "gold_usd": 3353.1,
+      "btc_gold_ratio": 34.9697
+    },
+    {
+      "date": "2025-07-22",
+      "btc_usd": 117482.47,
+      "gold_usd": 3396.98,
+      "btc_gold_ratio": 34.5843
+    },
+    {
+      "date": "2025-07-23",
+      "btc_usd": 119955.8,
+      "gold_usd": 3426.44,
+      "btc_gold_ratio": 35.0088
+    },
+    {
+      "date": "2025-07-24",
+      "btc_usd": 118629.06,
+      "gold_usd": 3395.94,
+      "btc_gold_ratio": 34.9326
+    },
+    {
+      "date": "2025-07-25",
+      "btc_usd": 118354.44,
+      "gold_usd": 3376.41,
+      "btc_gold_ratio": 35.0533
+    },
+    {
+      "date": "2025-07-26",
+      "btc_usd": 117540.81,
+      "gold_usd": 3347.2,
+      "btc_gold_ratio": 35.1161
+    },
+    {
+      "date": "2025-07-27",
+      "btc_usd": 117959.54,
+      "gold_usd": 3355.36,
+      "btc_gold_ratio": 35.1556
+    },
+    {
+      "date": "2025-07-28",
+      "btc_usd": 119418.91,
+      "gold_usd": 3346.76,
+      "btc_gold_ratio": 35.6819
+    },
+    {
+      "date": "2025-07-29",
+      "btc_usd": 118003.3,
+      "gold_usd": 3321.17,
+      "btc_gold_ratio": 35.5307
+    },
+    {
+      "date": "2025-07-30",
+      "btc_usd": 117853.31,
+      "gold_usd": 3334.45,
+      "btc_gold_ratio": 35.3442
+    },
+    {
+      "date": "2025-07-31",
+      "btc_usd": 117833.24,
+      "gold_usd": 3297.55,
+      "btc_gold_ratio": 35.7336
+    },
+    {
+      "date": "2025-08-01",
+      "btc_usd": 115700.0,
+      "gold_usd": 3295.43,
+      "btc_gold_ratio": 35.1093
+    },
+    {
+      "date": "2025-08-02",
+      "btc_usd": 113234.61,
+      "gold_usd": 3362.66,
+      "btc_gold_ratio": 33.6741
+    },
+    {
+      "date": "2025-08-03",
+      "btc_usd": 112554.9,
+      "gold_usd": 3361.22,
+      "btc_gold_ratio": 33.4863
+    },
+    {
+      "date": "2025-08-04",
+      "btc_usd": 114199.11,
+      "gold_usd": 3362.13,
+      "btc_gold_ratio": 33.9663
+    },
+    {
+      "date": "2025-08-05",
+      "btc_usd": 115138.69,
+      "gold_usd": 3379.02,
+      "btc_gold_ratio": 34.0745
+    },
+    {
+      "date": "2025-08-06",
+      "btc_usd": 114128.35,
+      "gold_usd": 3384.22,
+      "btc_gold_ratio": 33.7237
+    },
+    {
+      "date": "2025-08-07",
+      "btc_usd": 115022.1,
+      "gold_usd": 3371.62,
+      "btc_gold_ratio": 34.1148
+    },
+    {
+      "date": "2025-08-08",
+      "btc_usd": 117463.47,
+      "gold_usd": 3394.45,
+      "btc_gold_ratio": 34.6046
+    },
+    {
+      "date": "2025-08-09",
+      "btc_usd": 116688.37,
+      "gold_usd": 3385.43,
+      "btc_gold_ratio": 34.4678
+    },
+    {
+      "date": "2025-08-10",
+      "btc_usd": 116510.08,
+      "gold_usd": 3384.42,
+      "btc_gold_ratio": 34.4254
+    },
+    {
+      "date": "2025-08-11",
+      "btc_usd": 119266.93,
+      "gold_usd": 3386.18,
+      "btc_gold_ratio": 35.2217
+    },
+    {
+      "date": "2025-08-12",
+      "btc_usd": 118773.8,
+      "gold_usd": 3345.22,
+      "btc_gold_ratio": 35.5055
+    },
+    {
+      "date": "2025-08-13",
+      "btc_usd": 120202.53,
+      "gold_usd": 3342.64,
+      "btc_gold_ratio": 35.9603
+    },
+    {
+      "date": "2025-08-14",
+      "btc_usd": 123560.99,
+      "gold_usd": 3354.78,
+      "btc_gold_ratio": 36.8313
+    },
+    {
+      "date": "2025-08-15",
+      "btc_usd": 118405.6,
+      "gold_usd": 3330.58,
+      "btc_gold_ratio": 35.5511
+    },
+    {
+      "date": "2025-08-16",
+      "btc_usd": 117339.79,
+      "gold_usd": 3333.41,
+      "btc_gold_ratio": 35.2011
+    },
+    {
+      "date": "2025-08-17",
+      "btc_usd": 117501.22,
+      "gold_usd": 3331.63,
+      "btc_gold_ratio": 35.2684
+    },
+    {
+      "date": "2025-08-18",
+      "btc_usd": 117542.84,
+      "gold_usd": 3326.83,
+      "btc_gold_ratio": 35.3318
+    },
+    {
+      "date": "2025-08-19",
+      "btc_usd": 116256.41,
+      "gold_usd": 3333.04,
+      "btc_gold_ratio": 34.88
+    },
+    {
+      "date": "2025-08-20",
+      "btc_usd": 112778.34,
+      "gold_usd": 3311.65,
+      "btc_gold_ratio": 34.055
+    },
+    {
+      "date": "2025-08-21",
+      "btc_usd": 114252.4,
+      "gold_usd": 3340.4,
+      "btc_gold_ratio": 34.2032
+    },
+    {
+      "date": "2025-08-22",
+      "btc_usd": 112414.4,
+      "gold_usd": 3330.67,
+      "btc_gold_ratio": 33.7512
+    },
+    {
+      "date": "2025-08-23",
+      "btc_usd": 116834.25,
+      "gold_usd": 3363.49,
+      "btc_gold_ratio": 34.736
+    },
+    {
+      "date": "2025-08-24",
+      "btc_usd": 115359.98,
+      "gold_usd": 3359.72,
+      "btc_gold_ratio": 34.3362
+    },
+    {
+      "date": "2025-08-25",
+      "btc_usd": 113399.55,
+      "gold_usd": 3358.98,
+      "btc_gold_ratio": 33.7602
+    },
+    {
+      "date": "2025-08-26",
+      "btc_usd": 110185.35,
+      "gold_usd": 3341.89,
+      "btc_gold_ratio": 32.971
+    },
+    {
+      "date": "2025-08-27",
+      "btc_usd": 111842.71,
+      "gold_usd": 3379.57,
+      "btc_gold_ratio": 33.0938
+    },
+    {
+      "date": "2025-08-28",
+      "btc_usd": 111216.08,
+      "gold_usd": 3388.85,
+      "btc_gold_ratio": 32.8183
+    },
+    {
+      "date": "2025-08-29",
+      "btc_usd": 112525.6,
+      "gold_usd": 3416.61,
+      "btc_gold_ratio": 32.9349
+    },
+    {
+      "date": "2025-08-30",
+      "btc_usd": 108480.31,
+      "gold_usd": 3463.22,
+      "btc_gold_ratio": 31.3236
+    },
+    {
+      "date": "2025-08-31",
+      "btc_usd": 108781.96,
+      "gold_usd": 3463.09,
+      "btc_gold_ratio": 31.4118
+    },
+    {
+      "date": "2025-09-01",
+      "btc_usd": 108253.36,
+      "gold_usd": 3461.77,
+      "btc_gold_ratio": 31.2711
+    },
+    {
+      "date": "2025-09-02",
+      "btc_usd": 109162.69,
+      "gold_usd": 3502.56,
+      "btc_gold_ratio": 31.1665
+    },
+    {
+      "date": "2025-09-03",
+      "btc_usd": 111190.18,
+      "gold_usd": 3547.2,
+      "btc_gold_ratio": 31.3459
+    },
+    {
+      "date": "2025-09-04",
+      "btc_usd": 111711.52,
+      "gold_usd": 3572.63,
+      "btc_gold_ratio": 31.2687
+    },
+    {
+      "date": "2025-09-05",
+      "btc_usd": 110724.74,
+      "gold_usd": 3559.04,
+      "btc_gold_ratio": 31.1108
+    },
+    {
+      "date": "2025-09-06",
+      "btc_usd": 110662.18,
+      "gold_usd": 3593.21,
+      "btc_gold_ratio": 30.7976
+    },
+    {
+      "date": "2025-09-07",
+      "btc_usd": 110209.19,
+      "gold_usd": 3625.08,
+      "btc_gold_ratio": 30.4018
+    },
+    {
+      "date": "2025-09-08",
+      "btc_usd": 111131.99,
+      "gold_usd": 3603.13,
+      "btc_gold_ratio": 30.8432
+    },
+    {
+      "date": "2025-09-09",
+      "btc_usd": 112025.13,
+      "gold_usd": 3638.92,
+      "btc_gold_ratio": 30.7852
+    },
+    {
+      "date": "2025-09-10",
+      "btc_usd": 111547.44,
+      "gold_usd": 3644.24,
+      "btc_gold_ratio": 30.6092
+    },
+    {
+      "date": "2025-09-11",
+      "btc_usd": 113975.32,
+      "gold_usd": 3643.12,
+      "btc_gold_ratio": 31.2851
+    },
+    {
+      "date": "2025-09-12",
+      "btc_usd": 115503.17,
+      "gold_usd": 3633.39,
+      "btc_gold_ratio": 31.7894
+    },
+    {
+      "date": "2025-09-13",
+      "btc_usd": 116160.14,
+      "gold_usd": 3643.88,
+      "btc_gold_ratio": 31.8782
+    },
+    {
+      "date": "2025-09-14",
+      "btc_usd": 115970.58,
+      "gold_usd": 3640.63,
+      "btc_gold_ratio": 31.8545
+    },
+    {
+      "date": "2025-09-15",
+      "btc_usd": 115373.56,
+      "gold_usd": 3644.58,
+      "btc_gold_ratio": 31.6562
+    },
+    {
+      "date": "2025-09-16",
+      "btc_usd": 115397.25,
+      "gold_usd": 3685.24,
+      "btc_gold_ratio": 31.3133
+    },
+    {
+      "date": "2025-09-17",
+      "btc_usd": 116762.85,
+      "gold_usd": 3705.33,
+      "btc_gold_ratio": 31.5121
+    },
+    {
+      "date": "2025-09-18",
+      "btc_usd": 116455.95,
+      "gold_usd": 3673.3,
+      "btc_gold_ratio": 31.7033
+    },
+    {
+      "date": "2025-09-19",
+      "btc_usd": 117145.5,
+      "gold_usd": 3645.59,
+      "btc_gold_ratio": 32.1335
+    },
+    {
+      "date": "2025-09-20",
+      "btc_usd": 115655.81,
+      "gold_usd": 3690.08,
+      "btc_gold_ratio": 31.3423
+    },
+    {
+      "date": "2025-09-21",
+      "btc_usd": 115715.52,
+      "gold_usd": 3687.75,
+      "btc_gold_ratio": 31.3784
+    },
+    {
+      "date": "2025-09-22",
+      "btc_usd": 115304.48,
+      "gold_usd": 3694.12,
+      "btc_gold_ratio": 31.2129
+    },
+    {
+      "date": "2025-09-23",
+      "btc_usd": 112696.74,
+      "gold_usd": 3760.12,
+      "btc_gold_ratio": 29.9715
+    },
+    {
+      "date": "2025-09-24",
+      "btc_usd": 112022.17,
+      "gold_usd": 3774.74,
+      "btc_gold_ratio": 29.6768
+    },
+    {
+      "date": "2025-09-25",
+      "btc_usd": 113320.57,
+      "gold_usd": 3755.75,
+      "btc_gold_ratio": 30.1725
+    },
+    {
+      "date": "2025-09-26",
+      "btc_usd": 108963.53,
+      "gold_usd": 3754.37,
+      "btc_gold_ratio": 29.0231
+    },
+    {
+      "date": "2025-09-27",
+      "btc_usd": 109710.21,
+      "gold_usd": 3773.61,
+      "btc_gold_ratio": 29.073
+    },
+    {
+      "date": "2025-09-28",
+      "btc_usd": 109654.81,
+      "gold_usd": 3776.77,
+      "btc_gold_ratio": 29.034
+    },
+    {
+      "date": "2025-09-29",
+      "btc_usd": 112142.57,
+      "gold_usd": 3778.58,
+      "btc_gold_ratio": 29.6785
+    },
+    {
+      "date": "2025-09-30",
+      "btc_usd": 114309.15,
+      "gold_usd": 3846.99,
+      "btc_gold_ratio": 29.7139
+    },
+    {
+      "date": "2025-10-01",
+      "btc_usd": 114024.23,
+      "gold_usd": 3872.39,
+      "btc_gold_ratio": 29.4454
+    },
+    {
+      "date": "2025-10-02",
+      "btc_usd": 118503.24,
+      "gold_usd": 3873.27,
+      "btc_gold_ratio": 30.5951
+    },
+    {
+      "date": "2025-10-03",
+      "btc_usd": 120611.72,
+      "gold_usd": 3867.23,
+      "btc_gold_ratio": 31.1882
+    },
+    {
+      "date": "2025-10-04",
+      "btc_usd": 122250.15,
+      "gold_usd": 3886.66,
+      "btc_gold_ratio": 31.4537
+    },
+    {
+      "date": "2025-10-05",
+      "btc_usd": 122380.94,
+      "gold_usd": 3901.88,
+      "btc_gold_ratio": 31.3646
+    },
+    {
+      "date": "2025-10-06",
+      "btc_usd": 123506.19,
+      "gold_usd": 3914.87,
+      "btc_gold_ratio": 31.5479
+    },
+    {
+      "date": "2025-10-07",
+      "btc_usd": 124773.51,
+      "gold_usd": 3984.71,
+      "btc_gold_ratio": 31.313
+    },
+    {
+      "date": "2025-10-08",
+      "btc_usd": 121518.76,
+      "gold_usd": 4003.16,
+      "btc_gold_ratio": 30.3557
+    },
+    {
+      "date": "2025-10-09",
+      "btc_usd": 123352.5,
+      "gold_usd": 4030.95,
+      "btc_gold_ratio": 30.6013
+    },
+    {
+      "date": "2025-10-10",
+      "btc_usd": 121698.03,
+      "gold_usd": 4000.89,
+      "btc_gold_ratio": 30.4177
+    },
+    {
+      "date": "2025-10-11",
+      "btc_usd": 113201.74,
+      "gold_usd": 3989.04,
+      "btc_gold_ratio": 28.3782
+    },
+    {
+      "date": "2025-10-12",
+      "btc_usd": 110853.12,
+      "gold_usd": 3994.7,
+      "btc_gold_ratio": 27.7501
+    },
+    {
+      "date": "2025-10-13",
+      "btc_usd": 115189.57,
+      "gold_usd": 4043.19,
+      "btc_gold_ratio": 28.4897
+    },
+    {
+      "date": "2025-10-14",
+      "btc_usd": 115222.28,
+      "gold_usd": 4143.42,
+      "btc_gold_ratio": 27.8085
+    },
+    {
+      "date": "2025-10-15",
+      "btc_usd": 113156.57,
+      "gold_usd": 4182.06,
+      "btc_gold_ratio": 27.0576
+    },
+    {
+      "date": "2025-10-16",
+      "btc_usd": 110708.67,
+      "gold_usd": 4240.61,
+      "btc_gold_ratio": 26.1068
+    },
+    {
+      "date": "2025-10-17",
+      "btc_usd": 108076.73,
+      "gold_usd": 4444.8,
+      "btc_gold_ratio": 24.3153
+    },
+    {
+      "date": "2025-10-18",
+      "btc_usd": 106443.61,
+      "gold_usd": 4241.57,
+      "btc_gold_ratio": 25.0953
+    },
+    {
+      "date": "2025-10-19",
+      "btc_usd": 107156.0,
+      "gold_usd": 4244.14,
+      "btc_gold_ratio": 25.248
+    },
+    {
+      "date": "2025-10-20",
+      "btc_usd": 108621.13,
+      "gold_usd": 4244.67,
+      "btc_gold_ratio": 25.59
+    },
+    {
+      "date": "2025-10-21",
+      "btc_usd": 110608.57,
+      "gold_usd": 4365.21,
+      "btc_gold_ratio": 25.3387
+    },
+    {
+      "date": "2025-10-22",
+      "btc_usd": 108486.1,
+      "gold_usd": 4111.54,
+      "btc_gold_ratio": 26.3857
+    },
+    {
+      "date": "2025-10-23",
+      "btc_usd": 107618.43,
+      "gold_usd": 4093.14,
+      "btc_gold_ratio": 26.2924
+    },
+    {
+      "date": "2025-10-24",
+      "btc_usd": 110048.52,
+      "gold_usd": 4117.99,
+      "btc_gold_ratio": 26.7239
+    },
+    {
+      "date": "2025-10-25",
+      "btc_usd": 110997.8,
+      "gold_usd": 4111.43,
+      "btc_gold_ratio": 26.9974
+    },
+    {
+      "date": "2025-10-26",
+      "btc_usd": 111620.31,
+      "gold_usd": 4110.69,
+      "btc_gold_ratio": 27.1537
+    },
+    {
+      "date": "2025-10-27",
+      "btc_usd": 114476.01,
+      "gold_usd": 4060.07,
+      "btc_gold_ratio": 28.1956
+    },
+    {
+      "date": "2025-10-28",
+      "btc_usd": 114182.79,
+      "gold_usd": 3992.28,
+      "btc_gold_ratio": 28.6009
+    },
+    {
+      "date": "2025-10-29",
+      "btc_usd": 112950.35,
+      "gold_usd": 3962.93,
+      "btc_gold_ratio": 28.5017
+    },
+    {
+      "date": "2025-10-30",
+      "btc_usd": 110046.67,
+      "gold_usd": 3951.77,
+      "btc_gold_ratio": 27.8474
+    },
+    {
+      "date": "2025-10-31",
+      "btc_usd": 108240.77,
+      "gold_usd": 4036.88,
+      "btc_gold_ratio": 26.813
+    },
+    {
+      "date": "2025-11-01",
+      "btc_usd": 109573.91,
+      "gold_usd": 4000.84,
+      "btc_gold_ratio": 27.3878
+    },
+    {
+      "date": "2025-11-02",
+      "btc_usd": 110014.14,
+      "gold_usd": 4009.15,
+      "btc_gold_ratio": 27.4408
+    },
+    {
+      "date": "2025-11-03",
+      "btc_usd": 110650.21,
+      "gold_usd": 3978.78,
+      "btc_gold_ratio": 27.8101
+    },
+    {
+      "date": "2025-11-04",
+      "btc_usd": 106521.09,
+      "gold_usd": 3989.21,
+      "btc_gold_ratio": 26.7023
+    },
+    {
+      "date": "2025-11-05",
+      "btc_usd": 101635.27,
+      "gold_usd": 3928.29,
+      "btc_gold_ratio": 25.8727
+    },
+    {
+      "date": "2025-11-06",
+      "btc_usd": 103877.96,
+      "gold_usd": 3972.33,
+      "btc_gold_ratio": 26.1504
+    },
+    {
+      "date": "2025-11-07",
+      "btc_usd": 101322.64,
+      "gold_usd": 3983.02,
+      "btc_gold_ratio": 25.4387
+    },
+    {
+      "date": "2025-11-08",
+      "btc_usd": 103396.08,
+      "gold_usd": 3990.49,
+      "btc_gold_ratio": 25.9106
+    },
+    {
+      "date": "2025-11-09",
+      "btc_usd": 102290.14,
+      "gold_usd": 3987.95,
+      "btc_gold_ratio": 25.6498
+    },
+    {
+      "date": "2025-11-10",
+      "btc_usd": 104709.68,
+      "gold_usd": 4001.44,
+      "btc_gold_ratio": 26.168
+    },
+    {
+      "date": "2025-11-11",
+      "btc_usd": 105909.07,
+      "gold_usd": 4111.2,
+      "btc_gold_ratio": 25.7611
+    },
+    {
+      "date": "2025-11-12",
+      "btc_usd": 102960.78,
+      "gold_usd": 4128.02,
+      "btc_gold_ratio": 24.9419
+    },
+    {
+      "date": "2025-11-13",
+      "btc_usd": 101521.71,
+      "gold_usd": 4176.43,
+      "btc_gold_ratio": 24.3082
+    },
+    {
+      "date": "2025-11-14",
+      "btc_usd": 99730.45,
+      "gold_usd": 4171.68,
+      "btc_gold_ratio": 23.9065
+    },
+    {
+      "date": "2025-11-15",
+      "btc_usd": 94456.39,
+      "gold_usd": 4070.55,
+      "btc_gold_ratio": 23.2048
+    },
+    {
+      "date": "2025-11-16",
+      "btc_usd": 95508.31,
+      "gold_usd": 4091.28,
+      "btc_gold_ratio": 23.3444
+    },
+    {
+      "date": "2025-11-17",
+      "btc_usd": 94411.33,
+      "gold_usd": 4089.78,
+      "btc_gold_ratio": 23.0847
+    },
+    {
+      "date": "2025-11-18",
+      "btc_usd": 92036.73,
+      "gold_usd": 4024.78,
+      "btc_gold_ratio": 22.8675
+    },
+    {
+      "date": "2025-11-19",
+      "btc_usd": 92819.76,
+      "gold_usd": 4062.83,
+      "btc_gold_ratio": 22.8461
+    },
+    {
+      "date": "2025-11-20",
+      "btc_usd": 91363.28,
+      "gold_usd": 4092.86,
+      "btc_gold_ratio": 22.3226
+    },
+    {
+      "date": "2025-11-21",
+      "btc_usd": 86649.97,
+      "gold_usd": 4071.59,
+      "btc_gold_ratio": 21.2816
+    },
+    {
+      "date": "2025-11-22",
+      "btc_usd": 85051.8,
+      "gold_usd": 4062.78,
+      "btc_gold_ratio": 20.9344
+    },
+    {
+      "date": "2025-11-23",
+      "btc_usd": 84682.62,
+      "gold_usd": 4055.52,
+      "btc_gold_ratio": 20.8808
+    },
+    {
+      "date": "2025-11-24",
+      "btc_usd": 86783.85,
+      "gold_usd": 4064.59,
+      "btc_gold_ratio": 21.3512
+    },
+    {
+      "date": "2025-11-25",
+      "btc_usd": 88229.36,
+      "gold_usd": 4139.82,
+      "btc_gold_ratio": 21.3124
+    },
+    {
+      "date": "2025-11-26",
+      "btc_usd": 87310.33,
+      "gold_usd": 4124.85,
+      "btc_gold_ratio": 21.1669
+    },
+    {
+      "date": "2025-11-27",
+      "btc_usd": 90474.23,
+      "gold_usd": 4166.51,
+      "btc_gold_ratio": 21.7146
+    },
+    {
+      "date": "2025-11-28",
+      "btc_usd": 91279.06,
+      "gold_usd": 4160.21,
+      "btc_gold_ratio": 21.941
+    },
+    {
+      "date": "2025-11-29",
+      "btc_usd": 90950.38,
+      "gold_usd": 4231.12,
+      "btc_gold_ratio": 21.4956
+    },
+    {
+      "date": "2025-11-30",
+      "btc_usd": 90841.45,
+      "gold_usd": 4251.23,
+      "btc_gold_ratio": 21.3683
+    },
+    {
+      "date": "2025-12-01",
+      "btc_usd": 90406.28,
+      "gold_usd": 4240.11,
+      "btc_gold_ratio": 21.3217
+    },
+    {
+      "date": "2025-12-02",
+      "btc_usd": 86281.5,
+      "gold_usd": 4246.2,
+      "btc_gold_ratio": 20.3197
+    },
+    {
+      "date": "2025-12-03",
+      "btc_usd": 91344.73,
+      "gold_usd": 4215.07,
+      "btc_gold_ratio": 21.671
+    },
+    {
+      "date": "2025-12-04",
+      "btc_usd": 93619.44,
+      "gold_usd": 4214.58,
+      "btc_gold_ratio": 22.2133
+    },
+    {
+      "date": "2025-12-05",
+      "btc_usd": 92140.7,
+      "gold_usd": 4214.0,
+      "btc_gold_ratio": 21.8654
+    },
+    {
+      "date": "2025-12-06",
+      "btc_usd": 89307.09,
+      "gold_usd": 4210.91,
+      "btc_gold_ratio": 21.2085
+    },
+    {
+      "date": "2025-12-07",
+      "btc_usd": 89244.76,
+      "gold_usd": 4214.83,
+      "btc_gold_ratio": 21.174
+    },
+    {
+      "date": "2025-12-08",
+      "btc_usd": 90162.91,
+      "gold_usd": 4213.74,
+      "btc_gold_ratio": 21.3974
+    },
+    {
+      "date": "2025-12-09",
+      "btc_usd": 90618.05,
+      "gold_usd": 4202.42,
+      "btc_gold_ratio": 21.5633
+    },
+    {
+      "date": "2025-12-10",
+      "btc_usd": 92723.21,
+      "gold_usd": 4216.27,
+      "btc_gold_ratio": 21.9918
+    },
+    {
+      "date": "2025-12-11",
+      "btc_usd": 92005.14,
+      "gold_usd": 4239.4,
+      "btc_gold_ratio": 21.7024
+    },
+    {
+      "date": "2025-12-12",
+      "btc_usd": 92494.18,
+      "gold_usd": 4285.58,
+      "btc_gold_ratio": 21.5826
+    },
+    {
+      "date": "2025-12-13",
+      "btc_usd": 90307.26,
+      "gold_usd": 4310.0,
+      "btc_gold_ratio": 20.9529
+    },
+    {
+      "date": "2025-12-14",
+      "btc_usd": 90257.43,
+      "gold_usd": 4316.32,
+      "btc_gold_ratio": 20.9107
+    },
+    {
+      "date": "2025-12-15",
+      "btc_usd": 88230.77,
+      "gold_usd": 4319.37,
+      "btc_gold_ratio": 20.4268
+    },
+    {
+      "date": "2025-12-16",
+      "btc_usd": 86413.92,
+      "gold_usd": 4316.96,
+      "btc_gold_ratio": 20.0173
+    },
+    {
+      "date": "2025-12-17",
+      "btc_usd": 87821.89,
+      "gold_usd": 4322.47,
+      "btc_gold_ratio": 20.3175
+    },
+    {
+      "date": "2025-12-18",
+      "btc_usd": 86064.95,
+      "gold_usd": 4358.9,
+      "btc_gold_ratio": 19.7446
+    },
+    {
+      "date": "2025-12-19",
+      "btc_usd": 85450.33,
+      "gold_usd": 4345.8,
+      "btc_gold_ratio": 19.6627
+    },
+    {
+      "date": "2025-12-20",
+      "btc_usd": 88103.86,
+      "gold_usd": 4349.15,
+      "btc_gold_ratio": 20.2577
+    },
+    {
+      "date": "2025-12-21",
+      "btc_usd": 88347.94,
+      "gold_usd": 4351.14,
+      "btc_gold_ratio": 20.3046
+    },
+    {
+      "date": "2025-12-22",
+      "btc_usd": 88577.42,
+      "gold_usd": 4364.86,
+      "btc_gold_ratio": 20.2933
+    },
+    {
+      "date": "2025-12-23",
+      "btc_usd": 88491.12,
+      "gold_usd": 4480.02,
+      "btc_gold_ratio": 19.7524
+    },
+    {
+      "date": "2025-12-24",
+      "btc_usd": 87406.44,
+      "gold_usd": 4530.41,
+      "btc_gold_ratio": 19.2933
+    },
+    {
+      "date": "2025-12-25",
+      "btc_usd": 87642.61,
+      "gold_usd": 4494.13,
+      "btc_gold_ratio": 19.5016
+    },
+    {
+      "date": "2025-12-26",
+      "btc_usd": 87229.78,
+      "gold_usd": 4515.49,
+      "btc_gold_ratio": 19.3179
+    },
+    {
+      "date": "2025-12-27",
+      "btc_usd": 87305.96,
+      "gold_usd": 4554.42,
+      "btc_gold_ratio": 19.1695
+    },
+    {
+      "date": "2025-12-28",
+      "btc_usd": 87807.0,
+      "gold_usd": 4567.9,
+      "btc_gold_ratio": 19.2226
+    },
+    {
+      "date": "2025-12-29",
+      "btc_usd": 87822.91,
+      "gold_usd": 4550.81,
+      "btc_gold_ratio": 19.2983
+    },
+    {
+      "date": "2025-12-30",
+      "btc_usd": 87156.56,
+      "gold_usd": 4354.81,
+      "btc_gold_ratio": 20.0138
+    },
+    {
+      "date": "2025-12-31",
+      "btc_usd": 88414.63,
+      "gold_usd": 4353.91,
+      "btc_gold_ratio": 20.3069
+    },
+    {
+      "date": "2026-01-01",
+      "btc_usd": 87520.18,
+      "gold_usd": 4329.94,
+      "btc_gold_ratio": 20.2128
+    },
+    {
+      "date": "2026-01-02",
+      "btc_usd": 88727.67,
+      "gold_usd": 4352.65,
+      "btc_gold_ratio": 20.3847
+    },
+    {
+      "date": "2026-01-03",
+      "btc_usd": 89926.28,
+      "gold_usd": 4341.44,
+      "btc_gold_ratio": 20.7135
+    },
+    {
+      "date": "2026-01-04",
+      "btc_usd": 90593.85,
+      "gold_usd": 4352.84,
+      "btc_gold_ratio": 20.8126
+    },
+    {
+      "date": "2026-01-05",
+      "btc_usd": 91373.22,
+      "gold_usd": 4383.26,
+      "btc_gold_ratio": 20.8459
+    },
+    {
+      "date": "2026-01-06",
+      "btc_usd": 93926.8,
+      "gold_usd": 4446.87,
+      "btc_gold_ratio": 21.122
+    },
+    {
+      "date": "2026-01-07",
+      "btc_usd": 93666.86,
+      "gold_usd": 4510.0,
+      "btc_gold_ratio": 20.7687
+    },
+    {
+      "date": "2026-01-08",
+      "btc_usd": 91257.16,
+      "gold_usd": 4472.17,
+      "btc_gold_ratio": 20.4056
+    },
+    {
+      "date": "2026-01-09",
+      "btc_usd": 90983.52,
+      "gold_usd": 4478.19,
+      "btc_gold_ratio": 20.317
+    },
+    {
+      "date": "2026-01-10",
+      "btc_usd": 90504.9,
+      "gold_usd": 4503.54,
+      "btc_gold_ratio": 20.0964
+    },
+    {
+      "date": "2026-01-11",
+      "btc_usd": 90442.02,
+      "gold_usd": 4516.15,
+      "btc_gold_ratio": 20.0263
+    },
+    {
+      "date": "2026-01-12",
+      "btc_usd": 90819.37,
+      "gold_usd": 4539.23,
+      "btc_gold_ratio": 20.0076
+    },
+    {
+      "date": "2026-01-13",
+      "btc_usd": 91134.97,
+      "gold_usd": 4602.77,
+      "btc_gold_ratio": 19.8
+    },
+    {
+      "date": "2026-01-14",
+      "btc_usd": 95260.44,
+      "gold_usd": 4600.28,
+      "btc_gold_ratio": 20.7075
+    },
+    {
+      "date": "2026-01-15",
+      "btc_usd": 97007.78,
+      "gold_usd": 4624.8,
+      "btc_gold_ratio": 20.9756
+    },
+    {
+      "date": "2026-01-16",
+      "btc_usd": 95584.83,
+      "gold_usd": 4620.17,
+      "btc_gold_ratio": 20.6886
+    },
+    {
+      "date": "2026-01-17",
+      "btc_usd": 95516.08,
+      "gold_usd": 4601.64,
+      "btc_gold_ratio": 20.757
+    },
+    {
+      "date": "2026-01-18",
+      "btc_usd": 95099.53,
+      "gold_usd": 4610.44,
+      "btc_gold_ratio": 20.627
+    },
+    {
+      "date": "2026-01-19",
+      "btc_usd": 93752.71,
+      "gold_usd": 4682.33,
+      "btc_gold_ratio": 20.0227
+    },
+    {
+      "date": "2026-01-20",
+      "btc_usd": 92558.46,
+      "gold_usd": 4681.93,
+      "btc_gold_ratio": 19.7693
+    },
+    {
+      "date": "2026-01-21",
+      "btc_usd": 88312.84,
+      "gold_usd": 4800.82,
+      "btc_gold_ratio": 18.3954
+    },
+    {
+      "date": "2026-01-22",
+      "btc_usd": 89354.34,
+      "gold_usd": 4808.53,
+      "btc_gold_ratio": 18.5825
+    },
+    {
+      "date": "2026-01-23",
+      "btc_usd": 89443.4,
+      "gold_usd": 4967.96,
+      "btc_gold_ratio": 18.0041
+    },
+    {
+      "date": "2026-01-24",
+      "btc_usd": 89412.4,
+      "gold_usd": 5001.52,
+      "btc_gold_ratio": 17.877
+    },
+    {
+      "date": "2026-01-25",
+      "btc_usd": 89170.87,
+      "gold_usd": 5078.45,
+      "btc_gold_ratio": 17.5587
+    },
+    {
+      "date": "2026-01-26",
+      "btc_usd": 86548.32,
+      "gold_usd": 5061.61,
+      "btc_gold_ratio": 17.099
+    },
+    {
+      "date": "2026-01-27",
+      "btc_usd": 88307.86,
+      "gold_usd": 5061.07,
+      "btc_gold_ratio": 17.4484
+    },
+    {
+      "date": "2026-01-28",
+      "btc_usd": 89204.22,
+      "gold_usd": 5179.71,
+      "btc_gold_ratio": 17.2218
+    },
+    {
+      "date": "2026-01-29",
+      "btc_usd": 89162.1,
+      "gold_usd": 5523.22,
+      "btc_gold_ratio": 16.1431
+    },
+    {
+      "date": "2026-01-30",
+      "btc_usd": 84570.41,
+      "gold_usd": 5467.64,
+      "btc_gold_ratio": 15.4674
+    },
+    {
+      "date": "2026-01-31",
+      "btc_usd": 84141.78,
+      "gold_usd": 4919.6,
+      "btc_gold_ratio": 17.1034
+    },
+    {
+      "date": "2026-02-01",
+      "btc_usd": 78725.86,
+      "gold_usd": 4833.53,
+      "btc_gold_ratio": 16.2874
+    },
+    {
+      "date": "2026-02-02",
+      "btc_usd": 76937.06,
+      "gold_usd": 4761.3,
+      "btc_gold_ratio": 16.1588
+    },
+    {
+      "date": "2026-02-03",
+      "btc_usd": 78767.66,
+      "gold_usd": 4776.98,
+      "btc_gold_ratio": 16.489
+    },
+    {
+      "date": "2026-02-04",
+      "btc_usd": 75638.96,
+      "gold_usd": 4955.99,
+      "btc_gold_ratio": 15.2621
+    },
+    {
+      "date": "2026-02-05",
+      "btc_usd": 73172.29,
+      "gold_usd": 5028.85,
+      "btc_gold_ratio": 14.5505
+    },
+    {
+      "date": "2026-02-06",
+      "btc_usd": 62853.69,
+      "gold_usd": 4711.38,
+      "btc_gold_ratio": 13.3408
+    },
+    {
+      "date": "2026-02-07",
+      "btc_usd": 70523.95,
+      "gold_usd": 4940.88,
+      "btc_gold_ratio": 14.2736
+    },
+    {
+      "date": "2026-02-08",
+      "btc_usd": 69296.81,
+      "gold_usd": 4990.57,
+      "btc_gold_ratio": 13.8855
+    },
+    {
+      "date": "2026-02-09",
+      "btc_usd": 70542.37,
+      "gold_usd": 5039.82,
+      "btc_gold_ratio": 13.997
+    },
+    {
+      "date": "2026-02-10",
+      "btc_usd": 70096.41,
+      "gold_usd": 5036.47,
+      "btc_gold_ratio": 13.9178
+    },
+    {
+      "date": "2026-02-11",
+      "btc_usd": 68779.91,
+      "gold_usd": 5044.1,
+      "btc_gold_ratio": 13.6357
+    },
+    {
+      "date": "2026-02-12",
+      "btc_usd": 66937.58,
+      "gold_usd": 5076.52,
+      "btc_gold_ratio": 13.1857
+    },
+    {
+      "date": "2026-02-13",
+      "btc_usd": 66184.58,
+      "gold_usd": 4915.72,
+      "btc_gold_ratio": 13.4639
+    },
+    {
+      "date": "2026-02-14",
+      "btc_usd": 68838.87,
+      "gold_usd": 5043.46,
+      "btc_gold_ratio": 13.6491
+    },
+    {
+      "date": "2026-02-15",
+      "btc_usd": 69765.6,
+      "gold_usd": 5021.71,
+      "btc_gold_ratio": 13.8928
+    },
+    {
+      "date": "2026-02-16",
+      "btc_usd": 68716.58,
+      "gold_usd": 5021.3,
+      "btc_gold_ratio": 13.685
+    },
+    {
+      "date": "2026-02-17",
+      "btc_usd": 68907.78,
+      "gold_usd": 4998.06,
+      "btc_gold_ratio": 13.7869
+    },
+    {
+      "date": "2026-02-18",
+      "btc_usd": 67489.46,
+      "gold_usd": 4869.42,
+      "btc_gold_ratio": 13.8599
+    },
+    {
+      "date": "2026-02-19",
+      "btc_usd": 66456.35,
+      "gold_usd": 4981.44,
+      "btc_gold_ratio": 13.3408
+    },
+    {
+      "date": "2026-02-20",
+      "btc_usd": 66918.68,
+      "gold_usd": 5004.71,
+      "btc_gold_ratio": 13.3711
+    },
+    {
+      "date": "2026-02-21",
+      "btc_usd": 67970.29,
+      "gold_usd": 5112.66,
+      "btc_gold_ratio": 13.2945
+    },
+    {
+      "date": "2026-02-22",
+      "btc_usd": 67977.91,
+      "gold_usd": 5140.58,
+      "btc_gold_ratio": 13.2238
+    },
+    {
+      "date": "2026-02-23",
+      "btc_usd": 67585.12,
+      "gold_usd": 5182.57,
+      "btc_gold_ratio": 13.0408
+    },
+    {
+      "date": "2026-02-24",
+      "btc_usd": 64577.55,
+      "gold_usd": 5257.01,
+      "btc_gold_ratio": 12.2841
+    },
+    {
+      "date": "2026-02-25",
+      "btc_usd": 64074.11,
+      "gold_usd": 5169.68,
+      "btc_gold_ratio": 12.3942
+    },
+    {
+      "date": "2026-02-26",
+      "btc_usd": 67947.39,
+      "gold_usd": 5182.77,
+      "btc_gold_ratio": 13.1103
+    },
+    {
+      "date": "2026-02-27",
+      "btc_usd": 67469.06,
+      "gold_usd": 5196.55,
+      "btc_gold_ratio": 12.9834
+    },
+    {
+      "date": "2026-02-28",
+      "btc_usd": 65883.99,
+      "gold_usd": 5292.89,
+      "btc_gold_ratio": 12.4476
+    },
+    {
+      "date": "2026-03-01",
+      "btc_usd": 67008.45,
+      "gold_usd": 5372.9,
+      "btc_gold_ratio": 12.4716
+    },
+    {
+      "date": "2026-03-02",
+      "btc_usd": 65713.5,
+      "gold_usd": 5435.48,
+      "btc_gold_ratio": 12.0897
+    },
+    {
+      "date": "2026-03-03",
+      "btc_usd": 68864.04,
+      "gold_usd": 5354.77,
+      "btc_gold_ratio": 12.8603
+    },
+    {
+      "date": "2026-03-04",
+      "btc_usd": 68321.62,
+      "gold_usd": 5145.3,
+      "btc_gold_ratio": 13.2784
+    },
+    {
+      "date": "2026-03-05",
+      "btc_usd": 72669.77,
+      "gold_usd": 5173.78,
+      "btc_gold_ratio": 14.0458
+    },
+    {
+      "date": "2026-03-06",
+      "btc_usd": 70874.99,
+      "gold_usd": 5107.6,
+      "btc_gold_ratio": 13.8764
+    },
+    {
+      "date": "2026-03-07",
+      "btc_usd": 68148.28,
+      "gold_usd": 5179.06,
+      "btc_gold_ratio": 13.1584
+    },
+    {
+      "date": "2026-03-08",
+      "btc_usd": 67271.19,
+      "gold_usd": 5174.09,
+      "btc_gold_ratio": 13.0016
+    },
+    {
+      "date": "2026-03-09",
+      "btc_usd": 66036.16,
+      "gold_usd": 5076.97,
+      "btc_gold_ratio": 13.007
+    },
+    {
+      "date": "2026-03-10",
+      "btc_usd": 68459.32,
+      "gold_usd": 5145.08,
+      "btc_gold_ratio": 13.3058
+    },
+    {
+      "date": "2026-03-11",
+      "btc_usd": 69883.01,
+      "gold_usd": 5192.84,
+      "btc_gold_ratio": 13.4576
+    },
+    {
+      "date": "2026-03-12",
+      "btc_usd": 70226.82,
+      "gold_usd": 5145.56,
+      "btc_gold_ratio": 13.648
+    },
+    {
+      "date": "2026-03-13",
+      "btc_usd": 70544.43,
+      "gold_usd": 5109.34,
+      "btc_gold_ratio": 13.8069
+    },
+    {
+      "date": "2026-03-14",
+      "btc_usd": 70965.28,
+      "gold_usd": 5029.49,
+      "btc_gold_ratio": 14.1098
+    },
+    {
+      "date": "2026-03-15",
+      "btc_usd": 71217.1,
+      "gold_usd": 5021.06,
+      "btc_gold_ratio": 14.1837
+    },
+    {
+      "date": "2026-03-16",
+      "btc_usd": 72681.91,
+      "gold_usd": 4974.7,
+      "btc_gold_ratio": 14.6103
+    },
+    {
+      "date": "2026-03-17",
+      "btc_usd": 74858.15,
+      "gold_usd": 4999.51,
+      "btc_gold_ratio": 14.9731
+    },
+    {
+      "date": "2026-03-18",
+      "btc_usd": 73926.28,
+      "gold_usd": 4994.14,
+      "btc_gold_ratio": 14.8026
+    },
+    {
+      "date": "2026-03-19",
+      "btc_usd": 71255.86,
+      "gold_usd": 4826.34,
+      "btc_gold_ratio": 14.764
+    },
+    {
+      "date": "2026-03-20",
+      "btc_usd": 69871.45,
+      "gold_usd": 4652.79,
+      "btc_gold_ratio": 15.0171
+    },
+    {
+      "date": "2026-03-21",
+      "btc_usd": 70552.63,
+      "gold_usd": 4509.35,
+      "btc_gold_ratio": 15.6458
+    },
     {
       "date": "2026-03-22",
       "btc_usd": 68733.55,
@@ -558,9 +2208,8 @@
   "errors": [],
   "metadata": {
     "as_of": "2026-06-19",
-    "row_count": 90,
-    "preserved_existing": true,
-    "error_count": 0,
-    "offline_replay": true
+    "row_count": 365,
+    "preserved_existing": false,
+    "error_count": 0
   }
 }

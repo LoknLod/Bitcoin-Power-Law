@@ -201,7 +201,7 @@ def write_cache(cache: Dict[str, Any], path: Path) -> None:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Refresh local BTC/gold historical ratio cache.")
     parser.add_argument("--as-of", type=parse_as_of, default=None, help="As-of date in YYYY-MM-DD.")
-    parser.add_argument("--days", type=int, default=90, help="History window. Defaults to 90 days.")
+    parser.add_argument("--days", type=int, default=365, help="History window. Defaults to 365 days to support 200DMA computation.")
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT, help="Output path. Defaults to market-history-cache.json.")
     parser.add_argument("--offline", action="store_true", help="Validate and render from existing cache without network access.")
     return parser.parse_args()

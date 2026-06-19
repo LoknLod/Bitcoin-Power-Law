@@ -400,6 +400,23 @@
     const formatPct = v => (v >= 0 ? '+' : '') + (v * 100).toFixed(1) + '%';
     
     let currentData = null;
+    let btcHistory = null;
+
+    async function fetchBtcHistory() {
+      try {
+        const r = await fetch('market-history-cache.json', { cache: 'no-store' });
+        if (!r.ok) return null;
+        const d = await r.json();
+        const rows = Array.isArray(d?.ratio_series) ? d.ratio_series : [];
+        return rows.map(row => ({ date: row.date, price: Number(row.btc_usd) })).filter(r => Number.isFinite(r.price));
+      } catch { return null; }
+    }
+
+    function computeMA(prices, period) {
+      if (!prices || prices.length < period) return null;
+      const slice = prices.slice(-period);
+      return slice.reduce((sum, p) => sum + p, 0) / period;
+    }
     
     const formatDateTime = value => {
       if (!value) return 'unknown time';
@@ -618,13 +635,21 @@
       const app = document.getElementById('app');
       try {
         const { price, change, source, observedAt, cacheGenerated } = await fetchBTC();
+        if (!btcHistory) btcHistory = await fetchBtcHistory();
+        const prices = btcHistory ? btcHistory.map(r => r.price) : [];
+        const ma200 = computeMA(prices, 200);
+        const ma90 = computeMA(prices, 90);
+        const ma50 = computeMA(prices, 50);
         const days = daysSinceGenesis();
         const { support, conservativeFair, trend, resistance } = powerLawModel(days);
         const dev = (price - conservativeFair) / conservativeFair;
         const trendDev = (price - trend) / trend;
         const status = getStatus(price, conservativeFair, support, resistance);
         
-        currentData = { price, conservativeFair, trend, support, resistance, days };
+        currentData = { price, conservativeFair, trend, support, resistance, days, ma200, ma90, ma50 };
+        
+        const regimeSignal = ma200 ? (price > ma200 ? { text: '🟢 Above 200DMA — Bull Regime', cls: 'positive' } : { text: '🔴 Below 200DMA — Bear Regime', cls: 'negative' }) : null;
+        const maDev = ma200 ? ((price - ma200) / ma200) : null;
         
         app.innerHTML = `
           <div class="card">
@@ -641,6 +666,22 @@
             </div>
             <div class="source-row">BTC source: ${source || 'unknown'} · observed ${formatDateTime(observedAt)}${cacheGenerated ? ` · cache ${formatDateTime(cacheGenerated)}` : ''}</div>
           </div>
+          ${regimeSignal ? `
+          <div class="card">
+            <div class="gauge-section">
+              <div class="gauge-wrap">
+                <div class="gauge-label">200DMA Regime Signal</div>
+                <div class="status-badge ${regimeSignal.cls}" style="font-size:14px;margin-top:6px;">${regimeSignal.text}</div>
+              </div>
+            </div>
+            <div class="metrics" style="margin-top:12px;">
+              <div class="metric"><div class="metric-value">${ma200 ? formatPrice(ma200) : '—'}</div><div class="metric-label">200DMA</div></div>
+              <div class="metric"><div class="metric-value ${maDev >= 0 ? 'negative' : 'positive'}">${maDev !== null ? formatPct(maDev) : '—'}</div><div class="metric-label">From 200DMA</div></div>
+              <div class="metric"><div class="metric-value">${ma50 ? formatPrice(ma50) : '—'}</div><div class="metric-label">50DMA</div></div>
+              <div class="metric"><div class="metric-value">${ma90 ? formatPrice(ma90) : '—'}</div><div class="metric-label">90DMA</div></div>
+            </div>
+            <div class="model-note" style="margin-top:8px;">200DMA is a BTC regime signal: above = bull accumulation, below = bear distribution. Currently ${btcHistory ? btcHistory.length : 0} days of history available${btcHistory && btcHistory.length < 200 ? ` (${200 - btcHistory.length} more needed for full 200DMA; using ${btcHistory.length}-day proxy)` : ''}.</div>
+          </div>` : ''}
           <div class="card chart-card" onclick="openModal()">
             <div class="tap-hint">Tap to expand</div>
             <div class="chart-title">Power Law Corridor (2012–2034)</div>
