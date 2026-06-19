@@ -269,6 +269,41 @@
             text-align: center;
             margin-top: 8px;
         }
+
+        /* Thesis Health Traffic Light */
+        .traffic-light-card {
+            text-align: center;
+            padding: 20px;
+        }
+        .traffic-light {
+            display: inline-flex;
+            gap: 8px;
+            margin: 10px 0;
+        }
+        .traffic-dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            opacity: 0.2;
+            transition: opacity 300ms ease, box-shadow 300ms ease;
+        }
+        .traffic-dot.green { background: #4ade80; }
+        .traffic-dot.yellow { background: #fbbf24; }
+        .traffic-dot.red { background: #ef4444; }
+        .traffic-dot.active { opacity: 1; box-shadow: 0 0 12px currentColor; }
+        .traffic-label {
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+        .traffic-label.green { color: #4ade80; }
+        .traffic-label.yellow { color: #fbbf24; }
+        .traffic-label.red { color: #ef4444; }
+        .traffic-sub {
+            font-size: 0.75em;
+            color: #888;
+            margin-top: 4px;
+        }
     </style>
 </head>
 <body>
@@ -287,6 +322,18 @@
             <div class="card-title">⚖️ Thesis Debate</div>
             <div class="debate-text">Is AI producing real productivity faster than credit/fiscal stress is degrading money?</div>
             <div class="debate-sub">Every signal below maps to one side of this question.</div>
+        </div>
+        
+        <!-- Thesis Health Traffic Light -->
+        <div class="card traffic-light-card">
+            <div class="card-title">🚦 Thesis Health</div>
+            <div class="traffic-light">
+                <div class="traffic-dot green" id="tl-green"></div>
+                <div class="traffic-dot yellow" id="tl-yellow"></div>
+                <div class="traffic-dot red" id="tl-red"></div>
+            </div>
+            <div class="traffic-label" id="tl-label">Computing...</div>
+            <div class="traffic-sub" id="tl-sub"></div>
         </div>
         
         <!-- Thesis Break Watch -->
@@ -495,8 +542,24 @@
             return 'high';
         }
 
+        let watchlistCache = null;
+
+        async function loadWatchlist() {
+            try {
+                if (!watchlistCache) watchlistCache = await loadJson('aim-technical-watchlist.json');
+                return watchlistCache;
+            } catch { return null; }
+        }
+
+        function watchlistSymbol(ticker) {
+            const syms = watchlistCache?.symbols || [];
+            return syms.find(s => s.symbol === ticker);
+        }
+
+        let thesisBreakResults = [];
+
         function renderThesisBreak() {
-            // v0.4 thesis break conditions
+            // v0.4 thesis break conditions — 3 automated via FRED + watchlist, 4 manual
             const conditions = [
                 {
                     label: 'Hyperscaler capex cut for multiple quarters',
@@ -505,23 +568,35 @@
                 },
                 {
                     label: 'NVDA or AVGO guides down on demand (not supply)',
-                    status: 'manual',
-                    detail: 'Requires earnings guidance data — not yet automated'
+                    status: 'auto-price',
+                    detail: 'Price drawdown proxy from 52-week high',
+                    tickers: ['NVDA', 'AVGO'],
+                    yellowThreshold: 15,  // 15% drawdown = watch
+                    redThreshold: 25      // 25% drawdown = likely guide-down
                 },
                 {
                     label: 'TSMC advanced-node utilization weakens',
-                    status: 'manual',
-                    detail: 'Requires TSMC monthly revenue data — not yet automated'
+                    status: 'auto-price',
+                    detail: 'Price drawdown proxy from 52-week high',
+                    tickers: ['TSM'],
+                    yellowThreshold: 15,
+                    redThreshold: 25
                 },
                 {
                     label: 'TER says AI test demand is normalizing',
-                    status: 'manual',
-                    detail: 'Requires TER earnings commentary — not yet automated'
+                    status: 'auto-price',
+                    detail: 'Price drawdown proxy from 52-week high',
+                    tickers: ['TER'],
+                    yellowThreshold: 15,
+                    redThreshold: 25
                 },
                 {
                     label: 'GEV backlog deteriorates',
-                    status: 'manual',
-                    detail: 'Requires GEV quarterly backlog data — not yet automated'
+                    status: 'auto-price',
+                    detail: 'Price drawdown proxy from 52-week high',
+                    tickers: ['GEV'],
+                    yellowThreshold: 15,
+                    redThreshold: 25
                 },
                 {
                     label: 'Data-center financing freezes / GPU credit stress',
@@ -536,6 +611,8 @@
                     detail: 'Requires semiconductor market share data — not yet automated'
                 }
             ];
+
+            thesisBreakResults = [];
 
             const html = conditions.map(c => {
                 let dotClass = 'gray';
@@ -556,7 +633,39 @@
                             statusText = `${val.toFixed(2)}% HY spread — as of ${obs.date}`;
                         }
                     }
+                } else if (c.status === 'auto-price' && c.tickers) {
+                    // Use drawdown from 252-day high as price proxy for guide-down risk
+                    let maxDrawdown = 0;
+                    let worstTicker = '';
+                    let foundAny = false;
+                    for (const t of c.tickers) {
+                        const sym = watchlistSymbol(t);
+                        if (sym) {
+                            const ddRaw = Number(sym.drawdown_from_252d_high);
+                            if (!Number.isFinite(ddRaw)) continue;
+                            foundAny = true;
+                            const dd = Math.abs(ddRaw);
+                            if (dd > maxDrawdown) {
+                                maxDrawdown = dd;
+                                worstTicker = t;
+                            }
+                        }
+                    }
+                    if (foundAny) {
+                        if (maxDrawdown >= c.redThreshold) {
+                            dotClass = 'red';
+                            statusText = `${worstTicker} down ${maxDrawdown.toFixed(1)}% from 52w high — guide-down risk signal`;
+                        } else if (maxDrawdown >= c.yellowThreshold) {
+                            dotClass = 'yellow';
+                            statusText = `${worstTicker} down ${maxDrawdown.toFixed(1)}% from 52w high — watch`;
+                        } else {
+                            dotClass = 'green';
+                            statusText = `Max drawdown ${maxDrawdown.toFixed(1)}% (${worstTicker || 'none'}) — no signal`;
+                        }
+                    }
                 }
+
+                thesisBreakResults.push({ label: c.label, dotClass });
 
                 return `
                     <div class="thesis-item">
@@ -570,6 +679,44 @@
             }).join('');
 
             byId('thesis-break-list').innerHTML = html;
+            renderTrafficLight();
+        }
+
+        function renderTrafficLight() {
+            const automated = thesisBreakResults.filter(r => r.dotClass !== 'gray');
+            const hasRed = automated.some(r => r.dotClass === 'red');
+            const hasYellow = automated.some(r => r.dotClass === 'yellow');
+            const allGreen = automated.length > 0 && automated.every(r => r.dotClass === 'green');
+            const manualCount = thesisBreakResults.filter(r => r.dotClass === 'gray').length;
+            const expectedAutomated = thesisBreakResults.filter(r => r.label.includes('NVDA') || r.label.includes('TSMC') || r.label.includes('TER') || r.label.includes('GEV') || r.label.includes('Data-center'));
+            const reportingAutomated = expectedAutomated.filter(r => r.dotClass !== 'gray');
+
+            let light, label, sub;
+            if (hasRed) {
+                light = 'red';
+                label = '🚨 Thesis Break Signal';
+                sub = 'At least one break condition is active. Review before deploying capital.';
+            } else if (hasYellow) {
+                light = 'yellow';
+                label = '⚠️ Watch — Automated Signals Mixed';
+                sub = 'Some automated conditions need monitoring. No active break signal.';
+            } else if (allGreen && reportingAutomated.length >= expectedAutomated.length) {
+                light = 'green';
+                label = '✅ Automated Signals Clear';
+                sub = `${automated.length} automated conditions green${manualCount > 0 ? `; ${manualCount} manual conditions still need periodic review` : ''}.`;
+            } else {
+                light = 'yellow';
+                label = '⚠️ Insufficient Data';
+                sub = `Only ${reportingAutomated.length}/${expectedAutomated.length} automated conditions reporting. Watchlist data may be missing or stale.`;
+            }
+
+            byId('tl-green').classList.toggle('active', light === 'green');
+            byId('tl-yellow').classList.toggle('active', light === 'yellow');
+            byId('tl-red').classList.toggle('active', light === 'red');
+            const labelEl = byId('tl-label');
+            labelEl.textContent = label;
+            labelEl.className = `traffic-label ${light}`;
+            byId('tl-sub').textContent = sub;
         }
 
         function renderCreditStress() {
@@ -795,6 +942,7 @@
         async function init() {
             try {
                 [marketCache, fredCache] = await Promise.all([loadMarketCache(), loadFredCache()]);
+                await loadWatchlist();
                 const currentRatio = renderMarketData(marketCache);
                 try {
                     marketHistoryCache = await loadMarketHistoryCache();

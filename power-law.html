@@ -682,6 +682,49 @@
             </div>
             <div class="model-note" style="margin-top:8px;">200DMA is a BTC regime signal: above = bull accumulation, below = bear distribution. Currently ${btcHistory ? btcHistory.length : 0} days of history available${btcHistory && btcHistory.length < 200 ? ` (${200 - btcHistory.length} more needed for full 200DMA; using ${btcHistory.length}-day proxy)` : ''}.</div>
           </div>` : ''}
+          <div class="card">
+            <div class="gauge-section">
+              <div class="gauge-wrap">
+                <div class="gauge-label">Halving Cycle Position</div>
+                ${(() => {
+                  const halvings = [
+                    { date: new Date('2012-11-28'), label: '2012' },
+                    { date: new Date('2016-07-09'), label: '2016' },
+                    { date: new Date('2020-05-11'), label: '2020' },
+                    { date: new Date('2024-04-19'), label: '2024' },
+                    { date: new Date('2028-04-19'), label: '2028 (est)' }
+                  ];
+                  const now = new Date();
+                  let current = null, next = null;
+                  for (let i = 0; i < halvings.length; i++) {
+                    if (halvings[i].date <= now && (i + 1 < halvings.length)) {
+                      current = halvings[i];
+                      next = halvings[i + 1];
+                    }
+                  }
+                  if (!current || !next) return '<div class="metric-value">—</div>';
+                  const cycleLen = (next.date - current.date) / 864e5;
+                  const elapsed = (now - current.date) / 864e5;
+                  const cyclePct = (elapsed / cycleLen) * 100;
+                  const phase = cyclePct < 25 ? 'Early Bull' : cyclePct < 50 ? 'Mid Bull' : cyclePct < 75 ? 'Late Bull / Distribution' : 'Bear Accumulation';
+                  const phaseColor = cyclePct < 50 ? 'var(--green)' : cyclePct < 75 ? 'var(--amber)' : 'var(--red)';
+                  return `
+                    <div class="status-badge" style="font-size:14px;margin-top:6px;color:${phaseColor};">${phase}</div>
+                    <div class="metrics" style="margin-top:12px;">
+                      <div class="metric"><div class="metric-value">${current.label}</div><div class="metric-label">Last Halving</div></div>
+                      <div class="metric"><div class="metric-value">${cyclePct.toFixed(0)}%</div><div class="metric-label">Cycle Progress</div></div>
+                      <div class="metric"><div class="metric-value">${next.label}</div><div class="metric-label">Next Halving</div></div>
+                      <div class="metric"><div class="metric-value">${Math.round((next.date - now) / 864e5)}d</div><div class="metric-label">Days to Next</div></div>
+                    </div>
+                    <div style="background:rgba(255,255,255,0.08);border-radius:8px;height:12px;overflow:hidden;margin-top:8px;">
+                      <div style="height:100%;width:${Math.min(100, cyclePct).toFixed(0)}%;background:linear-gradient(90deg,var(--green),var(--amber),var(--red));border-radius:8px;"></div>
+                    </div>
+                    <div class="model-note" style="margin-top:6px;">Historically: first 12-18 months post-halving = accumulation. 18-36 months = bull run. Final 12 months = distribution before next halving cycle reset.</div>
+                  `;
+                })()}
+              </div>
+            </div>
+          </div>
           <div class="card chart-card" onclick="openModal()">
             <div class="tap-hint">Tap to expand</div>
             <div class="chart-title">Power Law Corridor (2012–2034)</div>

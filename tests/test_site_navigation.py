@@ -68,7 +68,7 @@ class SiteNavigationTests(unittest.TestCase):
         for page in pages:
             html = page.read_text()
             for target in list(local_href_targets(html)) + list(static_fetch_targets(html)):
-                if target == "portfolio-cockpit-cache.json":
+                if target in ("portfolio-cockpit-cache.json", "aim-technical-watchlist.json"):
                     continue
                 with self.subTest(page=page.relative_to(ROOT), target=target):
                     resolved = (page.parent / target).resolve()

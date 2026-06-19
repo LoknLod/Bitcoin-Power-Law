@@ -778,11 +778,16 @@
 
     function renderSignals(signals) {
       const items = Array.isArray(signals) ? signals : [];
+      // Sort by weight × score descending for priority ranking
+      const ranked = items.map(s => ({ ...s, priority: (Number(s.weight) || 0) * clampScore(s.score) }))
+        .sort((a, b) => b.priority - a.priority);
+      const top5 = ranked.slice(0, 5);
+      const rest = ranked.slice(5);
       return `
         <section class="card">
-          <div class="card-title">Signal Watchlist</div>
+          <div class="card-title">Signal Watchlist — Top ${top5.length} by Priority</div>
           <div class="signal-list">
-            ${items.length ? items.map(signal => {
+            ${top5.length ? top5.map(signal => {
               const regimeSlug = slug(signal.regime).replace("monetary-reset-risk", "monetary-reset");
               const score = clampScore(signal.score);
               return `
@@ -794,17 +799,183 @@
                   <div class="signal-tags">
                     <span class="tag">${escapeHtml(titleize(signal.regime))}</span>
                     <span class="tag">Weight ${escapeHtml(signal.weight ?? "n/a")}</span>
-                    <span class="tag">${escapeHtml(signal.direction || "direction n/a")}</span>
                     ${signal.value_label ? `<span class="tag">${escapeHtml(signal.value_label)}</span>` : ""}
-                    <span class="tag">${escapeHtml(signal.source || "source n/a")}</span>
-                    <span class="tag">${escapeHtml(signal.as_of || "as_of n/a")}</span>
-                    ${signal.freshness ? `<span class="tag">${escapeHtml(titleize(signal.freshness))}</span>` : ""}
+                    <span class="tag">${escapeHtml(signal.freshness ? titleize(signal.freshness) : "unknown")}</span>
                     ${Number.isFinite(Number(signal.age_days)) ? `<span class="tag">${escapeHtml(Number(signal.age_days))}d old</span>` : ""}
                   </div>
                   <div class="signal-note">${escapeHtml(signal.note || "")}</div>
                 </article>
               `;
             }).join("") : `<div class="empty-state">No source signals yet. Run scripts/score_aim_macro.py to generate the local starter ledger.</div>`}
+          </div>
+          ${rest.length ? `
+            <details style="margin-top:10px;">
+              <summary style="color:var(--text-dim);font-size:11px;cursor:pointer;padding:5px;">Show ${rest.length} more signals</summary>
+              <div class="signal-list" style="margin-top:8px;">
+                ${rest.map(signal => {
+                  const regimeSlug = slug(signal.regime).replace("monetary-reset-risk", "monetary-reset");
+                  const score = clampScore(signal.score);
+                  return `
+                    <article class="signal-item ${regimeSlug}" style="opacity:0.7;">
+                      <div class="signal-head">
+                        <div class="signal-name">${escapeHtml(signal.name)}</div>
+                        <div class="signal-score" style="font-size:14px;">${score}</div>
+                      </div>
+                      <div class="signal-note">${escapeHtml(signal.note || "")}</div>
+                    </article>
+                  `;
+                }).join("")}
+              </div>
+            </details>
+          ` : ""}
+        </section>
+      `;
+    }
+
+    function renderSectionDivider(label) {
+      return `<div style="text-align:center;margin:16px 0 10px;padding:6px;font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);">${escapeHtml(label)}</div>`;
+    }
+
+    async function loadWatchlistData() {
+      try {
+        const response = await fetch("aim-technical-watchlist.json", { cache: "no-store" });
+        if (!response.ok) return null;
+        return await response.json();
+      } catch { return null; }
+    }
+
+    function renderDeploymentGauge(watchlist) {
+      if (!watchlist || !Array.isArray(watchlist.symbols)) {
+        return `<section class="card"><div class="card-title">🎯 Deployment Trigger Gauge</div><div class="empty-state">Technical watchlist unavailable. Run shrike_aim_technical_watchlist.py to generate.</div></section>`;
+      }
+      // v0.4 deployment triggers: AI basket down 12-15%, 20-25%, 30%+
+      const aiBasket = ['NVDA', 'AVGO', 'TSM', 'ASML', 'GOOGL', 'GOOG', 'TER', 'GEV'];
+      let maxDrawdown = 0;
+      let worstTicker = '';
+      let sumDrawdown = 0;
+      const drawdowns = [];
+      for (const sym of watchlist.symbols) {
+        if (aiBasket.includes(sym.symbol)) {
+          const ddRaw = Number(sym.drawdown_from_252d_high);
+          if (!Number.isFinite(ddRaw)) continue;
+          const dd = Math.abs(ddRaw);
+          drawdowns.push({ ticker: sym.symbol, drawdown: dd });
+          sumDrawdown += dd;
+          if (dd > maxDrawdown) { maxDrawdown = dd; worstTicker = sym.symbol; }
+        }
+      }
+      // Fail closed: if we don't have enough AI-basket symbols, don't report "no trigger"
+      const basketCoverage = drawdowns.length;
+      if (basketCoverage < 4) {
+        return `<section class="card"><div class="card-title">🎯 Deployment Trigger Gauge</div><div class="empty-state">Insufficient AI-basket coverage in watchlist (${basketCoverage}/${aiBasket.length} symbols found). Cannot compute deployment trigger status.</div></section>`;
+      }
+      drawdowns.sort((a, b) => b.drawdown - a.drawdown);
+      // Equal-weighted basket drawdown (the thesis signal), with worst constituent for context
+      const basketDrawdown = sumDrawdown / basketCoverage;
+
+      const trigger1 = 12; // first trigger
+      const trigger2 = 20; // second trigger
+      const trigger3 = 30; // third trigger
+
+      let status, color, context;
+      if (basketDrawdown >= trigger3) {
+        status = '🔴 Deep Drawdown Zone (30%+ basket avg)';
+        color = 'var(--red)';
+        context = 'AI basket in deep drawdown. v0.4 thesis says deploy highest-quality only at this level.';
+      } else if (basketDrawdown >= trigger2) {
+        status = '🟠 Significant Drawdown Zone (20-25% basket avg)';
+        color = 'var(--amber)';
+        context = 'AI basket in significant drawdown. v0.4 thesis defines this as a second deployment review zone.';
+      } else if (basketDrawdown >= trigger1) {
+        status = '🟡 First Trigger Zone (12-15% basket avg)';
+        color = 'var(--amber)';
+        context = 'AI basket entering drawdown. v0.4 thesis defines this as the first deployment review zone.';
+      } else {
+        status = '🟢 No Trigger — Normal Accumulation';
+        color = 'var(--green)';
+        context = 'AI basket not in drawdown territory. No v0.4 deployment triggers active.';
+      }
+
+      const gaugePct = Math.min(100, (basketDrawdown / trigger3) * 100);
+
+      return `
+        <section class="card">
+          <div class="card-title">🎯 Deployment Trigger Gauge</div>
+          <div style="font-size:14px;font-weight:650;color:${color};margin-bottom:8px;">${status}</div>
+          <div style="background:rgba(255,255,255,0.08);border-radius:8px;height:24px;overflow:hidden;position:relative;margin-bottom:8px;">
+            <div style="height:100%;width:${gaugePct.toFixed(0)}%;background:linear-gradient(90deg,var(--green),var(--amber),var(--red));border-radius:8px;transition:width 400ms;"></div>
+            <div style="position:absolute;top:0;left:${(trigger1/trigger3*100).toFixed(0)}%;width:1px;height:100%;background:rgba(255,255,255,0.3);"></div>
+            <div style="position:absolute;top:0;left:${(trigger2/trigger3*100).toFixed(0)}%;width:1px;height:100%;background:rgba(255,255,255,0.3);"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text-dim);margin-bottom:10px;">
+            <span>0%</span><span>12% trigger</span><span>20% trigger</span><span>30%+ trigger</span>
+          </div>
+          <div style="font-size:12px;color:var(--text);line-height:1.4;margin-bottom:8px;">${context}</div>
+          <div style="font-size:11px;color:var(--text-dim);">
+            Basket avg drawdown: <strong style="color:var(--text);">${basketDrawdown.toFixed(1)}%</strong> · Worst: ${worstTicker} ${maxDrawdown.toFixed(1)}%
+          </div>
+          <div style="margin-top:6px;font-size:10px;color:var(--text-dim);">
+            ${drawdowns.slice(0, 5).map(d => `${d.ticker} ${d.drawdown.toFixed(1)}%`).join(' · ')}
+          </div>
+        </section>
+      `;
+    }
+
+    function renderDriftView(portfolioOverlay) {
+      const actual = portfolioOverlay?.aim?.actual_allocation;
+      if (!actual?.available || !Array.isArray(actual.sleeves)) {
+        return '';
+      }
+      // Target allocation from the cache
+      const targets = [
+        { sleeve_key: 'ai_productive_equity', label: 'AI Productive Equity', target: 46 },
+        { sleeve_key: 'agent_toll_collectors', label: 'Agent Toll Collectors', target: 11 },
+        { sleeve_key: 'energy_power_real_assets', label: 'Energy / Power', target: 9.5 },
+        { sleeve_key: 'hard_money', label: 'Hard Money', target: 7.5 },
+        { sleeve_key: 'healthcare_defense', label: 'Healthcare / Defense', target: 13 },
+        { sleeve_key: 'critical_minerals', label: 'Critical Minerals', target: 6 },
+        { sleeve_key: 'runway_optionality', label: 'Runway / Dry Powder', target: 7 },
+      ];
+      const actualMap = new Map(actual.sleeves.map(s => [s.sleeve_key, s]));
+      const unclassified = actualMap.get('unclassified');
+
+      const rows = targets.map(t => {
+        const a = actualMap.get(t.sleeve_key);
+        const actualPct = a ? Number(a.actual_pct) : 0;
+        const drift = actualPct - t.target;
+        const driftCls = Math.abs(drift) < 1 ? 'var(--green)' : drift > 0 ? 'var(--amber)' : 'var(--blue)';
+        return `
+          <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+            <div style="flex:1;font-size:11px;color:var(--text-dim);">${t.label}</div>
+            <div style="font-size:11px;color:var(--text);min-width:45px;text-align:right;">${actualPct.toFixed(1)}%</div>
+            <div style="font-size:10px;color:var(--text-dim);min-width:35px;text-align:right;">/ ${t.target}%</div>
+            <div style="font-size:10px;color:${driftCls};min-width:40px;text-align:right;">${drift >= 0 ? '+' : ''}${drift.toFixed(1)}%</div>
+          </div>
+        `;
+      }).join('');
+
+      const unclassifiedRow = unclassified ? `
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+          <div style="flex:1;font-size:11px;color:var(--text-dim);font-style:italic;">Unclassified / Cash</div>
+          <div style="font-size:11px;color:var(--text-dim);min-width:45px;text-align:right;">${Number(unclassified.actual_pct).toFixed(1)}%</div>
+          <div style="font-size:10px;color:var(--text-dim);min-width:35px;text-align:right;">/ 0%</div>
+          <div style="font-size:10px;color:var(--amber);min-width:40px;text-align:right;">+${Number(unclassified.actual_pct).toFixed(1)}%</div>
+        </div>
+      ` : '';
+
+      return `
+        <section class="card">
+          <div class="card-title">📊 Portfolio Drift (Private)</div>
+          <div style="display:flex;align-items:center;gap:8px;padding:4px 0 6px;font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border);">
+            <div style="flex:1;">Sleeve</div>
+            <div style="min-width:45px;text-align:right;">Actual</div>
+            <div style="min-width:35px;text-align:right;">Target</div>
+            <div style="min-width:40px;text-align:right;">Drift</div>
+          </div>
+          ${rows}
+          ${unclassifiedRow}
+          <div style="font-size:10px;color:var(--text-dim);margin-top:8px;line-height:1.35;">
+            Positive drift = overweight. Negative = underweight (deployable). Unclassified = cash or legacy holdings not mapped to v0.4 sleeves.
           </div>
         </section>
       `;
@@ -828,11 +999,15 @@
     }
 
     async function init() {
-      const [{ data, usedDemo }, portfolioOverlay] = await Promise.all([loadCache(), loadPortfolioOverlay()]);
+      const [{ data, usedDemo }, portfolioOverlay, watchlist] = await Promise.all([loadCache(), loadPortfolioOverlay(), loadWatchlistData()]);
       document.getElementById("demoWarning").classList.toggle("show", usedDemo);
       document.getElementById("app").innerHTML = [
-        renderPosture(data),
+        renderSectionDivider("Portfolio Readiness"),
         renderRetirementCockpit(portfolioOverlay),
+        renderDriftView(portfolioOverlay),
+        renderSectionDivider("Macro Regime & Deployment"),
+        renderDeploymentGauge(watchlist),
+        renderPosture(data),
         renderScores(data.scores),
         renderAllocation(data.aim5_allocation, portfolioOverlay),
         renderSignals(data.dashboard_signals || data.signals),
