@@ -1,9 +1,9 @@
 {
   "schema_version": "aim_macro_cache.v0.1",
   "scoring_version": "aim_macro_scoring.v0.3",
-  "generated_at": "2026-06-18T00:00:00Z",
+  "generated_at": "2026-06-19T00:00:00Z",
   "source": "local_fred_and_market_cache",
-  "freshness": "local_cache",
+  "freshness": "stale",
   "posture": {
     "key": "barbell",
     "label": "Barbell",
@@ -22,8 +22,8 @@
     },
     "monetary_reset": {
       "score": 62,
-      "confidence": "medium",
-      "interpretation": "Local FRED liquidity, credit, fiscal, rates, and spread proxies are available; score is still a simple first-pass model."
+      "confidence": "low",
+      "interpretation": "One or more required FRED macro/credit signals are missing or stale as of 2026-06-19 (latest monetary observation 2026-06-18); score is directional only."
     },
     "energy_bottleneck": {
       "score": 56,
@@ -74,7 +74,7 @@
       "as_of": "2026-04-30",
       "note": "Revenue growth, margins, free cash flow margin, R&D intensity, and optional SEC filing-language monetization evidence. Leaders: META, NVDA, MSFT.",
       "freshness": "local_cache",
-      "age_days": 49,
+      "age_days": 50,
       "value_label": "score 68/100"
     },
     {
@@ -87,7 +87,7 @@
       "as_of": "2026-04-30",
       "note": "Capex growth, capex/revenue, debt growth, depreciation growth, free-cash-flow pressure, and optional SEC filing-language risk evidence. Leaders: GOOGL, AMZN, AMD.",
       "freshness": "local_cache",
-      "age_days": 49,
+      "age_days": 50,
       "value_label": "score 51/100"
     },
     {
@@ -100,7 +100,7 @@
       "as_of": "2026-03-01",
       "note": "EIA retail electricity data: commercial electricity price +5.8% YoY; commercial electricity sales +4.5% YoY; industrial electricity price +3.9% YoY. First-pass proxy for AI/data-center energy bottleneck pressure.",
       "freshness": "local_cache",
-      "age_days": 109,
+      "age_days": 110,
       "value_label": "commercial electricity price +5.8% YoY; commercial electricity sales +4.5% YoY; industrial electricity price +3.9% YoY"
     },
     {
@@ -110,11 +110,11 @@
       "weight": 0.45,
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
-      "as_of": "2026-06-18",
-      "note": "BTC spot is $62,823 versus a power-law anchor of $135,542, a -53.7% gap.",
+      "as_of": "2026-06-19",
+      "note": "BTC spot is $63,069 versus a power-law anchor of $135,666, a -53.5% gap.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-53.7%"
+      "value_label": "-53.5%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -123,11 +123,11 @@
       "weight": 0.35,
       "direction": "higher means BTC is repricing versus the gold proxy",
       "source": "market_cache BTC/USD over PAXG/USD",
-      "as_of": "2026-06-18",
-      "note": "BTC buys roughly 15.0 ounces of the PAXG gold proxy.",
+      "as_of": "2026-06-19",
+      "note": "BTC buys roughly 15.2 ounces of the PAXG gold proxy.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "15.0 oz"
+      "value_label": "15.2 oz"
     },
     {
       "name": "Gold Proxy Price",
@@ -136,11 +136,11 @@
       "weight": 0.2,
       "direction": "higher means the gold shield is repricing in USD terms",
       "source": "pax-gold proxy",
-      "as_of": "2026-06-18",
-      "note": "PAXG gold proxy is $4,202.",
+      "as_of": "2026-06-19",
+      "note": "PAXG gold proxy is $4,143.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "$4,202"
+      "value_label": "$4,143"
     },
     {
       "name": "U.S. M2 Liquidity Context",
@@ -151,8 +151,8 @@
       "source": "FRED WM2NS",
       "as_of": "2026-05-04",
       "note": "US M2 is +5.4% YoY at $22,879B; useful context, but world credit is the monetary reset anchor.",
-      "freshness": "local_cache",
-      "age_days": 45,
+      "freshness": "stale",
+      "age_days": 46,
       "value_label": "+5.4%"
     },
     {
@@ -165,7 +165,7 @@
       "as_of": "2026-06-17",
       "note": "Fed assets are +0.9% YoY at $6,736B.",
       "freshness": "local_cache",
-      "age_days": 1,
+      "age_days": 2,
       "value_label": "+0.9%"
     },
     {
@@ -178,7 +178,7 @@
       "as_of": "2026-06-18",
       "note": "Overnight reverse repo is $0B, a thin remaining buffer.",
       "freshness": "local_cache",
-      "age_days": 0,
+      "age_days": 1,
       "value_label": "$0B"
     },
     {
@@ -191,7 +191,7 @@
       "as_of": "2026-06-17",
       "note": "TGA is $881B, which keeps liquidity conditions tighter.",
       "freshness": "local_cache",
-      "age_days": 1,
+      "age_days": 2,
       "value_label": "$881B"
     },
     {
@@ -204,7 +204,7 @@
       "as_of": "2026-06-17",
       "note": "Simple WALCL minus RRP minus TGA proxy is $5,855B; roughly 90d change is +0.9%.",
       "freshness": "local_cache",
-      "age_days": 1,
+      "age_days": 2,
       "value_label": "+0.9%"
     },
     {
@@ -217,7 +217,7 @@
       "as_of": "2025-10-01",
       "note": "Total reporting countries credit to the non-financial sector is +5.7% 3Y annualized at 262,666.1; this is the core monetary reset signal, with U.S. M2 demoted to context.",
       "freshness": "local_cache",
-      "age_days": 260,
+      "age_days": 261,
       "value_label": "+5.7% 3Y annualized"
     },
     {
@@ -230,7 +230,7 @@
       "as_of": "2025-10-01",
       "note": "U.S. total credit to the non-financial sector is +6.0% YoY at 77,279.7.",
       "freshness": "local_cache",
-      "age_days": 260,
+      "age_days": 261,
       "value_label": "+6.0% YoY"
     },
     {
@@ -243,7 +243,7 @@
       "as_of": "2026-01-01",
       "note": "Federal debt is +7.9% YoY at 39,065,421.0.",
       "freshness": "local_cache",
-      "age_days": 168,
+      "age_days": 169,
       "value_label": "+7.9% YoY"
     },
     {
@@ -256,7 +256,7 @@
       "as_of": "2026-01-01",
       "note": "Federal government interest payments is +6.5% YoY at 1,218.9.",
       "freshness": "local_cache",
-      "age_days": 168,
+      "age_days": 169,
       "value_label": "+6.5% YoY"
     },
     {
@@ -269,7 +269,7 @@
       "as_of": "2026-06-17",
       "note": "10Y Treasury yield is 4.49%.",
       "freshness": "local_cache",
-      "age_days": 1,
+      "age_days": 2,
       "value_label": "4.49%"
     },
     {
@@ -282,7 +282,7 @@
       "as_of": "2026-06-17",
       "note": "10Y real yield is 2.23%.",
       "freshness": "local_cache",
-      "age_days": 1,
+      "age_days": 2,
       "value_label": "2.23%"
     },
     {
@@ -295,7 +295,7 @@
       "as_of": "2026-06-18",
       "note": "10Y breakeven inflation is 2.25%.",
       "freshness": "local_cache",
-      "age_days": 0,
+      "age_days": 1,
       "value_label": "2.25%"
     },
     {
@@ -308,7 +308,7 @@
       "as_of": "2026-06-17",
       "note": "High-yield option-adjusted spread is 2.63 percentage points.",
       "freshness": "local_cache",
-      "age_days": 1,
+      "age_days": 2,
       "value_label": "2.63%"
     }
   ],
@@ -323,7 +323,7 @@
       "as_of": "2026-04-30",
       "note": "Revenue growth, margins, free cash flow margin, R&D intensity, and optional SEC filing-language monetization evidence. Leaders: META, NVDA, MSFT.",
       "freshness": "local_cache",
-      "age_days": 49,
+      "age_days": 50,
       "value_label": "score 68/100"
     },
     {
@@ -336,7 +336,7 @@
       "as_of": "2026-04-30",
       "note": "Capex growth, capex/revenue, debt growth, depreciation growth, free-cash-flow pressure, and optional SEC filing-language risk evidence. Leaders: GOOGL, AMZN, AMD.",
       "freshness": "local_cache",
-      "age_days": 49,
+      "age_days": 50,
       "value_label": "score 51/100"
     },
     {
@@ -346,11 +346,11 @@
       "weight": 0.45,
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
-      "as_of": "2026-06-18",
-      "note": "BTC spot is $62,823 versus a power-law anchor of $135,542, a -53.7% gap.",
+      "as_of": "2026-06-19",
+      "note": "BTC spot is $63,069 versus a power-law anchor of $135,666, a -53.5% gap.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-53.7%"
+      "value_label": "-53.5%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -359,11 +359,11 @@
       "weight": 0.35,
       "direction": "higher means BTC is repricing versus the gold proxy",
       "source": "market_cache BTC/USD over PAXG/USD",
-      "as_of": "2026-06-18",
-      "note": "BTC buys roughly 15.0 ounces of the PAXG gold proxy.",
+      "as_of": "2026-06-19",
+      "note": "BTC buys roughly 15.2 ounces of the PAXG gold proxy.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "15.0 oz"
+      "value_label": "15.2 oz"
     },
     {
       "name": "World Credit Growth",
@@ -375,7 +375,7 @@
       "as_of": "2025-10-01",
       "note": "Total reporting countries credit to the non-financial sector is +5.7% 3Y annualized at 262,666.1; this is the core monetary reset signal, with U.S. M2 demoted to context.",
       "freshness": "local_cache",
-      "age_days": 260,
+      "age_days": 261,
       "value_label": "+5.7% 3Y annualized"
     }
   ],
