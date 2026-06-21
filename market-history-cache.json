@@ -1,8 +1,8 @@
 {
   "schema_version": "market_history_cache.v0.1",
-  "generated_at": "2026-06-19T00:00:00Z",
-  "source": "coingecko_market_chart",
-  "days": 365,
+  "generated_at": "2026-06-21T15:45:15Z",
+  "source": "existing_market_history_cache",
+  "days": 1500,
   "assets": {
     "btc_usd": {
       "coin_id": "bitcoin",
@@ -2205,11 +2205,15 @@
       "btc_gold_ratio": 15.1799
     }
   ],
-  "errors": [],
+  "errors": [
+    "CoinGecko bitcoin market_chart failed: HTTP Error 401: Unauthorized",
+    "CoinGecko pax-gold market_chart failed: HTTP Error 401: Unauthorized",
+    "preserved existing ratio_series after refresh error"
+  ],
   "metadata": {
-    "as_of": "2026-06-19",
+    "as_of": null,
     "row_count": 365,
-    "preserved_existing": false,
-    "error_count": 0
+    "preserved_existing": true,
+    "error_count": 3
   }
 }

@@ -201,7 +201,7 @@ def write_cache(cache: Dict[str, Any], path: Path) -> None:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Refresh local BTC/gold historical ratio cache.")
     parser.add_argument("--as-of", type=parse_as_of, default=None, help="As-of date in YYYY-MM-DD.")
-    parser.add_argument("--days", type=int, default=365, help="History window. Defaults to 365 days to support 200DMA computation.")
+    parser.add_argument("--days", type=int, default=365, help="History window. Defaults to 365 days. Up to 2000 for 200-week MA support.")
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT, help="Output path. Defaults to market-history-cache.json.")
     parser.add_argument("--offline", action="store_true", help="Validate and render from existing cache without network access.")
     return parser.parse_args()
@@ -209,8 +209,8 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
-    if args.days < 7 or args.days > 365:
-        print("Market history cache update refused: --days must be between 7 and 365")
+    if args.days < 7 or args.days > 2000:
+        print("Market history cache update refused: --days must be between 7 and 2000")
         return 2
     output_path = args.output if args.output.is_absolute() else ROOT / args.output
     try:

@@ -23,7 +23,7 @@ AI_SIGNALS_CACHE = ROOT / "ai-signals-cache.json"
 ENERGY_CACHE = ROOT / "energy-cache.json"
 AIM_CACHE = ROOT / "aim-cache.json"
 SCHEMA_VERSION = "aim_macro_cache.v0.1"
-SCORING_VERSION = "aim_macro_scoring.v0.3"
+SCORING_VERSION = "aim_macro_scoring.v0.4"
 FRESHNESS_MAX_AGE_DAYS = 45
 QUARTERLY_FRESHNESS_MAX_AGE_DAYS = 370
 ENERGY_FRESHNESS_MAX_AGE_DAYS = 120
@@ -33,6 +33,10 @@ NET_LIQUIDITY_LOOKBACK_TOLERANCE_DAYS = 14
 BTC_GENESIS = date(2009, 1, 3)
 BTC_POWER_LAW_A = -17.01
 BTC_POWER_LAW_B = 5.82
+BTC_HISTORY_EXTENDED = ROOT / "btc-history-extended.json"
+WEEK_200_DAYS = 1400
+POWER_LAW_GAP_THRESHOLD = -40.0
+POWER_LAW_GAP_DECAY_DAYS = 90  # confidence drops to "low" after this many consecutive days below threshold
 DEBATE_QUESTION = "Is AI producing real productivity faster than credit/fiscal stress is degrading money?"
 
 QUARTERLY_SERIES = {
@@ -471,6 +475,68 @@ def score_btc_power_gap(gap_pct: Optional[float]) -> int:
     if gap_pct >= -25.0:
         return 55
     return 48
+
+
+def score_btc_200wma(pct_vs_200w: Optional[float]) -> int:
+    """Score the 200-week MA signal. Below = oversold/bullish for hard money."""
+    if pct_vs_200w is None:
+        return 50
+    if pct_vs_200w <= -20.0:
+        return 75  # deeply oversold — strong hard-money signal
+    if pct_vs_200w <= -10.0:
+        return 68
+    if pct_vs_200w <= 0.0:
+        return 62  # below 200wMA — oversold
+    if pct_vs_200w <= 10.0:
+        return 55  # near the line — neutral
+    if pct_vs_200w <= 30.0:
+        return 50  # above — normal
+    return 45  # far above — potentially overextended
+
+
+def compute_200wma(history: List[Dict[str, Any]]) -> Tuple[Optional[float], Optional[str]]:
+    """Compute the 200-week (1400-day) moving average from BTC daily history."""
+    if not isinstance(history, list) or len(history) < WEEK_200_DAYS:
+        return None, f"insufficient history: {len(history) if isinstance(history, list) else 0} days, need {WEEK_200_DAYS}"
+    closes = []
+    for row in history[-WEEK_200_DAYS:]:
+        price = safe_float(row.get("btc_usd"))
+        if price is not None and price > 0:
+            closes.append(price)
+    if len(closes) < WEEK_200_DAYS * 0.95:  # allow 5% missing
+        return None, f"too many missing closes: {WEEK_200_DAYS - len(closes)}"
+    return sum(closes) / len(closes), None
+
+
+def power_law_gap_duration_days(history: List[Dict[str, Any]], as_of: date) -> Optional[int]:
+    """Count consecutive days the power-law gap has been below the threshold."""
+    if not isinstance(history, list) or not history:
+        return None
+    consecutive = 0
+    for row in reversed(history):
+        observed_at = parse_cache_date(row.get("date"))
+        btc_price = safe_float(row.get("btc_usd"))
+        if observed_at is None or btc_price is None:
+            continue
+        fair_value = btc_power_law_fair_value(observed_at)
+        if fair_value is None or fair_value <= 0:
+            break
+        gap_pct = (btc_price - fair_value) / fair_value * 100.0
+        if gap_pct < POWER_LAW_GAP_THRESHOLD:
+            consecutive += 1
+        else:
+            break
+    return consecutive
+
+
+def load_btc_history_extended() -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
+    cache, error = read_json(BTC_HISTORY_EXTENDED)
+    if error:
+        return None, error
+    series = cache.get("series") if isinstance(cache, dict) else None
+    if not isinstance(series, list) or not series:
+        return None, "btc-history-extended.json missing series array"
+    return cache, None
 
 
 def score_btc_gold_ratio(ratio: Optional[float]) -> int:
@@ -917,24 +983,63 @@ def build_hard_money_signals(
     gold_price, gold_date, gold_source = market_price(market_cache, "gold_usd")
     missing_reason = market_error or "market-cache.json missing or incomplete"
 
+    # Load extended BTC history for 200-week MA and gap duration
+    btc_history_cache, _ = load_btc_history_extended()
+    btc_history = btc_history_cache.get("series") if btc_history_cache else None
+    ma_200w, ma_200w_error = compute_200wma(btc_history) if btc_history else (None, "no btc-history-extended.json")
+    gap_duration = power_law_gap_duration_days(btc_history, as_of) if btc_history else None
+
     signals: List[Dict[str, Any]] = []
 
+    # --- 200-week MA signal (primary, model-free) ---
+    if btc_price is not None and ma_200w is not None:
+        pct_vs_200w = (btc_price / ma_200w - 1.0) * 100.0
+        freshness, age_days = market_freshness(btc_date, as_of)
+        signals.append(
+            regime_signal(
+                "BTC 200-Week Moving Average",
+                "hard_money_repricing",
+                score_btc_200wma(pct_vs_200w),
+                0.35,
+                "below 200wMA = oversold (bullish for hard money); above = normal",
+                btc_source,
+                btc_date.isoformat() if btc_date else as_of.isoformat(),
+                (
+                    f"BTC spot is {format_usd_price(btc_price)} versus a 200-week MA of "
+                    f"{format_usd_price(ma_200w)}, a {format_pct(pct_vs_200w)} deviation. "
+                    f"Model-free long-term trend signal."
+                ),
+                freshness=freshness,
+                age_days=age_days,
+                value_label=format_pct(pct_vs_200w),
+            )
+        )
+    else:
+        reason = "BTC spot unavailable" if btc_price is None else f"200-week MA unavailable: {ma_200w_error}"
+        signals.append(missing_hard_money_signal("BTC 200-Week Moving Average", as_of, reason or missing_reason))
+
+    # --- Power law gap signal (secondary, reduced weight) ---
     if btc_price is not None and fair_value is not None:
         gap_pct = (btc_price - fair_value) / fair_value * 100.0
         freshness, age_days = market_freshness(btc_date, as_of)
+        gap_note = (
+            f"BTC spot is {format_usd_price(btc_price)} versus a power-law anchor of "
+            f"{format_usd_price(fair_value)}, a {format_pct(gap_pct)} gap."
+        )
+        if gap_duration is not None and gap_duration > 0:
+            gap_note += f" Gap has been below {POWER_LAW_GAP_THRESHOLD:.0f}% for {gap_duration} consecutive days."
+            if gap_duration >= POWER_LAW_GAP_DECAY_DAYS:
+                gap_note += " Confidence decayed to low (extended gap without reversion)."
         signals.append(
             regime_signal(
                 "BTC Power Law Fair Value Gap",
                 "hard_money_repricing",
                 score_btc_power_gap(gap_pct),
-                0.45,
+                0.25,  # reduced from 0.45 — 200-week MA is now primary
                 "higher means BTC is repricing above the time-based power-law anchor",
                 btc_source,
                 btc_date.isoformat() if btc_date else as_of.isoformat(),
-                (
-                    f"BTC spot is {format_usd_price(btc_price)} versus a power-law anchor of "
-                    f"{format_usd_price(fair_value)}, a {format_pct(gap_pct)} gap."
-                ),
+                gap_note,
                 freshness=freshness,
                 age_days=age_days,
                 value_label=format_pct(gap_pct),
@@ -944,6 +1049,7 @@ def build_hard_money_signals(
         reason = "BTC spot price unavailable" if btc_price is None else "BTC power-law anchor unavailable before genesis"
         signals.append(missing_hard_money_signal("BTC Power Law Fair Value Gap", as_of, reason or missing_reason))
 
+    # --- BTC/Gold Ratio (unchanged weight) ---
     if btc_price is not None and gold_price is not None:
         ratio = btc_price / gold_price
         freshness, age_days, observed_at = combined_market_freshness((btc_date, gold_date), as_of)
@@ -952,7 +1058,7 @@ def build_hard_money_signals(
                 "BTC/Gold Ratio",
                 "hard_money_repricing",
                 score_btc_gold_ratio(ratio),
-                0.35,
+                0.25,
                 "higher means BTC is repricing versus the gold proxy",
                 "market_cache BTC/USD over PAXG/USD",
                 observed_at.isoformat() if observed_at else as_of.isoformat(),
@@ -966,6 +1072,7 @@ def build_hard_money_signals(
         missing = "BTC spot price unavailable" if btc_price is None else "gold proxy price unavailable"
         signals.append(missing_hard_money_signal("BTC/Gold Ratio", as_of, missing or missing_reason))
 
+    # --- Gold proxy price (unchanged) ---
     if gold_price is not None:
         freshness, age_days = market_freshness(gold_date, as_of)
         signals.append(
@@ -973,7 +1080,7 @@ def build_hard_money_signals(
                 "Gold Proxy Price",
                 "hard_money_repricing",
                 score_gold_price(gold_price),
-                0.20,
+                0.15,  # reduced from 0.20 — 200-week MA takes primary weight
                 "higher means the gold shield is repricing in USD terms",
                 gold_source,
                 gold_date.isoformat() if gold_date else as_of.isoformat(),
@@ -1541,6 +1648,14 @@ def build_cache(as_of: date, ai_signals_cache_path: Optional[Path] = None, energ
     source = cache_source(monetary_freshness, hard_money_freshness)
     monetary_confidence = confidence_from_freshness(monetary_freshness, len(weighted_monetary))
     hard_money_confidence = confidence_from_freshness(hard_money_freshness, len(weighted_hard_money))
+
+    # Power-law gap confidence decay: if the gap has been below threshold for an
+    # extended period without reversion, downgrade hard-money confidence to "low"
+    btc_history_cache_decay, _ = load_btc_history_extended()
+    btc_history_decay = btc_history_cache_decay.get("series") if btc_history_cache_decay else None
+    gap_duration = power_law_gap_duration_days(btc_history_decay, as_of) if btc_history_decay else None
+    if gap_duration is not None and gap_duration >= POWER_LAW_GAP_DECAY_DAYS and hard_money_confidence == "medium":
+        hard_money_confidence = "low"
     monetary_score = weighted_score(weighted_monetary)
     hard_money_score = weighted_score(weighted_hard_money, fallback=50)
 
@@ -1567,7 +1682,7 @@ def build_cache(as_of: date, ai_signals_cache_path: Optional[Path] = None, energ
             f"{MARKET_FRESHNESS_MAX_AGE_DAYS} days as of {as_of.isoformat()}; score is directional only."
         )
     else:
-        hard_money_note = "Local BTC and PAXG gold-proxy prices are available; hard-money repricing score is medium-confidence and simple."
+        hard_money_note = "Local BTC and PAXG gold-proxy prices are available; hard-money repricing score includes 200-week MA (primary), power-law gap (secondary), BTC/gold ratio, and gold proxy."
 
     scores = {
         "ai_productivity": ai_score_summary(
