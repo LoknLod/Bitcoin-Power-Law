@@ -28,6 +28,7 @@ FRESHNESS_MAX_AGE_DAYS = 45
 QUARTERLY_FRESHNESS_MAX_AGE_DAYS = 370
 ENERGY_FRESHNESS_MAX_AGE_DAYS = 120
 MARKET_FRESHNESS_MAX_AGE_DAYS = 3
+DIRECTIONAL_STALENESS_WARNING_DAYS = 90
 NET_LIQUIDITY_LOOKBACK_DAYS = 90
 NET_LIQUIDITY_LOOKBACK_TOLERANCE_DAYS = 14
 BTC_GENESIS = date(2009, 1, 3)
@@ -300,6 +301,16 @@ def signal_freshness(observed_at: date, as_of: date, max_age_days: int = FRESHNE
     if age_days < 0:
         return "future"
     return "local_cache" if age_days <= max_age_days else "stale"
+
+
+def fred_staleness_warning(observed_at: date, as_of: date) -> Optional[str]:
+    age_days = signal_age_days(observed_at, as_of)
+    if age_days <= DIRECTIONAL_STALENESS_WARNING_DAYS:
+        return None
+    return (
+        f"FRED observation is {age_days} days old as of {as_of.isoformat()}; "
+        "treat this score as directional only until the series refreshes."
+    )
 
 
 def net_liquidity_billions(walcl_millions: float, rrp_billions: float, tga_millions: float) -> float:
@@ -591,6 +602,8 @@ def regime_signal(
     freshness: Optional[str] = None,
     age_days: Optional[int] = None,
     value_label: Optional[str] = None,
+    placeholder: bool = False,
+    staleness_warning: Optional[str] = None,
 ) -> Dict[str, Any]:
     signal = {
         "name": name,
@@ -608,6 +621,10 @@ def regime_signal(
         signal["age_days"] = age_days
     if value_label is not None:
         signal["value_label"] = value_label
+    if placeholder:
+        signal["placeholder"] = True
+    if staleness_warning is not None:
+        signal["staleness_warning"] = staleness_warning
     return signal
 
 
@@ -623,6 +640,7 @@ def energy_starter_signal(generated_at: str) -> Dict[str, Any]:
         as_of,
         "Qualitative starter: AI data centers and Bitcoin mining both expose power constraints.",
         freshness="starter",
+        placeholder=True,
     )
 
 
@@ -639,6 +657,7 @@ def starter_signals(generated_at: str) -> List[Dict[str, Any]]:
             as_of,
             "Placeholder until verified AI revenue, margin, and productivity series are added.",
             freshness="starter",
+            placeholder=True,
         ),
         regime_signal(
             "AI Capex Bubble Starter",
@@ -650,6 +669,7 @@ def starter_signals(generated_at: str) -> List[Dict[str, Any]]:
             as_of,
             "Placeholder until hyperscaler capex, financing, and utilization data are added.",
             freshness="starter",
+            placeholder=True,
         ),
         energy_starter_signal(generated_at),
     ]
@@ -1156,6 +1176,7 @@ def add_growth_signal(
             freshness=fred_freshness(series_id, series_latest[0], as_of),
             age_days=signal_age_days(series_latest[0], as_of),
             value_label=f"{format_pct(growth)} {growth_label}",
+            staleness_warning=fred_staleness_warning(series_latest[0], as_of),
         )
     )
 
@@ -1196,6 +1217,7 @@ def add_level_signal(
             freshness=fred_freshness(series_id, series_latest[0], as_of),
             age_days=signal_age_days(series_latest[0], as_of),
             value_label=f"{series_latest[1]:.2f}%",
+            staleness_warning=fred_staleness_warning(series_latest[0], as_of),
         )
     )
 
@@ -1236,6 +1258,7 @@ def build_monetary_signals(cache: Dict[str, Any], as_of: date) -> Tuple[List[Dic
                 freshness=fred_freshness("WM2NS", wm2_latest[0], as_of),
                 age_days=signal_age_days(wm2_latest[0], as_of),
                 value_label=format_pct(wm2_yoy),
+                staleness_warning=fred_staleness_warning(wm2_latest[0], as_of),
             )
         )
     else:
@@ -1265,6 +1288,7 @@ def build_monetary_signals(cache: Dict[str, Any], as_of: date) -> Tuple[List[Dic
                 freshness=fred_freshness("WALCL", walcl_latest[0], as_of),
                 age_days=signal_age_days(walcl_latest[0], as_of),
                 value_label=format_pct(walcl_yoy),
+                staleness_warning=fred_staleness_warning(walcl_latest[0], as_of),
             )
         )
     else:
@@ -1292,6 +1316,7 @@ def build_monetary_signals(cache: Dict[str, Any], as_of: date) -> Tuple[List[Dic
                 freshness=fred_freshness("RRPONTSYD", rrp_latest[0], as_of),
                 age_days=signal_age_days(rrp_latest[0], as_of),
                 value_label=format_billions(rrp_latest[1]),
+                staleness_warning=fred_staleness_warning(rrp_latest[0], as_of),
             )
         )
     else:
@@ -1320,6 +1345,7 @@ def build_monetary_signals(cache: Dict[str, Any], as_of: date) -> Tuple[List[Dic
                 freshness=fred_freshness("WTREGEN", tga_latest[0], as_of),
                 age_days=signal_age_days(tga_latest[0], as_of),
                 value_label=format_billions(tga_billions),
+                staleness_warning=fred_staleness_warning(tga_latest[0], as_of),
             )
         )
     else:
@@ -1382,6 +1408,7 @@ def build_monetary_signals(cache: Dict[str, Any], as_of: date) -> Tuple[List[Dic
                 ),
                 age_days=signal_age_days(latest_component_date, as_of),
                 value_label=format_pct(change_pct),
+                staleness_warning=fred_staleness_warning(latest_component_date, as_of),
             )
         )
     else:
@@ -1424,6 +1451,7 @@ def build_monetary_signals(cache: Dict[str, Any], as_of: date) -> Tuple[List[Dic
                 freshness=fred_freshness("Q5ACAMUSDA", world_credit_latest[0], as_of),
                 age_days=signal_age_days(world_credit_latest[0], as_of),
                 value_label=f"{format_pct(world_credit_growth)} 3Y annualized",
+                staleness_warning=fred_staleness_warning(world_credit_latest[0], as_of),
             )
         )
     add_growth_signal(
@@ -1517,6 +1545,20 @@ def weighted_monetary_signals(signals: Iterable[Dict[str, Any]]) -> List[Dict[st
         if signal.get("regime") == "monetary_reset" and weight > 0:
             weighted.append(signal)
     return weighted
+
+
+def stale_monetary_input_signals(signals: Iterable[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    stale: List[Dict[str, Any]] = []
+    for signal in weighted_monetary_signals(signals):
+        source = str(signal.get("source") or "")
+        if not source.startswith("FRED"):
+            continue
+        age_days = safe_float(signal.get("age_days"))
+        if age_days is None:
+            continue
+        if age_days > DIRECTIONAL_STALENESS_WARNING_DAYS:
+            stale.append(signal)
+    return stale
 
 
 def weighted_hard_money_signals(signals: Iterable[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -1646,8 +1688,11 @@ def build_cache(as_of: date, ai_signals_cache_path: Optional[Path] = None, energ
     hard_money_freshness = freshness_from_hard_money_signals(hard_money_signals)
     freshness = combined_freshness(monetary_freshness, hard_money_freshness)
     source = cache_source(monetary_freshness, hard_money_freshness)
+    stale_monetary_inputs = stale_monetary_input_signals(monetary_signals)
     monetary_confidence = confidence_from_freshness(monetary_freshness, len(weighted_monetary))
     hard_money_confidence = confidence_from_freshness(hard_money_freshness, len(weighted_hard_money))
+    if stale_monetary_inputs:
+        monetary_confidence = "low"
 
     # Power-law gap confidence decay: if the gap has been below threshold for an
     # extended period without reversion, downgrade hard-money confidence to "low"
@@ -1663,6 +1708,14 @@ def build_cache(as_of: date, ai_signals_cache_path: Optional[Path] = None, energ
         monetary_note = f"No usable FRED cache ({fred_error}); using a low-confidence starter score."
     elif not weighted_monetary:
         monetary_note = "No useful local FRED observations are available; using a low-confidence starter score."
+    elif stale_monetary_inputs:
+        stale_names = ", ".join(str(signal.get("name")) for signal in stale_monetary_inputs[:4])
+        oldest_age = max(int(safe_float(signal.get("age_days")) or 0) for signal in stale_monetary_inputs)
+        monetary_note = (
+            f"One or more weighted FRED macro/credit inputs are older than "
+            f"{DIRECTIONAL_STALENESS_WARNING_DAYS} days as of {as_of.isoformat()} "
+            f"({stale_names}; oldest {oldest_age} days); score is directional only."
+        )
     elif monetary_freshness == "stale":
         latest_label = newest_date.isoformat() if newest_date else "unknown"
         monetary_note = (
@@ -1716,6 +1769,8 @@ def build_cache(as_of: date, ai_signals_cache_path: Optional[Path] = None, energ
     return {
         "schema_version": SCHEMA_VERSION,
         "scoring_version": SCORING_VERSION,
+        "aim_schema_version": SCHEMA_VERSION,
+        "aim_scoring_version": SCORING_VERSION,
         "generated_at": generated_at,
         "source": source,
         "freshness": freshness,

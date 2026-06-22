@@ -1,17 +1,13 @@
 {
   "schema_version": "btc_history_extended.v0.1",
   "source": "coinbase_exchange_candles",
-  "fetched_at": "2026-06-21T15:56:13.569537+00:00",
+  "fetched_at": "2026-06-22T09:00:21.346630+00:00",
   "candle_count": 1500,
   "date_range": {
-    "start": "2022-05-14",
-    "end": "2026-06-21"
+    "start": "2022-05-15",
+    "end": "2026-06-22"
   },
   "series": [
-    {
-      "date": "2022-05-14",
-      "btc_usd": 30041.88
-    },
     {
       "date": "2022-05-15",
       "btc_usd": 31290.05
@@ -6006,7 +6002,11 @@
     },
     {
       "date": "2026-06-21",
-      "btc_usd": 64146.0
+      "btc_usd": 63235.63
+    },
+    {
+      "date": "2026-06-22",
+      "btc_usd": 64099.42
     }
   ]
 }

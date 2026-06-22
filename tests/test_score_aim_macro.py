@@ -70,6 +70,8 @@ class ScoreAimMacroTests(unittest.TestCase):
                 score_aim_macro.MARKET_CACHE = original_market_cache
 
         signal_names = {signal["name"] for signal in cache["signals"]}
+        self.assertEqual(cache["aim_schema_version"], score_aim_macro.SCHEMA_VERSION)
+        self.assertEqual(cache["aim_scoring_version"], score_aim_macro.SCORING_VERSION)
         self.assertEqual(cache["freshness"], "local_cache")
         self.assertIn("World Credit Growth", signal_names)
         self.assertIn("U.S. Credit Growth", signal_names)
@@ -83,6 +85,8 @@ class ScoreAimMacroTests(unittest.TestCase):
         self.assertGreater(world_credit["weight"], m2["weight"])
         self.assertIn("3Y annualized", world_credit["value_label"])
         self.assertIn("core monetary reset signal", world_credit["note"])
+        self.assertIn("148 days old", world_credit["staleness_warning"])
+        self.assertEqual(cache["scores"]["monetary_reset"]["confidence"], "low")
 
     def test_dashboard_signal_ledger_prioritizes_small_watchlist(self):
         cache = {
@@ -240,6 +244,7 @@ class ScoreAimMacroTests(unittest.TestCase):
 
         signal = next(s for s in cache["signals"] if s.get("regime") == "energy_bottleneck")
         self.assertEqual(signal["name"], "Energy Bottleneck Starter")
+        self.assertTrue(signal.get("placeholder"))
         self.assertEqual(cache["scores"]["energy_bottleneck"]["score"], 60)
         self.assertEqual(cache["scores"]["energy_bottleneck"]["confidence"], "low")
 
@@ -341,6 +346,8 @@ class ScoreAimMacroTests(unittest.TestCase):
         signal_names = [signal["name"] for signal in cache["signals"]]
         self.assertIn("AI Productivity Starter", signal_names)
         self.assertNotIn("AI Productivity Score", signal_names)
+        starter_signal = next(signal for signal in cache["signals"] if signal["name"] == "AI Productivity Starter")
+        self.assertTrue(starter_signal.get("placeholder"))
         self.assertEqual(cache["scores"]["ai_productivity"]["score"], 55)
 
     def test_build_ai_signals_rejects_empty_malformed_or_stale_cache(self):
