@@ -88,6 +88,39 @@ class ScoreAimMacroTests(unittest.TestCase):
         self.assertIn("148 days old", world_credit["staleness_warning"])
         self.assertEqual(cache["scores"]["monetary_reset"]["confidence"], "low")
 
+    def test_stale_monetary_input_signals_uses_as_of_when_age_days_missing(self):
+        signals = [
+            {
+                "name": "Missing age but stale as_of",
+                "regime": "monetary_reset",
+                "source": "FRED TEST",
+                "weight": 0.1,
+                "as_of": "2026-01-01",
+            },
+            {
+                "name": "Missing age but fresh as_of",
+                "regime": "monetary_reset",
+                "source": "FRED TEST",
+                "weight": 0.1,
+                "as_of": "2026-05-01",
+            },
+            {
+                "name": "Missing age and as_of",
+                "regime": "monetary_reset",
+                "source": "FRED TEST",
+                "weight": 0.1,
+            },
+        ]
+
+        stale_names = {
+            signal["name"]
+            for signal in score_aim_macro.stale_monetary_input_signals(signals, date(2026, 5, 29))
+        }
+
+        self.assertIn("Missing age but stale as_of", stale_names)
+        self.assertIn("Missing age and as_of", stale_names)
+        self.assertNotIn("Missing age but fresh as_of", stale_names)
+
     def test_dashboard_signal_ledger_prioritizes_small_watchlist(self):
         cache = {
             "signals": [

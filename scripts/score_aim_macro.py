@@ -1547,14 +1547,25 @@ def weighted_monetary_signals(signals: Iterable[Dict[str, Any]]) -> List[Dict[st
     return weighted
 
 
-def stale_monetary_input_signals(signals: Iterable[Dict[str, Any]]) -> List[Dict[str, Any]]:
+def monetary_signal_age_days(signal: Dict[str, Any], as_of: Optional[date] = None) -> Optional[float]:
+    age_days = safe_float(signal.get("age_days"))
+    if age_days is not None:
+        return age_days
+    observed_at = parse_cache_date(signal.get("as_of"))
+    if observed_at is None:
+        return None
+    return signal_age_days(observed_at, as_of or default_as_of())
+
+
+def stale_monetary_input_signals(signals: Iterable[Dict[str, Any]], as_of: Optional[date] = None) -> List[Dict[str, Any]]:
     stale: List[Dict[str, Any]] = []
     for signal in weighted_monetary_signals(signals):
         source = str(signal.get("source") or "")
         if not source.startswith("FRED"):
             continue
-        age_days = safe_float(signal.get("age_days"))
+        age_days = monetary_signal_age_days(signal, as_of)
         if age_days is None:
+            stale.append(signal)
             continue
         if age_days > DIRECTIONAL_STALENESS_WARNING_DAYS:
             stale.append(signal)
@@ -1688,7 +1699,7 @@ def build_cache(as_of: date, ai_signals_cache_path: Optional[Path] = None, energ
     hard_money_freshness = freshness_from_hard_money_signals(hard_money_signals)
     freshness = combined_freshness(monetary_freshness, hard_money_freshness)
     source = cache_source(monetary_freshness, hard_money_freshness)
-    stale_monetary_inputs = stale_monetary_input_signals(monetary_signals)
+    stale_monetary_inputs = stale_monetary_input_signals(monetary_signals, as_of)
     monetary_confidence = confidence_from_freshness(monetary_freshness, len(weighted_monetary))
     hard_money_confidence = confidence_from_freshness(hard_money_freshness, len(weighted_hard_money))
     if stale_monetary_inputs:
@@ -1710,7 +1721,10 @@ def build_cache(as_of: date, ai_signals_cache_path: Optional[Path] = None, energ
         monetary_note = "No useful local FRED observations are available; using a low-confidence starter score."
     elif stale_monetary_inputs:
         stale_names = ", ".join(str(signal.get("name")) for signal in stale_monetary_inputs[:4])
-        oldest_age = max(int(safe_float(signal.get("age_days")) or 0) for signal in stale_monetary_inputs)
+        oldest_age = max(
+            int(monetary_signal_age_days(signal, as_of) or DIRECTIONAL_STALENESS_WARNING_DAYS + 1)
+            for signal in stale_monetary_inputs
+        )
         monetary_note = (
             f"One or more weighted FRED macro/credit inputs are older than "
             f"{DIRECTIONAL_STALENESS_WARNING_DAYS} days as of {as_of.isoformat()} "
