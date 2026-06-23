@@ -3,7 +3,7 @@
   "scoring_version": "aim_macro_scoring.v0.4",
   "generated_at": "2026-06-23T00:00:00Z",
   "source": "local_fred_and_market_cache",
-  "freshness": "stale",
+  "freshness": "local_cache",
   "posture": {
     "key": "barbell",
     "label": "Barbell",
@@ -22,8 +22,8 @@
     },
     "monetary_reset": {
       "score": 62,
-      "confidence": "low",
-      "interpretation": "One or more required FRED macro/credit signals are missing or stale as of 2026-06-23 (latest monetary observation 2026-06-22); score is directional only."
+      "confidence": "medium",
+      "interpretation": "Local FRED liquidity, credit, fiscal, rates, and spread proxies are available; score is still a simple first-pass model."
     },
     "energy_bottleneck": {
       "score": 56,
@@ -121,10 +121,10 @@
       "direction": "below 200wMA = oversold (bullish for hard money); above = normal",
       "source": "coingecko bitcoin",
       "as_of": "2026-06-23",
-      "note": "BTC spot is $62,380 versus a 200-week MA of $62,213, a +0.3% deviation. Model-free long-term trend signal.",
+      "note": "BTC spot is $62,685 versus a 200-week MA of $62,213, a +0.8% deviation. Model-free long-term trend signal.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "+0.3%"
+      "value_label": "+0.8%"
     },
     {
       "name": "BTC Power Law Fair Value Gap",
@@ -134,10 +134,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-06-23",
-      "note": "BTC spot is $62,380 versus a power-law anchor of $136,162, a -54.2% gap. Gap has been below -40% for 37 consecutive days.",
+      "note": "BTC spot is $62,685 versus a power-law anchor of $136,162, a -54.0% gap. Gap has been below -40% for 37 consecutive days.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-54.2%"
+      "value_label": "-54.0%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -147,10 +147,10 @@
       "direction": "higher means BTC is repricing versus the gold proxy",
       "source": "market_cache BTC/USD over PAXG/USD",
       "as_of": "2026-06-23",
-      "note": "BTC buys roughly 15.1 ounces of the PAXG gold proxy.",
+      "note": "BTC buys roughly 15.3 ounces of the PAXG gold proxy.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "15.1 oz"
+      "value_label": "15.3 oz"
     },
     {
       "name": "Gold Proxy Price",
@@ -160,10 +160,10 @@
       "direction": "higher means the gold shield is repricing in USD terms",
       "source": "pax-gold proxy",
       "as_of": "2026-06-23",
-      "note": "PAXG gold proxy is $4,128.",
+      "note": "PAXG gold proxy is $4,106.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "$4,128"
+      "value_label": "$4,106"
     },
     {
       "name": "U.S. M2 Liquidity Context",
@@ -172,11 +172,11 @@
       "weight": 0.03,
       "direction": "domestic liquidity context; not the core world-credit thesis signal",
       "source": "FRED WM2NS",
-      "as_of": "2026-05-04",
-      "note": "US M2 is +5.4% YoY at $22,879B; useful context, but world credit is the monetary reset anchor.",
-      "freshness": "stale",
-      "age_days": 50,
-      "value_label": "+5.4%"
+      "as_of": "2026-06-01",
+      "note": "US M2 is +6.3% YoY at $23,063B; useful context, but world credit is the monetary reset anchor.",
+      "freshness": "local_cache",
+      "age_days": 22,
+      "value_label": "+6.3%"
     },
     {
       "name": "Fed Balance Sheet YoY",
@@ -198,11 +198,11 @@
       "weight": 0.22,
       "direction": "lower means less residual liquidity buffer",
       "source": "FRED RRPONTSYD",
-      "as_of": "2026-06-22",
-      "note": "Overnight reverse repo is $4B, a thin remaining buffer.",
+      "as_of": "2026-06-23",
+      "note": "Overnight reverse repo is $6B, a thin remaining buffer.",
       "freshness": "local_cache",
-      "age_days": 1,
-      "value_label": "$4B"
+      "age_days": 0,
+      "value_label": "$6B"
     },
     {
       "name": "Treasury General Account",
@@ -225,10 +225,10 @@
       "direction": "higher supports risk appetite; lower supports stress",
       "source": "FRED WALCL-RRPONTSYD-WTREGEN",
       "as_of": "2026-06-17",
-      "note": "Simple WALCL minus RRP minus TGA proxy is $5,852B; roughly 90d change is +0.9%.",
+      "note": "Simple WALCL minus RRP minus TGA proxy is $5,849B; roughly 90d change is +0.8%.",
       "freshness": "local_cache",
       "age_days": 6,
-      "value_label": "+0.9%"
+      "value_label": "+0.8%"
     },
     {
       "name": "World Credit Growth",
@@ -289,11 +289,11 @@
       "weight": 0.04,
       "direction": "higher yields tighten discount rates and debt-service conditions",
       "source": "FRED DGS10",
-      "as_of": "2026-06-18",
-      "note": "10Y Treasury yield is 4.46%.",
+      "as_of": "2026-06-22",
+      "note": "10Y Treasury yield is 4.51%.",
       "freshness": "local_cache",
-      "age_days": 5,
-      "value_label": "4.46%"
+      "age_days": 1,
+      "value_label": "4.51%"
     },
     {
       "name": "10Y Real Yield",
@@ -302,11 +302,11 @@
       "weight": 0.1,
       "direction": "higher real yields increase monetary and credit pressure",
       "source": "FRED DFII10",
-      "as_of": "2026-06-18",
-      "note": "10Y real yield is 2.21%.",
+      "as_of": "2026-06-22",
+      "note": "10Y real yield is 2.28%.",
       "freshness": "local_cache",
-      "age_days": 5,
-      "value_label": "2.21%"
+      "age_days": 1,
+      "value_label": "2.28%"
     },
     {
       "name": "10Y Breakeven Inflation",
@@ -315,11 +315,11 @@
       "weight": 0.04,
       "direction": "higher breakevens can signal inflation repricing pressure",
       "source": "FRED T10YIE",
-      "as_of": "2026-06-22",
-      "note": "10Y breakeven inflation is 2.23%.",
+      "as_of": "2026-06-23",
+      "note": "10Y breakeven inflation is 2.21%.",
       "freshness": "local_cache",
-      "age_days": 1,
-      "value_label": "2.23%"
+      "age_days": 0,
+      "value_label": "2.21%"
     },
     {
       "name": "High-Yield Option-Adjusted Spread",
@@ -370,10 +370,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-06-23",
-      "note": "BTC spot is $62,380 versus a power-law anchor of $136,162, a -54.2% gap. Gap has been below -40% for 37 consecutive days.",
+      "note": "BTC spot is $62,685 versus a power-law anchor of $136,162, a -54.0% gap. Gap has been below -40% for 37 consecutive days.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-54.2%"
+      "value_label": "-54.0%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -383,10 +383,10 @@
       "direction": "higher means BTC is repricing versus the gold proxy",
       "source": "market_cache BTC/USD over PAXG/USD",
       "as_of": "2026-06-23",
-      "note": "BTC buys roughly 15.1 ounces of the PAXG gold proxy.",
+      "note": "BTC buys roughly 15.3 ounces of the PAXG gold proxy.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "15.1 oz"
+      "value_label": "15.3 oz"
     },
     {
       "name": "World Credit Growth",
