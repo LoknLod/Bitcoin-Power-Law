@@ -1,15 +1,15 @@
 {
   "schema_version": "fred_cache.v0.1",
-  "generated": "2026-06-25T00:00:00Z",
-  "generated_at": "2026-06-25T00:00:00Z",
+  "generated": "2026-06-26T00:00:00Z",
+  "generated_at": "2026-06-26T00:00:00Z",
   "source": "fred_graph_csv",
   "metadata": {
-    "as_of": "2026-06-25",
+    "as_of": "2026-06-26",
     "series_requested": 12,
     "series_fetched": 12,
     "series_preserved": 0,
     "series_with_errors": 0,
-    "observation_count": 7812,
+    "observation_count": 7808,
     "endpoint": "https://fred.stlouisfed.org/graph/fredgraph.csv?id={series_id}"
   },
   "series": {
@@ -17,7 +17,7 @@
       "desc": "Fed Balance Sheet (Weekly, millions USD)",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=WALCL",
-      "fetched_at": "2026-06-25T00:00:00Z",
+      "fetched_at": "2026-06-26T00:00:00Z",
       "observation_count": 313,
       "latest_date": "2026-06-24",
       "observations": [
@@ -1279,14 +1279,10 @@
       "desc": "Overnight Reverse Repo (Daily, billions USD)",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=RRPONTSYD",
-      "fetched_at": "2026-06-25T00:00:00Z",
-      "observation_count": 1497,
+      "fetched_at": "2026-06-26T00:00:00Z",
+      "observation_count": 1496,
       "latest_date": "2026-06-25",
       "observations": [
-        {
-          "date": "2020-06-25",
-          "value": "0.001"
-        },
         {
           "date": "2020-06-26",
           "value": "0.2"
@@ -7277,7 +7273,7 @@
       "desc": "Treasury General Account (Weekly, millions USD)",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=WTREGEN",
-      "fetched_at": "2026-06-25T00:00:00Z",
+      "fetched_at": "2026-06-26T00:00:00Z",
       "observation_count": 313,
       "latest_date": "2026-06-24",
       "observations": [
@@ -8539,7 +8535,7 @@
       "desc": "M2 Money Stock (Weekly, billions USD)",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=WM2NS",
-      "fetched_at": "2026-06-25T00:00:00Z",
+      "fetched_at": "2026-06-26T00:00:00Z",
       "observation_count": 310,
       "latest_date": "2026-06-01",
       "observations": [
@@ -9789,7 +9785,7 @@
       "desc": "U.S. total credit to non-financial sector, adjusted for breaks",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=QUSCAMUSDA",
-      "fetched_at": "2026-06-25T00:00:00Z",
+      "fetched_at": "2026-06-26T00:00:00Z",
       "observation_count": 23,
       "latest_date": "2025-10-01",
       "observations": [
@@ -9891,7 +9887,7 @@
       "desc": "Total reporting countries total credit to non-financial sector, adjusted for breaks",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=Q5ACAMUSDA",
-      "fetched_at": "2026-06-25T00:00:00Z",
+      "fetched_at": "2026-06-26T00:00:00Z",
       "observation_count": 23,
       "latest_date": "2025-10-01",
       "observations": [
@@ -9993,7 +9989,7 @@
       "desc": "Federal Debt: Total Public Debt",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=GFDEBTN",
-      "fetched_at": "2026-06-25T00:00:00Z",
+      "fetched_at": "2026-06-26T00:00:00Z",
       "observation_count": 24,
       "latest_date": "2026-01-01",
       "observations": [
@@ -10099,7 +10095,7 @@
       "desc": "Federal government current expenditures: interest payments",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=A091RC1Q027SBEA",
-      "fetched_at": "2026-06-25T00:00:00Z",
+      "fetched_at": "2026-06-26T00:00:00Z",
       "observation_count": 24,
       "latest_date": "2026-01-01",
       "observations": [
@@ -10205,14 +10201,10 @@
       "desc": "10-Year Treasury Constant Maturity Rate",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10",
-      "fetched_at": "2026-06-25T00:00:00Z",
-      "observation_count": 1499,
+      "fetched_at": "2026-06-26T00:00:00Z",
+      "observation_count": 1498,
       "latest_date": "2026-06-24",
       "observations": [
-        {
-          "date": "2020-06-25",
-          "value": "0.68"
-        },
         {
           "date": "2020-06-26",
           "value": "0.64"
@@ -16211,14 +16203,10 @@
       "desc": "10-Year Treasury Inflation-Indexed Constant Maturity Rate",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFII10",
-      "fetched_at": "2026-06-25T00:00:00Z",
-      "observation_count": 1499,
+      "fetched_at": "2026-06-26T00:00:00Z",
+      "observation_count": 1498,
       "latest_date": "2026-06-24",
       "observations": [
-        {
-          "date": "2020-06-25",
-          "value": "-0.65"
-        },
         {
           "date": "2020-06-26",
           "value": "-0.68"
@@ -22217,14 +22205,10 @@
       "desc": "10-Year Breakeven Inflation Rate",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=T10YIE",
-      "fetched_at": "2026-06-25T00:00:00Z",
-      "observation_count": 1500,
+      "fetched_at": "2026-06-26T00:00:00Z",
+      "observation_count": 1499,
       "latest_date": "2026-06-25",
       "observations": [
-        {
-          "date": "2020-06-25",
-          "value": "1.33"
-        },
         {
           "date": "2020-06-26",
           "value": "1.32"
@@ -28227,14 +28211,10 @@
       "desc": "ICE BofA US High Yield Index Option-Adjusted Spread",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2",
-      "fetched_at": "2026-06-25T00:00:00Z",
+      "fetched_at": "2026-06-26T00:00:00Z",
       "observation_count": 787,
-      "latest_date": "2026-06-24",
+      "latest_date": "2026-06-25",
       "observations": [
-        {
-          "date": "2023-06-26",
-          "value": "4.45"
-        },
         {
           "date": "2023-06-27",
           "value": "4.3"
@@ -31378,6 +31358,10 @@
         {
           "date": "2026-06-24",
           "value": "2.76"
+        },
+        {
+          "date": "2026-06-25",
+          "value": "2.78"
         }
       ]
     }
