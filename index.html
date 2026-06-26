@@ -661,8 +661,32 @@
       return `${shown.join("; ")}${extra}`;
     }
 
+    function inferredRegimeFreshness(data, regime) {
+      const signals = Array.isArray(data?.signals) ? data.signals : [];
+      const regimeSignals = signals.filter(signal => signal?.regime === regime);
+      if (!regimeSignals.length) return "unknown";
+      if (regimeSignals.some(signal => ["stale", "missing", "future"].includes(signal?.freshness))) return "stale";
+      return "local_cache";
+    }
+
+    function inferredScoreIssues(data, key) {
+      const regime = key === "monetary_reset" ? "monetary_reset" : key === "hard_money_repricing" ? "hard_money_repricing" : null;
+      if (!regime) return [];
+      const signals = Array.isArray(data?.signals) ? data.signals : [];
+      return signals
+        .filter(signal => signal?.regime === regime && Number(signal?.weight) > 0)
+        .filter(signal => ["stale", "missing", "future"].includes(signal?.freshness) || (regime === "monetary_reset" && Number(signal?.age_days) > 90))
+        .sort((a, b) => Number(b.weight || 0) - Number(a.weight || 0));
+    }
+
     function scoreFreshnessDetail(data, key) {
-      return data?.freshness_detail?.score_inputs?.[key] || {};
+      const detail = data?.freshness_detail?.score_inputs?.[key];
+      if (detail) return detail;
+      const regime = key === "monetary_reset" ? "monetary_reset" : key === "hard_money_repricing" ? "hard_money_repricing" : null;
+      return {
+        freshness: regime ? inferredRegimeFreshness(data, regime) : data?.freshness,
+        stale_inputs: inferredScoreIssues(data, key)
+      };
     }
 
     async function loadCache() {
@@ -704,8 +728,8 @@
 
     function renderPosture(data) {
       const aimFreshness = data?.freshness_detail?.aim_cache || data.freshness || "unknown";
-      const marketFreshness = data?.freshness_detail?.market_inputs || "unknown";
-      const monetaryFreshness = data?.freshness_detail?.monetary_regime || "unknown";
+      const marketFreshness = data?.freshness_detail?.market_inputs || inferredRegimeFreshness(data, "hard_money_repricing");
+      const monetaryFreshness = data?.freshness_detail?.monetary_regime || inferredRegimeFreshness(data, "monetary_reset");
       const thresholds = data?.freshness_detail?.thresholds || {};
       return `
         <section class="card">
