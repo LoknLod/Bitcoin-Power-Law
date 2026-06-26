@@ -114,6 +114,15 @@
       margin-top: 8px;
       line-height: 1.4;
     }
+    .freshness-pill {
+      display: inline-block;
+      padding: 1px 6px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.06);
+      color: var(--text-dim);
+    }
+    .freshness-pill.fresh { color: var(--green); background: rgba(0,211,149,0.12); }
+    .freshness-pill.stale { color: var(--red); background: rgba(255,107,107,0.12); }
     .model-note {
       font-size: 11px;
       color: var(--text-dim);
@@ -424,6 +433,17 @@
       if (Number.isNaN(d.getTime())) return value;
       return d.toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
     };
+    const marketAgeDays = observedAt => {
+      const observed = observedAt ? new Date(observedAt) : null;
+      if (!observed || Number.isNaN(observed.getTime())) return null;
+      return Math.floor((Date.now() - observed.getTime()) / 86400000);
+    };
+    const marketFreshnessPill = observedAt => {
+      const age = marketAgeDays(observedAt);
+      const stale = age === null || age < 0 || age > 3;
+      const label = age === null ? 'market date missing' : age < 0 ? 'future-dated market' : `market ${stale ? 'stale' : 'fresh'} · ${age}d`;
+      return `<span class="freshness-pill ${stale ? 'stale' : 'fresh'}">${label}</span>`;
+    };
 
     async function fetchCachedBTC() {
       const r = await fetch('market-cache.json', { cache: 'no-store' });
@@ -664,7 +684,7 @@
               <div class="metric"><div class="metric-value ${dev >= 0 ? 'negative' : 'positive'}">${formatPct(dev)}</div><div class="metric-label">From Conservative</div></div>
               <div class="metric"><div class="metric-value ${trendDev >= 0 ? 'negative' : 'positive'}">${formatPct(trendDev)}</div><div class="metric-label">From Anchor</div></div>
             </div>
-            <div class="source-row">BTC source: ${source || 'unknown'} · observed ${formatDateTime(observedAt)}${cacheGenerated ? ` · cache ${formatDateTime(cacheGenerated)}` : ''}</div>
+            <div class="source-row">BTC market: ${source || 'unknown'} · observed ${formatDateTime(observedAt)} ${marketFreshnessPill(observedAt)}${cacheGenerated ? ` · market cache ${formatDateTime(cacheGenerated)}` : ''}<br>AIM/regime freshness is separate on Dashboard.</div>
           </div>
           ${regimeSignal ? `
           <div class="card">

@@ -132,6 +132,18 @@
             line-height: 1.45;
             margin-top: 10px;
         }
+        .source-note.warn { color: #fbbf24; }
+        .freshness-tag {
+            display: inline-block;
+            padding: 1px 6px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.06);
+            color: #888;
+            font-size: 0.9em;
+            margin-left: 4px;
+        }
+        .freshness-tag.fresh { color: #4ade80; background: rgba(74,222,128,0.12); }
+        .freshness-tag.stale { color: #ef4444; background: rgba(239,68,68,0.12); }
 
         .empty-chart {
             height: 200px;
@@ -483,6 +495,30 @@
             if (Number.isNaN(date.getTime())) return value;
             return date.toISOString().slice(0, 10);
         };
+        const cacheAsOfDate = () => {
+            const raw = fredCache?.metadata?.as_of || fredCache?.generated_at || marketCache?.metadata?.as_of || marketCache?.generated_at;
+            const d = raw ? new Date(raw) : new Date();
+            return Number.isNaN(d.getTime()) ? new Date() : d;
+        };
+        const ageDays = observedDate => {
+            if (!observedDate) return null;
+            const observed = new Date(observedDate);
+            if (Number.isNaN(observed.getTime())) return null;
+            return Math.floor((cacheAsOfDate() - observed) / 86400000);
+        };
+        const freshnessMarkup = (observedDate, staleAfterDays) => {
+            const age = ageDays(observedDate);
+            if (age === null) return '<span class="freshness-tag stale">missing date</span>';
+            if (age < 0) return '<span class="freshness-tag stale">future-dated</span>';
+            const stale = age > staleAfterDays;
+            return `<span class="freshness-tag ${stale ? 'stale' : 'fresh'}">${stale ? 'stale' : 'fresh'} · ${age}d</span>`;
+        };
+        const sourceLine = (prefix, observedDate, staleAfterDays = 90) => {
+            const age = ageDays(observedDate);
+            const stale = age === null || age > staleAfterDays || age < 0;
+            const reason = stale ? ' — directional until cache refreshes' : '';
+            return `${prefix}${observedDate ? ` · as of ${observedDate}` : ''} ${freshnessMarkup(observedDate, staleAfterDays)}${reason}`;
+        };
 
         async function loadJson(url) {
             const res = await fetch(url, { cache: 'no-store' });
@@ -746,7 +782,7 @@
                         <span class="price-value ${cls}">${val.toFixed(2)}${item.suffix}</span>
                     </div>
                     <div class="signal-bar"><div class="signal-fill ${fillClass}" style="width:${fillPct.toFixed(0)}%"></div></div>
-                    <div style="font-size:0.68em;color:#666;margin:2px 0 8px;">${item.note} · as of ${item.obs.date}</div>
+                    <div style="font-size:0.68em;color:#666;margin:2px 0 8px;">${sourceLine(item.note, item.obs.date, 90)}</div>
                 `;
             }).join('');
 
@@ -818,7 +854,7 @@
                         <span class="price-label">${item.label}</span>
                         <span class="price-value ${cls}">${val >= 0 ? '+' : ''}${val.toFixed(1)}${item.suffix}</span>
                     </div>
-                    <div style="font-size:0.68em;color:#666;margin:2px 0 8px;">${item.note}${latest ? ` · as of ${latest.date}` : ''}</div>
+                    <div style="font-size:0.68em;color:#666;margin:2px 0 8px;">${sourceLine(item.note, latest?.date, 90)}</div>
                 `;
             }).join('');
 
@@ -889,7 +925,7 @@
             byId('btc-silver-ratio').textContent = `${btcSilverRatio.toFixed(0)} oz`;
 
             byId('chart-info').innerHTML =
-                `Current ratio: ${btcGoldRatio.toFixed(1)} oz/BTC from ${btc?.source || 'BTC cache'} and ${gold?.source || 'gold proxy cache'}.`;
+                `Current ratio: ${btcGoldRatio.toFixed(1)} oz/BTC from ${btc?.source || 'BTC cache'} (${freshnessMarkup(btc?.as_of || cache?.generated_at, 3)}) and ${gold?.source || 'gold proxy cache'} (${freshnessMarkup(gold?.as_of || cache?.generated_at, 3)}).`;
             return btcGoldRatio;
         }
 
@@ -908,8 +944,9 @@
             if (balance !== null && rrp !== null && tga !== null) {
                 byId('net-liquidity').textContent = formatT(balance - rrp - tga);
             }
-            byId('liquidity-source').textContent =
-                `Local FRED cache generated ${formatIsoDate(fredCache?.generated_at)}. Latest WALCL ${balanceRaw?.date || 'n/a'}, RRP ${rrpRaw?.date || 'n/a'}, TGA ${tgaRaw?.date || 'n/a'}.`;
+            byId('liquidity-source').innerHTML =
+                `FRED cache ${formatIsoDate(fredCache?.generated_at)}. ` +
+                `${sourceLine('WALCL', balanceRaw?.date, 90)}; ${sourceLine('RRP', rrpRaw?.date, 90)}; ${sourceLine('TGA', tgaRaw?.date, 90)}.`;
         }
 
         function renderWorldCredit() {
@@ -936,7 +973,7 @@
             renderWorldCreditSparkline(obs.slice(-24));
             byId('world-credit-info').innerHTML =
                 '📚 <strong>Book thesis:</strong> world credit growth is the cleaner paper-claims signal than U.S. M2.<br>' +
-                `FRED Q5ACAMUSDA latest ${latest.date}; 3Y baseline ${prior.date}. M2 remains secondary domestic context.`;
+                `${sourceLine('FRED Q5ACAMUSDA', latest.date, 90)}; 3Y baseline ${prior.date}. M2 remains secondary domestic context.`;
         }
 
         async function init() {

@@ -1572,13 +1572,96 @@ def stale_monetary_input_signals(signals: Iterable[Dict[str, Any]], as_of: Optio
     return stale
 
 
+def signal_weight(signal: Dict[str, Any]) -> float:
+    weight = safe_float(signal.get("weight"))
+    return weight if weight is not None else 0.0
+
+
+def freshness_issue_signals(
+    signals: Iterable[Dict[str, Any]],
+    regime: str,
+    *,
+    as_of: date,
+    include_directional_warnings: bool = False,
+) -> List[Dict[str, Any]]:
+    issues: List[Dict[str, Any]] = []
+    for signal in signals:
+        if not isinstance(signal, dict) or signal.get("regime") != regime or signal_weight(signal) <= 0:
+            continue
+
+        freshness = str(signal.get("freshness") or "unknown")
+        age_days = monetary_signal_age_days(signal, as_of)
+        has_issue = freshness in {"stale", "missing", "future"}
+        if include_directional_warnings and age_days is not None:
+            has_issue = has_issue or age_days > DIRECTIONAL_STALENESS_WARNING_DAYS
+        if not has_issue:
+            continue
+
+        issue: Dict[str, Any] = {
+            "name": str(signal.get("name") or "Unknown signal"),
+            "source": str(signal.get("source") or "unknown"),
+            "freshness": freshness,
+            "weight": signal_weight(signal),
+            "as_of": signal.get("as_of"),
+            "impact": "weighted_score_input",
+        }
+        if age_days is not None:
+            issue["age_days"] = int(age_days)
+        if signal.get("staleness_warning"):
+            issue["note"] = signal.get("staleness_warning")
+        issues.append(issue)
+
+    return sorted(issues, key=lambda item: (-float(item.get("weight") or 0), str(item.get("name") or "")))
+
+
+def score_freshness_detail(
+    *,
+    as_of: date,
+    aim_freshness: str,
+    monetary_freshness: str,
+    hard_money_freshness: str,
+    monetary_signals: Iterable[Dict[str, Any]],
+    hard_money_signals: Iterable[Dict[str, Any]],
+) -> Dict[str, Any]:
+    monetary_issues = freshness_issue_signals(
+        monetary_signals,
+        "monetary_reset",
+        as_of=as_of,
+        include_directional_warnings=True,
+    )
+    hard_money_issues = freshness_issue_signals(
+        hard_money_signals,
+        "hard_money_repricing",
+        as_of=as_of,
+    )
+    return {
+        "as_of": as_of.isoformat(),
+        "aim_cache": aim_freshness,
+        "monetary_regime": monetary_freshness,
+        "market_inputs": hard_money_freshness,
+        "thresholds": {
+            "market_max_age_days": MARKET_FRESHNESS_MAX_AGE_DAYS,
+            "fred_directional_warning_days": DIRECTIONAL_STALENESS_WARNING_DAYS,
+        },
+        "score_inputs": {
+            "monetary_reset": {
+                "freshness": monetary_freshness,
+                "affected_by_stale_inputs": bool(monetary_issues),
+                "stale_inputs": monetary_issues[:5],
+            },
+            "hard_money_repricing": {
+                "freshness": hard_money_freshness,
+                "affected_by_stale_inputs": bool(hard_money_issues),
+                "stale_inputs": hard_money_issues[:5],
+            },
+        },
+    }
+
+
 def weighted_hard_money_signals(signals: Iterable[Dict[str, Any]]) -> List[Dict[str, Any]]:
     weighted: List[Dict[str, Any]] = []
     for signal in signals:
-        try:
-            weight = float(signal.get("weight", 0))
-        except (TypeError, ValueError):
-            continue
+        weight = signal_weight(signal)
         if signal.get("regime") == "hard_money_repricing" and weight > 0 and signal.get("freshness") != "future":
             weighted.append(signal)
     return weighted
@@ -1599,11 +1682,11 @@ def freshness_from_monetary_signals(signals: Iterable[Dict[str, Any]]) -> str:
 
 def freshness_from_hard_money_signals(signals: Iterable[Dict[str, Any]]) -> str:
     signal_list = list(signals)
+    if any(signal.get("freshness") in ("stale", "missing", "future") for signal in signal_list if signal.get("regime") == "hard_money_repricing"):
+        return "stale"
     weighted = weighted_hard_money_signals(signal_list)
     if not weighted:
         return "demo"
-    if any(signal.get("freshness") in ("stale", "missing", "future") for signal in signal_list if signal.get("regime") == "hard_money_repricing"):
-        return "stale"
     return "local_cache"
 
 
@@ -1779,6 +1862,14 @@ def build_cache(as_of: date, ai_signals_cache_path: Optional[Path] = None, energ
 
     signals = ai_signals + hard_money_signals + monetary_signals
     dashboard_signals = dashboard_signal_watchlist({"signals": signals})
+    freshness_detail = score_freshness_detail(
+        as_of=as_of,
+        aim_freshness=freshness,
+        monetary_freshness=monetary_freshness,
+        hard_money_freshness=hard_money_freshness,
+        monetary_signals=monetary_signals,
+        hard_money_signals=hard_money_signals,
+    )
 
     return {
         "schema_version": SCHEMA_VERSION,
@@ -1788,6 +1879,7 @@ def build_cache(as_of: date, ai_signals_cache_path: Optional[Path] = None, energ
         "generated_at": generated_at,
         "source": source,
         "freshness": freshness,
+        "freshness_detail": freshness_detail,
         "posture": choose_posture(scores),
         "scores": scores,
         "aim5_allocation": AIM5_ALLOCATION,

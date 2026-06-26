@@ -1,9 +1,74 @@
 {
   "schema_version": "aim_macro_cache.v0.1",
   "scoring_version": "aim_macro_scoring.v0.4",
+  "aim_schema_version": "aim_macro_cache.v0.1",
+  "aim_scoring_version": "aim_macro_scoring.v0.4",
   "generated_at": "2026-06-25T00:00:00Z",
   "source": "local_fred_and_market_cache",
   "freshness": "local_cache",
+  "freshness_detail": {
+    "as_of": "2026-06-25",
+    "aim_cache": "local_cache",
+    "monetary_regime": "local_cache",
+    "market_inputs": "local_cache",
+    "thresholds": {
+      "market_max_age_days": 3,
+      "fred_directional_warning_days": 90
+    },
+    "score_inputs": {
+      "monetary_reset": {
+        "freshness": "local_cache",
+        "affected_by_stale_inputs": true,
+        "stale_inputs": [
+          {
+            "name": "World Credit Growth",
+            "source": "FRED Q5ACAMUSDA",
+            "freshness": "local_cache",
+            "weight": 0.28,
+            "as_of": "2025-10-01",
+            "impact": "weighted_score_input",
+            "age_days": 267,
+            "note": "FRED observation is 267 days old as of 2026-06-25; treat this score as directional only until the series refreshes."
+          },
+          {
+            "name": "Federal Debt Growth",
+            "source": "FRED GFDEBTN",
+            "freshness": "local_cache",
+            "weight": 0.12,
+            "as_of": "2026-01-01",
+            "impact": "weighted_score_input",
+            "age_days": 175,
+            "note": "FRED observation is 175 days old as of 2026-06-25; treat this score as directional only until the series refreshes."
+          },
+          {
+            "name": "Federal Interest Payments Growth",
+            "source": "FRED A091RC1Q027SBEA",
+            "freshness": "local_cache",
+            "weight": 0.12,
+            "as_of": "2026-01-01",
+            "impact": "weighted_score_input",
+            "age_days": 175,
+            "note": "FRED observation is 175 days old as of 2026-06-25; treat this score as directional only until the series refreshes."
+          },
+          {
+            "name": "U.S. Credit Growth",
+            "source": "FRED QUSCAMUSDA",
+            "freshness": "local_cache",
+            "weight": 0.08,
+            "as_of": "2025-10-01",
+            "impact": "weighted_score_input",
+            "age_days": 267,
+            "note": "FRED observation is 267 days old as of 2026-06-25; treat this score as directional only until the series refreshes."
+          }
+        ]
+      },
+      "hard_money_repricing": {
+        "freshness": "local_cache",
+        "affected_by_stale_inputs": false,
+        "stale_inputs": []
+      }
+    }
+  },
   "posture": {
     "key": "barbell",
     "label": "Barbell",
@@ -22,13 +87,13 @@
     },
     "monetary_reset": {
       "score": 62,
-      "confidence": "medium",
-      "interpretation": "Local FRED liquidity, credit, fiscal, rates, and spread proxies are available; score is still a simple first-pass model."
+      "confidence": "low",
+      "interpretation": "One or more weighted FRED macro/credit inputs are older than 90 days as of 2026-06-25 (World Credit Growth, U.S. Credit Growth, Federal Debt Growth, Federal Interest Payments Growth; oldest 267 days); score is directional only."
     },
     "energy_bottleneck": {
       "score": 56,
       "confidence": "medium",
-      "interpretation": "EIA retail electricity data: commercial electricity price +4.8% YoY; commercial electricity sales +5.2% YoY; industrial electricity price +5.5% YoY. First-pass proxy for AI/data-center energy bottleneck pressure."
+      "interpretation": "EIA retail electricity data: commercial electricity price +5.8% YoY; commercial electricity sales +4.5% YoY; industrial electricity price +3.9% YoY. First-pass proxy for AI/data-center energy bottleneck pressure."
     },
     "hard_money_repricing": {
       "score": 58,
@@ -107,11 +172,11 @@
       "weight": 0.3,
       "direction": "higher means power-cost/load pressure is rising",
       "source": "eia_energy_cache",
-      "as_of": "2026-04-01",
-      "note": "EIA retail electricity data: commercial electricity price +4.8% YoY; commercial electricity sales +5.2% YoY; industrial electricity price +5.5% YoY. First-pass proxy for AI/data-center energy bottleneck pressure.",
+      "as_of": "2026-03-01",
+      "note": "EIA retail electricity data: commercial electricity price +5.8% YoY; commercial electricity sales +4.5% YoY; industrial electricity price +3.9% YoY. First-pass proxy for AI/data-center energy bottleneck pressure.",
       "freshness": "local_cache",
-      "age_days": 85,
-      "value_label": "commercial electricity price +4.8% YoY; commercial electricity sales +5.2% YoY; industrial electricity price +5.5% YoY"
+      "age_days": 116,
+      "value_label": "commercial electricity price +5.8% YoY; commercial electricity sales +4.5% YoY; industrial electricity price +3.9% YoY"
     },
     {
       "name": "BTC 200-Week Moving Average",
@@ -121,10 +186,10 @@
       "direction": "below 200wMA = oversold (bullish for hard money); above = normal",
       "source": "coingecko bitcoin",
       "as_of": "2026-06-25",
-      "note": "BTC spot is $59,706 versus a 200-week MA of $62,213, a -4.0% deviation. Model-free long-term trend signal.",
+      "note": "BTC spot is $59,706 versus a 200-week MA of $62,243, a -4.1% deviation. Model-free long-term trend signal.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-4.0%"
+      "value_label": "-4.1%"
     },
     {
       "name": "BTC Power Law Fair Value Gap",
@@ -134,7 +199,7 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-06-25",
-      "note": "BTC spot is $59,706 versus a power-law anchor of $136,411, a -56.2% gap. Gap has been below -40% for 37 consecutive days.",
+      "note": "BTC spot is $59,706 versus a power-law anchor of $136,411, a -56.2% gap. Gap has been below -40% for 38 consecutive days.",
       "freshness": "local_cache",
       "age_days": 0,
       "value_label": "-56.2%"
@@ -241,7 +306,8 @@
       "note": "Total reporting countries credit to the non-financial sector is +5.7% 3Y annualized at 262,666.1; this is the core monetary reset signal, with U.S. M2 demoted to context.",
       "freshness": "local_cache",
       "age_days": 267,
-      "value_label": "+5.7% 3Y annualized"
+      "value_label": "+5.7% 3Y annualized",
+      "staleness_warning": "FRED observation is 267 days old as of 2026-06-25; treat this score as directional only until the series refreshes."
     },
     {
       "name": "U.S. Credit Growth",
@@ -254,7 +320,8 @@
       "note": "U.S. total credit to the non-financial sector is +6.0% YoY at 77,279.7.",
       "freshness": "local_cache",
       "age_days": 267,
-      "value_label": "+6.0% YoY"
+      "value_label": "+6.0% YoY",
+      "staleness_warning": "FRED observation is 267 days old as of 2026-06-25; treat this score as directional only until the series refreshes."
     },
     {
       "name": "Federal Debt Growth",
@@ -267,7 +334,8 @@
       "note": "Federal debt is +7.9% YoY at 39,065,421.0.",
       "freshness": "local_cache",
       "age_days": 175,
-      "value_label": "+7.9% YoY"
+      "value_label": "+7.9% YoY",
+      "staleness_warning": "FRED observation is 175 days old as of 2026-06-25; treat this score as directional only until the series refreshes."
     },
     {
       "name": "Federal Interest Payments Growth",
@@ -280,7 +348,8 @@
       "note": "Federal government interest payments is +6.5% YoY at 1,218.9.",
       "freshness": "local_cache",
       "age_days": 175,
-      "value_label": "+6.5% YoY"
+      "value_label": "+6.5% YoY",
+      "staleness_warning": "FRED observation is 175 days old as of 2026-06-25; treat this score as directional only until the series refreshes."
     },
     {
       "name": "10Y Treasury Yield",
@@ -370,7 +439,7 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-06-25",
-      "note": "BTC spot is $59,706 versus a power-law anchor of $136,411, a -56.2% gap. Gap has been below -40% for 37 consecutive days.",
+      "note": "BTC spot is $59,706 versus a power-law anchor of $136,411, a -56.2% gap. Gap has been below -40% for 38 consecutive days.",
       "freshness": "local_cache",
       "age_days": 0,
       "value_label": "-56.2%"
@@ -399,7 +468,8 @@
       "note": "Total reporting countries credit to the non-financial sector is +5.7% 3Y annualized at 262,666.1; this is the core monetary reset signal, with U.S. M2 demoted to context.",
       "freshness": "local_cache",
       "age_days": 267,
-      "value_label": "+5.7% 3Y annualized"
+      "value_label": "+5.7% 3Y annualized",
+      "staleness_warning": "FRED observation is 267 days old as of 2026-06-25; treat this score as directional only until the series refreshes."
     }
   ],
   "debate_question": "Is AI producing real productivity faster than credit/fiscal stress is degrading money?"

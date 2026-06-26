@@ -87,6 +87,13 @@ class ScoreAimMacroTests(unittest.TestCase):
         self.assertIn("core monetary reset signal", world_credit["note"])
         self.assertIn("148 days old", world_credit["staleness_warning"])
         self.assertEqual(cache["scores"]["monetary_reset"]["confidence"], "low")
+        self.assertEqual(cache["freshness_detail"]["market_inputs"], "local_cache")
+        self.assertTrue(cache["freshness_detail"]["score_inputs"]["monetary_reset"]["affected_by_stale_inputs"])
+        stale_names = [
+            signal["name"]
+            for signal in cache["freshness_detail"]["score_inputs"]["monetary_reset"]["stale_inputs"]
+        ]
+        self.assertIn("World Credit Growth", stale_names)
 
     def test_stale_monetary_input_signals_uses_as_of_when_age_days_missing(self):
         signals = [
@@ -457,6 +464,9 @@ class ScoreAimMacroTests(unittest.TestCase):
         hard_money_signals = [s for s in cache["signals"] if s.get("regime") == "hard_money_repricing"]
         self.assertTrue(any(signal.get("freshness") == "future" for signal in hard_money_signals))
         self.assertEqual(cache["freshness"], "stale")
+        self.assertEqual(cache["freshness_detail"]["aim_cache"], "stale")
+        self.assertEqual(cache["freshness_detail"]["market_inputs"], "stale")
+        self.assertTrue(cache["freshness_detail"]["score_inputs"]["hard_money_repricing"]["affected_by_stale_inputs"])
         self.assertEqual(cache["scores"]["hard_money_repricing"]["score"], 50)
         self.assertEqual(cache["scores"]["hard_money_repricing"]["confidence"], "low")
     def test_mixed_future_market_inputs_do_not_make_ratio_fresh(self):
