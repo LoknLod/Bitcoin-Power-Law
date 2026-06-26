@@ -495,16 +495,18 @@
             if (Number.isNaN(date.getTime())) return value;
             return date.toISOString().slice(0, 10);
         };
-        const cacheAsOfDate = () => {
-            const raw = fredCache?.metadata?.as_of || fredCache?.generated_at || marketCache?.metadata?.as_of || marketCache?.generated_at;
-            const d = raw ? new Date(raw) : new Date();
-            return Number.isNaN(d.getTime()) ? new Date() : d;
-        };
         const ageDays = observedDate => {
             if (!observedDate) return null;
             const observed = new Date(observedDate);
             if (Number.isNaN(observed.getTime())) return null;
-            return Math.floor((cacheAsOfDate() - observed) / 86400000);
+            return Math.floor((Date.now() - observed.getTime()) / 86400000);
+        };
+        const cacheAgeText = generatedAt => {
+            const age = ageDays(generatedAt);
+            if (age === null) return 'age unknown';
+            if (age < 0) return 'future-dated';
+            if (age === 0) return 'today';
+            return `${age}d old`;
         };
         const freshnessMarkup = (observedDate, staleAfterDays) => {
             const age = ageDays(observedDate);
@@ -995,7 +997,7 @@
                 renderLiquidity();
                 renderWorldCredit();
                 byId('update-time').textContent =
-                    `Local caches: market ${formatIsoDate(marketCache?.generated_at)}, history ${formatIsoDate(marketHistoryCache?.generated_at)}, FRED ${formatIsoDate(fredCache?.generated_at)}. Rendered ${new Date().toLocaleTimeString()}.`;
+                    `Local caches: market ${formatIsoDate(marketCache?.generated_at)} (${cacheAgeText(marketCache?.generated_at)}), history ${formatIsoDate(marketHistoryCache?.generated_at)} (${cacheAgeText(marketHistoryCache?.generated_at)}), FRED ${formatIsoDate(fredCache?.generated_at)} (${cacheAgeText(fredCache?.generated_at)}). Rendered ${new Date().toLocaleTimeString()}.`;
             } catch (error) {
                 console.error('Macro cache render error:', error);
                 byId('update-time').textContent = `Data unavailable: ${error.message}`;

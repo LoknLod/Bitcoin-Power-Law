@@ -138,6 +138,12 @@ class SiteNavigationTests(unittest.TestCase):
         self.assertNotIn("if (!btcPrice) btcPrice = 68000", html)
         self.assertNotIn("goldPrice = 2950", html)
 
+    def test_macro_freshness_uses_wall_clock_not_cache_as_of(self):
+        html = (ROOT / "macro.html").read_text()
+        self.assertIn("Date.now() - observed.getTime()", html)
+        self.assertIn("cacheAgeText", html)
+        self.assertNotIn("cacheAsOfDate() - observed", html)
+
     def test_dashboard_supports_private_portfolio_overlay_without_embedding_values(self):
         html = (ROOT / "index.html").read_text()
         self.assertIn("portfolio-cockpit-cache.json", html)

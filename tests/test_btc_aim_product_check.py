@@ -74,6 +74,48 @@ class BtcAimProductCheckTests(unittest.TestCase):
         self.assertEqual(report.status, "critical")
         self.assertTrue(any(f.check == "public_privacy" for f in report.findings))
 
+    def test_market_freshness_prefers_private_served_cache(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "repo"
+            private = Path(tmp) / "private"
+            root.mkdir()
+            private.mkdir()
+            for name in product_check.PUBLIC_CACHE_FILES:
+                (root / name).write_text(json.dumps({"generated_at": "2026-06-26T00:00:00Z"}))
+            (root / "market-cache.json").write_text(json.dumps({
+                "generated_at": "2026-06-25T00:00:00Z",
+                "assets": {"btc_usd": {"price": 1, "as_of": "2026-06-25T00:00:00Z"}},
+            }))
+            (private / "market-cache.json").write_text(json.dumps({
+                "generated_at": "2026-06-26T11:30:00Z",
+                "assets": {"btc_usd": {"price": 1, "as_of": "2026-06-26T11:30:00Z"}},
+            }))
+            with mock.patch.object(product_check, "ROOT", root):
+                report = product_check.Report()
+                product_check.check_json_caches(report, product_check.datetime(2026, 6, 26, 12, 0, tzinfo=product_check.timezone.utc), private)
+        self.assertEqual(report.metrics["market_freshness"]["source"], "private")
+        self.assertFalse(any(f.check == "market_freshness" for f in report.findings))
+
+    def test_private_endpoint_invalid_body_is_critical(self):
+        class FakeResponse:
+            status = 200
+            def __enter__(self): return self
+            def __exit__(self, *args): return False
+            def read(self): return b"not json"
+
+        with tempfile.TemporaryDirectory() as tmp:
+            serve = Path(tmp)
+            (serve / "portfolio-cockpit-cache.json").write_text(json.dumps({
+                "schema_version": "shrike_portfolio_cockpit.v0.1",
+                "mutation_allowed": False,
+                "privacy_note": "private",
+            }))
+            with mock.patch.object(product_check, "urlopen", return_value=FakeResponse()):
+                report = product_check.Report()
+                product_check.check_private_overlay(report, serve, "http://private.invalid/")
+        self.assertEqual(report.status, "critical")
+        self.assertTrue(any(f.check == "private_endpoint" for f in report.findings))
+
     def test_navigation_guard_enforces_three_tabs(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

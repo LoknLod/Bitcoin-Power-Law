@@ -135,7 +135,7 @@ def check_required_files(report: Report) -> None:
             report.add("critical", "required_files", f"Missing required site file: {name}")
 
 
-def check_json_caches(report: Report, now: datetime) -> None:
+def check_json_caches(report: Report, now: datetime, private_serve_dir: Path | None = None) -> None:
     for name in PUBLIC_CACHE_FILES:
         path = ROOT / name
         try:
@@ -153,18 +153,24 @@ def check_json_caches(report: Report, now: datetime) -> None:
         if hits:
             report.add("critical", "public_privacy", f"Public cache contains private-shaped markers: {name}", ", ".join(hits))
 
-    market = (ROOT / "market-cache.json")
-    if market.exists():
+    market_candidates = [("public", ROOT / "market-cache.json")]
+    if private_serve_dir is not None:
+        market_candidates.insert(0, ("private", private_serve_dir / "market-cache.json"))
+    for market_label, market in market_candidates:
+        if not market.exists():
+            continue
         try:
             data = read_json(market)
             btc = ((data.get("assets") or {}).get("btc_usd") or {})
             observed = btc.get("as_of") or data.get("generated_at")
             minutes = age_minutes(observed, now)
-            report.metrics["market_freshness"] = {"observed_at": observed, "age": age_label(minutes), "threshold": f"{MARKET_STALE_MINUTES}m"}
+            report.metrics["market_freshness"] = {"source": market_label, "observed_at": observed, "age": age_label(minutes), "threshold": f"{MARKET_STALE_MINUTES}m"}
             if minutes is None or minutes > MARKET_STALE_MINUTES:
-                report.add("warning", "market_freshness", "BTC market cache is stale or age-unknown", f"age={age_label(minutes)} threshold={MARKET_STALE_MINUTES}m")
+                report.add("warning", "market_freshness", "BTC market cache is stale or age-unknown", f"source={market_label} age={age_label(minutes)} threshold={MARKET_STALE_MINUTES}m")
+            break
         except Exception as exc:  # noqa: BLE001
             report.add("critical", "market_freshness", "Cannot inspect market cache freshness", str(exc))
+            break
 
     aim = (ROOT / "aim-cache.json")
     if aim.exists():
@@ -238,8 +244,18 @@ def check_private_overlay(report: Report, serve_dir: Path, endpoint: str | None)
             with urlopen(url, timeout=3) as response:  # noqa: S310 - local Tailscale/private diagnostic
                 if response.status != 200:
                     report.add("warning", "private_endpoint", "Private endpoint returned non-200", str(response.status))
+                    return
+                remote = json.loads(response.read().decode("utf-8"))
+                if not isinstance(remote, dict):
+                    raise ValueError("remote private cache root is not an object")
+                if remote.get("schema_version") != "shrike_portfolio_cockpit.v0.1" or remote.get("mutation_allowed") is not False or not remote.get("privacy_note"):
+                    report.add("critical", "private_endpoint", "Private endpoint body failed schema/read-only/privacy validation")
+                elif remote.get("generated_at") != data.get("generated_at"):
+                    report.add("warning", "private_endpoint", "Private endpoint generated_at differs from local served cache", f"remote={remote.get('generated_at')} local={data.get('generated_at')}")
         except (OSError, URLError) as exc:
             report.add("warning", "private_endpoint", "Private endpoint not reachable", str(exc))
+        except (json.JSONDecodeError, UnicodeDecodeError, ValueError) as exc:
+            report.add("critical", "private_endpoint", "Private endpoint returned invalid cache body", str(exc))
 
 
 def check_host_scripts(report: Report, host_scripts: Iterable[Path]) -> None:
@@ -268,7 +284,7 @@ def build_report(args: argparse.Namespace) -> Report:
     now = datetime.now(timezone.utc)
     report = Report()
     check_required_files(report)
-    check_json_caches(report, now)
+    check_json_caches(report, now, Path(args.private_serve_dir))
     check_navigation(report)
     check_private_overlay(report, Path(args.private_serve_dir), args.private_endpoint)
     check_host_scripts(report, [Path(p) for p in args.host_script])
