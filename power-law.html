@@ -352,7 +352,7 @@
       <div class="logo">₿</div>
       <div>
         <h1>BTC Power Law Detail</h1>
-        <div class="subtitle">Long-term valuation model</div>
+        <div class="subtitle">Long-term adoption trend; secondary signal</div>
       </div>
     </header>
         <div class="nav-links">
@@ -380,7 +380,7 @@
       <div class="modal-info" id="modalInfo"></div>
       <div class="modal-legend">
         <div class="legend-item"><span class="legend-dot" style="background:#00d395"></span> Support</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#4da6ff"></span> Conservative Fair</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#4da6ff"></span> Lower Trend Band</div>
         <div class="legend-item"><span class="legend-dot" style="background:rgba(255,255,255,0.45)"></span> Trend Anchor</div>
         <div class="legend-item"><span class="legend-dot" style="background:#ff6b6b"></span> Resistance</div>
         <div class="legend-item"><span class="legend-dot" style="background:#f7931a"></span> Current Price</div>
@@ -391,7 +391,7 @@
   <script>
     const GENESIS = new Date('2009-01-03T18:15:05Z');
     const PL_A = -17.01, PL_B = 5.82;
-    const SUPPORT_MULT = 0.35, CONSERVATIVE_FAIR_MULT = 0.71, TREND_MULT = 1.0, RESIST_MULT = 3.5;
+    const SUPPORT_MULT = 0.35, LOWER_TREND_BAND_MULT = 0.71, TREND_MULT = 1.0, RESIST_MULT = 3.5;
     
     const daysSinceGenesis = (d = new Date()) => (d - GENESIS) / 864e5;
     const powerLawPrice = days => Math.pow(10, PL_A + PL_B * Math.log10(days));
@@ -399,7 +399,7 @@
       const trend = powerLawPrice(days);
       return {
         support: trend * SUPPORT_MULT,
-        conservativeFair: trend * CONSERVATIVE_FAIR_MULT,
+        conservativeFair: trend * LOWER_TREND_BAND_MULT,
         trend,
         resistance: trend * RESIST_MULT
       };
@@ -489,11 +489,11 @@
     }
     
     function getStatus(price, fair, sup, res) {
-      if (price < sup) return { text: '🟢 Deeply Undervalued', cls: 'status-undervalued' };
-      if (price < fair * 0.7) return { text: '🟢 Undervalued', cls: 'status-undervalued' };
-      if (price < fair * 1.3) return { text: '🔵 Conservative Fair Zone', cls: 'status-fair' };
-      if (price < res) return { text: '🟠 Above Conservative Fair', cls: 'status-overvalued' };
-      return { text: '🔴 Overvalued', cls: 'status-overvalued' };
+      if (price < sup) return { text: '🟢 Deep Below Trend', cls: 'status-undervalued' };
+      if (price < fair * 0.7) return { text: '🟢 Below Trend', cls: 'status-undervalued' };
+      if (price < fair * 1.3) return { text: '🔵 Near Lower Trend Band', cls: 'status-fair' };
+      if (price < res) return { text: '🟠 Above Lower Band', cls: 'status-overvalued' };
+      return { text: '🔴 Above Trend Corridor', cls: 'status-overvalued' };
     }
     
     function gaugePos(price, sup, res) {
@@ -552,7 +552,7 @@
       ctx.lineWidth = isModal ? 2.5 : 2;
       [
         [SUPPORT_MULT, 'rgba(0,211,149,0.7)'],
-        [CONSERVATIVE_FAIR_MULT, 'rgba(77,166,255,0.9)'],
+        [LOWER_TREND_BAND_MULT, 'rgba(77,166,255,0.9)'],
         [TREND_MULT, 'rgba(255,255,255,0.45)'],
         [RESIST_MULT, 'rgba(255,107,107,0.7)']
       ].forEach(([m, c]) => {
@@ -597,13 +597,13 @@
         
         // 2028 halving projection
         const d2028 = daysSinceGenesis(new Date('2028-04-01'));
-        const fair2028 = powerLawPrice(d2028) * CONSERVATIVE_FAIR_MULT;
-        ctx.fillText('2028 conservative: ' + formatPrice(fair2028), xPos(d2028), yPos(fair2028) - 15);
+        const fair2028 = powerLawPrice(d2028) * LOWER_TREND_BAND_MULT;
+        ctx.fillText('2028 lower band: ' + formatPrice(fair2028), xPos(d2028), yPos(fair2028) - 15);
         
         // 2032 projection
         const d2032 = daysSinceGenesis(new Date('2032-01-01'));
-        const fair2032 = powerLawPrice(d2032) * CONSERVATIVE_FAIR_MULT;
-        ctx.fillText('2032 conservative: ' + formatPrice(fair2032), xPos(d2032), yPos(fair2032) - 15);
+        const fair2032 = powerLawPrice(d2032) * LOWER_TREND_BAND_MULT;
+        ctx.fillText('2032 lower band: ' + formatPrice(fair2032), xPos(d2032), yPos(fair2032) - 15);
       }
     }
     
@@ -626,15 +626,15 @@
         </div>
         <div class="modal-stat">
           <div class="modal-stat-value" style="color: var(--blue)">${formatPrice(conservativeFair)}</div>
-          <div class="modal-stat-label">Conservative</div>
+          <div class="modal-stat-label">Lower Band</div>
         </div>
         <div class="modal-stat">
           <div class="modal-stat-value" style="color: var(--text)">${formatPrice(trend)}</div>
           <div class="modal-stat-label">Trend Anchor</div>
         </div>
         <div class="modal-stat">
-          <div class="modal-stat-value" style="color: var(--blue)">${formatPrice(powerLawPrice(d2030) * CONSERVATIVE_FAIR_MULT)}</div>
-          <div class="modal-stat-label">Conservative 2030</div>
+          <div class="modal-stat-value" style="color: var(--blue)">${formatPrice(powerLawPrice(d2030) * LOWER_TREND_BAND_MULT)}</div>
+          <div class="modal-stat-label">Lower Band 2030</div>
         </div>
       `;
       
@@ -679,10 +679,10 @@
               ${change !== null ? `<div class="price-change ${change >= 0 ? 'positive' : 'negative'}">${formatPct(change)} (24h)</div>` : ''}
             </div>
             <div class="metrics">
-              <div class="metric"><div class="metric-value power-law-value">${formatPrice(conservativeFair)}</div><div class="metric-label">Conservative Fair</div></div>
+              <div class="metric"><div class="metric-value power-law-value">${formatPrice(conservativeFair)}</div><div class="metric-label">Lower Trend Band</div></div>
               <div class="metric"><div class="metric-value">${formatPrice(trend)}</div><div class="metric-label">Trend Anchor</div></div>
-              <div class="metric"><div class="metric-value ${dev >= 0 ? 'negative' : 'positive'}">${formatPct(dev)}</div><div class="metric-label">From Conservative</div></div>
-              <div class="metric"><div class="metric-value ${trendDev >= 0 ? 'negative' : 'positive'}">${formatPct(trendDev)}</div><div class="metric-label">From Anchor</div></div>
+              <div class="metric"><div class="metric-value ${dev >= 0 ? 'negative' : 'positive'}">${formatPct(dev)}</div><div class="metric-label">vs Lower Band</div></div>
+              <div class="metric"><div class="metric-value ${trendDev >= 0 ? 'negative' : 'positive'}">${formatPct(trendDev)}</div><div class="metric-label">vs Trend Anchor</div></div>
             </div>
             <div class="source-row">BTC market: ${source || 'unknown'} · observed ${formatDateTime(observedAt)} ${marketFreshnessPill(observedAt)}${cacheGenerated ? ` · market cache ${formatDateTime(cacheGenerated)}` : ''}<br>AIM/regime freshness is separate on Dashboard.</div>
           </div>
@@ -751,7 +751,7 @@
             <div class="chart-container"><canvas id="chart"></canvas></div>
             <div class="chart-legend">
               <div class="legend-item"><span class="legend-dot" style="background:#00d395"></span>Support</div>
-              <div class="legend-item"><span class="legend-dot" style="background:#4da6ff"></span>Conservative</div>
+              <div class="legend-item"><span class="legend-dot" style="background:#4da6ff"></span>Lower Band</div>
               <div class="legend-item"><span class="legend-dot" style="background:rgba(255,255,255,0.45)"></span>Anchor</div>
               <div class="legend-item"><span class="legend-dot" style="background:#ff6b6b"></span>Resist</div>
               <div class="legend-item"><span class="legend-dot" style="background:#f7931a"></span>Now</div>
@@ -762,17 +762,17 @@
               <div class="gauge-wrap">
                 <div class="gauge-label">Position in Channel</div>
                 <div class="gauge"><div class="gauge-marker" style="left:${gaugePos(price, support, resistance)}%"></div></div>
-                <div class="gauge-labels"><span>Support</span><span>Conservative</span><span>Resist</span></div>
+                <div class="gauge-labels"><span>Support</span><span>Lower Band</span><span>Resist</span></div>
               </div>
               <div class="status-badge ${status.cls}">${status.text}</div>
             </div>
             <div class="bands">
               <div class="band support"><div class="band-value">${formatPrice(support)}</div><div class="band-label">Support</div></div>
-              <div class="band fair"><div class="band-value">${formatPrice(conservativeFair)}</div><div class="band-label">Conservative</div></div>
+              <div class="band fair"><div class="band-value">${formatPrice(conservativeFair)}</div><div class="band-label">Lower Band</div></div>
               <div class="band"><div class="band-value">${formatPrice(trend)}</div><div class="band-label">Trend Anchor</div></div>
               <div class="band resist"><div class="band-value">${formatPrice(resistance)}</div><div class="band-label">Resistance</div></div>
             </div>
-            <div class="model-note"><strong>Model note:</strong> AIM scoring uses the raw trend anchor. This page also shows the conservative visual fair line at 0.71× the anchor, which is why older views could show a different fair-price range.</div>
+            <div class="model-note"><strong>Model note:</strong> AIM scoring uses the raw trend anchor. This page also shows a 0.71× lower trend band. The power law is a secondary structural signal, not a price target or immunity from dollar-liquidity shocks.</div>
           </div>`;
         
         const canvas = document.getElementById('chart');

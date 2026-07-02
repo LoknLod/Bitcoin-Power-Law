@@ -97,22 +97,55 @@ class SiteNavigationTests(unittest.TestCase):
         self.assertNotIn("mempool.space", widget)
         self.assertNotIn("Hash", widget)
 
-    def test_macro_page_uses_world_credit_not_m2_as_monetary_reset_headline(self):
+    def test_macro_page_uses_dollar_regime_lens_not_legacy_m2_headline(self):
         html = (ROOT / "macro.html").read_text()
+        self.assertIn("Dollar Regime: Treasury vs Fed Dominance", html)
+        self.assertIn("Treasury / Stablecoin / SOFR Watch", html)
+        self.assertIn("Regime Risk Watch", html)
+        expected_regime_checks = (
+            "Credit-spread/liquidity crisis overwhelms transition",
+            "Real-rate pressure keeps BTC trading like long-duration risk tech",
+            "Treasury funding stress pressures dollar collateral",
+            "Stablecoin adoption stalls or regulation reverses",
+            "CBDC / digital-euro route gains over private stablecoin route",
+            "U.S. Bitcoin reserve policy delayed, diluted, or reversed",
+            "BTC wrapper/carry stress diverges from spot BTC reserve-asset signal",
+        )
+        for check in expected_regime_checks:
+            self.assertIn(check, html)
+        for series in ("BAMLH0A0HYM2", "DFII10", "DGS10"):
+            self.assertIn(series, html)
+        self.assertIn("renderRegimeRiskWatch", html)
+        self.assertIn("renderRegimeTrafficLight", html)
         self.assertIn("World Credit Growth", html)
         self.assertIn("Q5ACAMUSDA", html)
-        self.assertIn("3Y Annualized", html)
-        self.assertIn("Monetary Reset", html)
+        self.assertIn("3Y ann.", html)
+        self.assertIn("Legacy broad-liquidity proxy", html)
+        self.assertIn("manual stress check", html)
+        self.assertIn("Manual watch until source feeds are wired", html)
+        self.assertIn("Treat as decision-support, not a trade instruction", html)
+        self.assertIn("Failure modes", html)
+        self.assertNotIn("Anti-thesis", html)
         self.assertNotIn("Global M2 Money Supply (US Proxy)", html)
+        self.assertNotIn("Thesis Health", html)
+        self.assertNotIn("Thesis Break", html)
+        self.assertNotIn("renderThesisBreak", html)
+        self.assertNotIn("thesis-break-list", html)
+        self.assertNotIn("loadWatchlist", html)
+        self.assertNotIn("aim-technical-watchlist", html)
+        for stale_ai_term in ("Hyperscaler", "NVDA", "AVGO", "TSMC", "TER", "GEV", "China domestic-silicon"):
+            self.assertNotIn(stale_ai_term, html)
 
-    def test_power_law_page_labels_raw_anchor_and_conservative_fair(self):
+    def test_power_law_page_labels_raw_anchor_and_lower_trend_band(self):
         html = (ROOT / "power-law.html").read_text()
-        self.assertIn("CONSERVATIVE_FAIR_MULT = 0.71", html)
+        self.assertIn("LOWER_TREND_BAND_MULT = 0.71", html)
         self.assertIn("TREND_MULT = 1.0", html)
-        self.assertIn("Conservative Fair", html)
+        self.assertIn("Lower Trend Band", html)
         self.assertIn("Trend Anchor", html)
         self.assertIn("market-cache.json", html)
         self.assertIn("AIM scoring uses the raw trend anchor", html)
+        self.assertIn("secondary structural signal", html)
+        self.assertNotIn("Conservative Fair", html)
 
     def test_macro_page_does_not_duplicate_power_law_position_card(self):
         html = (ROOT / "macro.html").read_text()
@@ -163,6 +196,11 @@ class SiteNavigationTests(unittest.TestCase):
         self.assertIn("BTC Stack", html)
         self.assertIn("actualAllocationMap", html)
         self.assertIn("allocation-actual-fill", html)
+        self.assertIn("Progress to target", html)
+        self.assertIn("actualPct / target", html)
+        self.assertIn("allocation-overflow-marker", html)
+        self.assertIn("% full", html)
+        self.assertIn("% of target", html)
         self.assertIn("Unclassified / Legacy Holdings", html)
         self.assertIn("2030", html)
         self.assertIn("2035", html)

@@ -222,31 +222,31 @@
             background: rgba(247,147,26,0.15);
         }
 
-        /* Thesis Break Watch */
-        .thesis-item {
+        /* Regime Risk Watch */
+        .regime-item {
             display: flex;
             align-items: flex-start;
             gap: 10px;
             padding: 10px 0;
             border-bottom: 1px solid rgba(255,255,255,0.06);
         }
-        .thesis-item:last-child { border-bottom: none; }
+        .regime-item:last-child { border-bottom: none; }
         
-        .thesis-dot {
+        .regime-dot {
             width: 10px;
             height: 10px;
             border-radius: 50%;
             margin-top: 4px;
             flex-shrink: 0;
         }
-        .thesis-dot.green { background: #4ade80; box-shadow: 0 0 6px rgba(74,222,128,0.4); }
-        .thesis-dot.yellow { background: #fbbf24; box-shadow: 0 0 6px rgba(251,191,36,0.4); }
-        .thesis-dot.red { background: #ef4444; box-shadow: 0 0 6px rgba(239,68,68,0.4); }
-        .thesis-dot.gray { background: #555; }
+        .regime-dot.green { background: #4ade80; box-shadow: 0 0 6px rgba(74,222,128,0.4); }
+        .regime-dot.yellow { background: #fbbf24; box-shadow: 0 0 6px rgba(251,191,36,0.4); }
+        .regime-dot.red { background: #ef4444; box-shadow: 0 0 6px rgba(239,68,68,0.4); }
+        .regime-dot.gray { background: #555; }
         
-        .thesis-content { flex: 1; }
-        .thesis-label { font-size: 0.85em; color: #ddd; line-height: 1.35; }
-        .thesis-status { font-size: 0.7em; color: #888; margin-top: 2px; }
+        .regime-content { flex: 1; }
+        .regime-label { font-size: 0.85em; color: #ddd; line-height: 1.35; }
+        .regime-status { font-size: 0.7em; color: #888; margin-top: 2px; }
 
         /* Signal gauge */
         .signal-bar {
@@ -282,7 +282,7 @@
             margin-top: 8px;
         }
 
-        /* Thesis Health Traffic Light */
+        /* Regime Health Traffic Light */
         .traffic-light-card {
             text-align: center;
             padding: 20px;
@@ -321,7 +321,7 @@
 <body>
     <div class="container">
         <h1>BTC/AIM Macro Regime</h1>
-        <p class="subtitle">Thesis health • Credit & liquidity stress • Hard money</p>
+        <p class="subtitle">Treasury dominance • SOFR/stablecoins • BTC liquidity risk</p>
         
         <div class="nav-links">
             <a href="index.html">Dashboard</a>
@@ -329,16 +329,16 @@
             <a href="macro.html" class="active">Macro</a>
         </div>
         
-        <!-- Thesis Debate Question -->
+        <!-- Regime Debate Question -->
         <div class="card debate-card">
-            <div class="card-title">⚖️ Thesis Debate</div>
-            <div class="debate-text">Is AI producing real productivity faster than credit/fiscal stress is degrading money?</div>
-            <div class="debate-sub">Every signal below maps to one side of this question.</div>
+            <div class="card-title">⚖️ Regime Debate</div>
+            <div class="debate-text">Is the dollar moving from offshore Fed/LIBOR credit support toward onshore Treasury/SOFR/stablecoin collateral?</div>
+            <div class="debate-sub">Working lens, not prophecy: track the transition and the liquidity shocks that can still swamp BTC.</div>
         </div>
         
-        <!-- Thesis Health Traffic Light -->
+        <!-- Regime Health Traffic Light -->
         <div class="card traffic-light-card">
-            <div class="card-title">🚦 Thesis Health</div>
+            <div class="card-title">🚦 Regime Health</div>
             <div class="traffic-light">
                 <div class="traffic-dot green" id="tl-green"></div>
                 <div class="traffic-dot yellow" id="tl-yellow"></div>
@@ -348,13 +348,13 @@
             <div class="traffic-sub" id="tl-sub"></div>
         </div>
         
-        <!-- Thesis Break Watch -->
+        <!-- Regime Risk Watch -->
         <div class="card">
-            <div class="card-title">🚨 Thesis Break Watch (v0.4)</div>
-            <div id="thesis-break-list">
-                <div class="info-text">Loading thesis break conditions...</div>
+            <div class="card-title">🚨 Regime Risk Watch</div>
+            <div id="regime-risk-list">
+                <div class="info-text">Loading dollar-regime risk checks...</div>
             </div>
-            <div class="source-note">Conditions from retirement_buildout_thesis_v0.4.json, embedded in macro.html for static rendering. Manual items require periodic review until automated data sources are wired.</div>
+            <div class="source-note">Automated checks use local FRED caches where available. Manual items stay explicit until stablecoin, SOFR/T-bill, CBDC, wrapper-stress, and BTC-reserve feeds are wired.</div>
         </div>
         
         <!-- Credit & Liquidity Stress -->
@@ -365,17 +365,18 @@
             </div>
         </div>
         
-        <!-- Monetary Reset Signals -->
+        <!-- Dollar Regime Signals -->
         <div class="card">
-            <div class="card-title">💵 Monetary Reset: Fiscal & Credit Growth</div>
+            <div class="card-title">💵 Dollar Regime: Treasury vs Fed Dominance</div>
             <div id="monetary-reset">
-                <div class="info-text">Loading monetary reset data...</div>
+                <div class="info-text">Loading fiscal, credit, and dollar-plumbing data...</div>
             </div>
+            <div class="source-note">2022 is the inflection frame: bond-bull rupture, Fed hikes, LIBOR-to-SOFR migration, and marginal dollar pricing moving onshore.</div>
         </div>
         
-        <!-- Fed Net Liquidity -->
+        <!-- Policy Liquidity -->
         <div class="card">
-            <div class="card-title">🌊 Fed Net Liquidity</div>
+            <div class="card-title">🌊 Policy Liquidity: Fed + Treasury Drain</div>
             <div class="price-row">
                 <span class="price-label">Fed Balance Sheet</span>
                 <span class="price-value liquidity" id="fed-balance">$--</span>
@@ -385,7 +386,7 @@
                 <span class="price-value neutral" id="rrp">$--</span>
             </div>
             <div class="price-row">
-                <span class="price-label">− Treasury (TGA)</span>
+                <span class="price-label">− Treasury General Account</span>
                 <span class="price-value neutral" id="tga">$--</span>
             </div>
             <div class="section-divider"></div>
@@ -395,32 +396,23 @@
             </div>
             <div class="info-text">
                 💡 Net Liquidity = Fed Balance Sheet − RRP − TGA<br>
-                Bitcoin correlates strongly with Fed liquidity flows.
+                Liquidity still matters; this is plumbing context, not a Fed-prints-BTC-up autopilot.
             </div>
             <div class="source-note" id="liquidity-source"></div>
         </div>
         
-        <!-- World Credit Growth -->
+        <!-- Treasury / Stablecoin / SOFR Watch -->
         <div class="card">
-            <div class="card-title">🌍 World Credit Growth</div>
-            <div class="price-row">
-                <span class="price-label">World Credit Latest</span>
-                <span class="price-value liquidity" id="world-credit-value">$--</span>
+            <div class="card-title">🏦 Treasury / Stablecoin / SOFR Watch</div>
+            <div class="metrics-grid">
+                <div class="metric-box"><div class="metric-value liquidity">SOFR</div><div class="metric-label">manual stress check</div></div>
+                <div class="metric-box"><div class="metric-value liquidity">T-Bills</div><div class="metric-label">manual collateral check</div></div>
+                <div class="metric-box"><div class="metric-value liquidity">Stablecoins</div><div class="metric-label">manual adoption check</div></div>
+                <div class="metric-box"><div class="metric-value stress">CBDC</div><div class="metric-label">manual competing-route check</div></div>
             </div>
-            <div class="price-row">
-                <span class="price-label">3Y Annualized Growth</span>
-                <span class="price-value" id="world-credit-3y">--%</span>
-            </div>
-            <div class="price-row">
-                <span class="price-label">Signal Role</span>
-                <span class="price-value" id="world-credit-trend">Core</span>
-            </div>
-            <div style="height: 80px; position: relative; margin-top: 10px;">
-                <div class="mini-chart" id="world-credit-sparkline"></div>
-            </div>
-            <div class="info-text" id="world-credit-info">
-                📚 <strong>Book thesis:</strong> world credit growth is the cleaner paper-claims signal than U.S. M2.<br>
-                Uses FRED series Q5ACAMUSDA; M2 becomes secondary domestic context.
+            <div class="info-text">
+                Watch Treasury issuance, stablecoin law/supply, SOFR/T-bill plumbing, credit spreads, Fed reform, CBDC/digital-euro moves, and U.S. BTC reserve policy. Manual watch until source feeds are wired.<br>
+                Failure modes: adoption failure, Treasury overreach, political reversal, reserve delay, liquidity crisis, or BTC trading like risk tech longer than expected.
             </div>
         </div>
         
@@ -466,6 +458,7 @@
                     <div class="metric-label">BTC in Silver oz</div>
                 </div>
             </div>
+            <div class="info-text">Spot BTC is the reserve-asset signal. Treasury companies, preferreds, margin/yield wrappers, and digital-credit products are separate frontier credit/carry trades.</div>
         </div>
         
         <div class="update-time" id="update-time">Loading...</div>
@@ -580,77 +573,60 @@
             return 'high';
         }
 
-        let watchlistCache = null;
+        let regimeRiskResults = [];
 
-        async function loadWatchlist() {
-            try {
-                if (!watchlistCache) watchlistCache = await loadJson('aim-technical-watchlist.json');
-                return watchlistCache;
-            } catch { return null; }
-        }
-
-        function watchlistSymbol(ticker) {
-            const syms = watchlistCache?.symbols || [];
-            return syms.find(s => s.symbol === ticker);
-        }
-
-        let thesisBreakResults = [];
-
-        function renderThesisBreak() {
-            // v0.4 thesis break conditions — 3 automated via FRED + watchlist, 4 manual
+        function renderRegimeRiskWatch() {
             const conditions = [
                 {
-                    label: 'Hyperscaler capex cut for multiple quarters',
-                    status: 'manual',
-                    detail: 'Requires SEC EDGAR earnings data — not yet automated'
-                },
-                {
-                    label: 'NVDA or AVGO guides down on demand (not supply)',
-                    status: 'auto-price',
-                    detail: 'Price drawdown proxy from 52-week high',
-                    tickers: ['NVDA', 'AVGO'],
-                    yellowThreshold: 15,  // 15% drawdown = watch
-                    redThreshold: 25      // 25% drawdown = likely guide-down
-                },
-                {
-                    label: 'TSMC advanced-node utilization weakens',
-                    status: 'auto-price',
-                    detail: 'Price drawdown proxy from 52-week high',
-                    tickers: ['TSM'],
-                    yellowThreshold: 15,
-                    redThreshold: 25
-                },
-                {
-                    label: 'TER says AI test demand is normalizing',
-                    status: 'auto-price',
-                    detail: 'Price drawdown proxy from 52-week high',
-                    tickers: ['TER'],
-                    yellowThreshold: 15,
-                    redThreshold: 25
-                },
-                {
-                    label: 'GEV backlog deteriorates',
-                    status: 'auto-price',
-                    detail: 'Price drawdown proxy from 52-week high',
-                    tickers: ['GEV'],
-                    yellowThreshold: 15,
-                    redThreshold: 25
-                },
-                {
-                    label: 'Data-center financing freezes / GPU credit stress',
+                    label: 'Credit-spread/liquidity crisis overwhelms transition',
                     status: 'auto',
-                    detail: 'HY OAS spread proxy',
+                    detail: 'HY OAS spread proxy from local FRED cache',
                     fredSeries: 'BAMLH0A0HYM2',
-                    threshold: 5.0
+                    threshold: 5.0,
+                    yellowThreshold: 3.5,
+                    units: '% HY OAS'
                 },
                 {
-                    label: 'China domestic-silicon share accelerates',
+                    label: 'Real-rate pressure keeps BTC trading like long-duration risk tech',
+                    status: 'auto',
+                    detail: '10Y real yield proxy from local FRED cache',
+                    fredSeries: 'DFII10',
+                    threshold: 2.5,
+                    yellowThreshold: 1.75,
+                    units: '% real yield'
+                },
+                {
+                    label: 'Treasury funding stress pressures dollar collateral',
+                    status: 'auto',
+                    detail: '10Y Treasury yield proxy; T-bill/SOFR feeds not wired yet',
+                    fredSeries: 'DGS10',
+                    threshold: 5.0,
+                    yellowThreshold: 4.25,
+                    units: '% 10Y yield'
+                },
+                {
+                    label: 'Stablecoin adoption stalls or regulation reverses',
                     status: 'manual',
-                    detail: 'Requires semiconductor market share data — not yet automated'
+                    detail: 'Manual: needs stablecoin supply, issuer reserve, and law-status feeds'
+                },
+                {
+                    label: 'CBDC / digital-euro route gains over private stablecoin route',
+                    status: 'manual',
+                    detail: 'Manual: monitor BIS/CBDC policy and competing digital-euro rollout'
+                },
+                {
+                    label: 'U.S. Bitcoin reserve policy delayed, diluted, or reversed',
+                    status: 'manual',
+                    detail: 'Manual: monitor legislative/executive reserve-policy progress'
+                },
+                {
+                    label: 'BTC wrapper/carry stress diverges from spot BTC reserve-asset signal',
+                    status: 'manual',
+                    detail: 'Manual: monitor treasury companies, preferreds, margin funding, and digital-credit products'
                 }
             ];
 
-            thesisBreakResults = [];
+            regimeRiskResults = [];
 
             const html = conditions.map(c => {
                 let dotClass = 'gray';
@@ -660,92 +636,62 @@
                     const obs = latestObservation(c.fredSeries);
                     if (obs) {
                         const val = obs.val;
+                        const yellowThreshold = c.yellowThreshold ?? c.threshold * 0.7;
                         if (val >= c.threshold) {
                             dotClass = 'red';
-                            statusText = `${val.toFixed(2)}% HY spread (above ${c.threshold}% threshold) — as of ${obs.date}`;
-                        } else if (val >= c.threshold * 0.7) {
+                            statusText = `${val.toFixed(2)}${c.units} (above ${c.threshold}% threshold) — as of ${obs.date}`;
+                        } else if (val >= yellowThreshold) {
                             dotClass = 'yellow';
-                            statusText = `${val.toFixed(2)}% HY spread — as of ${obs.date}`;
+                            statusText = `${val.toFixed(2)}${c.units} — watch level as of ${obs.date}`;
                         } else {
                             dotClass = 'green';
-                            statusText = `${val.toFixed(2)}% HY spread — as of ${obs.date}`;
-                        }
-                    }
-                } else if (c.status === 'auto-price' && c.tickers) {
-                    // Use drawdown from 252-day high as price proxy for guide-down risk
-                    let maxDrawdown = 0;
-                    let worstTicker = '';
-                    let foundAny = false;
-                    for (const t of c.tickers) {
-                        const sym = watchlistSymbol(t);
-                        if (sym) {
-                            const ddRaw = Number(sym.drawdown_from_252d_high);
-                            if (!Number.isFinite(ddRaw)) continue;
-                            foundAny = true;
-                            const dd = Math.abs(ddRaw);
-                            if (dd > maxDrawdown) {
-                                maxDrawdown = dd;
-                                worstTicker = t;
-                            }
-                        }
-                    }
-                    if (foundAny) {
-                        if (maxDrawdown >= c.redThreshold) {
-                            dotClass = 'red';
-                            statusText = `${worstTicker} down ${maxDrawdown.toFixed(1)}% from 52w high — guide-down risk signal`;
-                        } else if (maxDrawdown >= c.yellowThreshold) {
-                            dotClass = 'yellow';
-                            statusText = `${worstTicker} down ${maxDrawdown.toFixed(1)}% from 52w high — watch`;
-                        } else {
-                            dotClass = 'green';
-                            statusText = `Max drawdown ${maxDrawdown.toFixed(1)}% (${worstTicker || 'none'}) — no signal`;
+                            statusText = `${val.toFixed(2)}${c.units} — below watch level as of ${obs.date}`;
                         }
                     }
                 }
 
-                thesisBreakResults.push({ label: c.label, dotClass });
+                regimeRiskResults.push({ label: c.label, dotClass, automated: c.status === 'auto' });
 
                 return `
-                    <div class="thesis-item">
-                        <div class="thesis-dot ${dotClass}"></div>
-                        <div class="thesis-content">
-                            <div class="thesis-label">${c.label}</div>
-                            <div class="thesis-status">${statusText}</div>
+                    <div class="regime-item">
+                        <div class="regime-dot ${dotClass}"></div>
+                        <div class="regime-content">
+                            <div class="regime-label">${c.label}</div>
+                            <div class="regime-status">${statusText}</div>
                         </div>
                     </div>
                 `;
             }).join('');
 
-            byId('thesis-break-list').innerHTML = html;
-            renderTrafficLight();
+            byId('regime-risk-list').innerHTML = html;
+            renderRegimeTrafficLight();
         }
 
-        function renderTrafficLight() {
-            const automated = thesisBreakResults.filter(r => r.dotClass !== 'gray');
+        function renderRegimeTrafficLight() {
+            const automated = regimeRiskResults.filter(r => r.automated && r.dotClass !== 'gray');
+            const expectedAutomated = regimeRiskResults.filter(r => r.automated);
             const hasRed = automated.some(r => r.dotClass === 'red');
             const hasYellow = automated.some(r => r.dotClass === 'yellow');
             const allGreen = automated.length > 0 && automated.every(r => r.dotClass === 'green');
-            const manualCount = thesisBreakResults.filter(r => r.dotClass === 'gray').length;
-            const expectedAutomated = thesisBreakResults.filter(r => r.label.includes('NVDA') || r.label.includes('TSMC') || r.label.includes('TER') || r.label.includes('GEV') || r.label.includes('Data-center'));
-            const reportingAutomated = expectedAutomated.filter(r => r.dotClass !== 'gray');
+            const manualCount = regimeRiskResults.filter(r => !r.automated).length;
 
             let light, label, sub;
             if (hasRed) {
                 light = 'red';
-                label = '🚨 Thesis Break Signal';
-                sub = 'At least one break condition is active. Review before deploying capital.';
+                label = '🚨 Regime Stress Active';
+                sub = 'At least one automated regime-risk check is flashing red. Treat as decision-support, not a trade instruction.';
             } else if (hasYellow) {
                 light = 'yellow';
-                label = '⚠️ Watch — Automated Signals Mixed';
-                sub = 'Some automated conditions need monitoring. No active break signal.';
-            } else if (allGreen && reportingAutomated.length >= expectedAutomated.length) {
+                label = '⚠️ Regime Watch';
+                sub = 'Some automated dollar-liquidity checks are elevated; manual transition checks remain required.';
+            } else if (allGreen && automated.length >= expectedAutomated.length) {
                 light = 'green';
-                label = '✅ Automated Signals Clear';
-                sub = `${automated.length} automated conditions green${manualCount > 0 ? `; ${manualCount} manual conditions still need periodic review` : ''}.`;
+                label = '✅ Automated Checks Clear';
+                sub = `${automated.length} automated checks green; ${manualCount} manual regime-transition checks still require review.`;
             } else {
                 light = 'yellow';
                 label = '⚠️ Insufficient Data';
-                sub = `Only ${reportingAutomated.length}/${expectedAutomated.length} automated conditions reporting. Watchlist data may be missing or stale.`;
+                sub = `Only ${automated.length}/${expectedAutomated.length} automated checks reporting. Local FRED cache may be missing or stale.`;
             }
 
             byId('tl-green').classList.toggle('active', light === 'green');
@@ -812,35 +758,35 @@
                         return (Math.pow(latest.val / prior.val, 1 / years) - 1) * 100;
                     },
                     suffix: '%',
-                    note: 'Core monetary reset signal — paper claims expanding'
+                    note: 'Old-regime paper claims still expanding; watch whether Treasury collateral becomes the marginal dollar anchor'
                 },
                 {
                     label: 'US Credit Growth (YoY)',
                     obs: usCredit,
                     compute: obs => yoy(obs),
                     suffix: '%',
-                    note: 'Domestic credit expansion'
+                    note: 'Domestic credit context; Fed-dominance legacy signal'
                 },
                 {
                     label: 'Federal Debt Growth (YoY)',
                     obs: fedDebt,
                     compute: obs => yoy(obs),
                     suffix: '%',
-                    note: 'Fiscal stress — debt compounding faster'
+                    note: 'Treasury-dominance pressure — issuance and rollover needs matter'
                 },
                 {
                     label: 'Federal Interest Payments (YoY)',
                     obs: fedInterest,
                     compute: obs => yoy(obs),
                     suffix: '%',
-                    note: 'Debt service spiral risk'
+                    note: 'Treasury/fiscal constraint; watch for policy-driven liquidity events'
                 },
                 {
                     label: 'US M2 Growth (YoY)',
                     obs: m2,
                     compute: obs => yoy(obs),
                     suffix: '%',
-                    note: 'Domestic liquidity context (secondary)'
+                    note: 'Legacy broad-liquidity proxy; useful but not the steering wheel'
                 }
             ];
 
@@ -861,18 +807,6 @@
             }).join('');
 
             byId('monetary-reset').innerHTML = html;
-        }
-
-        function renderWorldCreditSparkline(items) {
-            const el = byId('world-credit-sparkline');
-            if (!el || !items.length) return;
-            const values = items.map(item => item.val);
-            const min = Math.min(...values);
-            const max = Math.max(...values);
-            el.innerHTML = items.map(item => {
-                const pct = max === min ? 50 : 10 + ((item.val - min) / (max - min)) * 90;
-                return `<div class="bar" title="${item.date}" style="height:${pct.toFixed(1)}%; background:linear-gradient(to top,#2563eb,#60a5fa);"></div>`;
-            }).join('');
         }
 
         function renderRatioHistory(cache) {
@@ -951,37 +885,9 @@
                 `${sourceLine('WALCL', balanceRaw?.date, 90)}; ${sourceLine('RRP', rrpRaw?.date, 90)}; ${sourceLine('TGA', tgaRaw?.date, 90)}.`;
         }
 
-        function renderWorldCredit() {
-            const obs = observations('Q5ACAMUSDA');
-            if (obs.length < 2) return;
-
-            const latest = obs[obs.length - 1];
-            byId('world-credit-value').textContent = '$' + (latest.val / 1000).toFixed(1) + 'T';
-
-            const threeYearTarget = new Date(latest.date);
-            threeYearTarget.setFullYear(threeYearTarget.getFullYear() - 3);
-            const prior = priorObservationNear(obs, threeYearTarget);
-            const years = Math.max((new Date(latest.date) - new Date(prior.date)) / (365.25 * 24 * 60 * 60 * 1000), 0.01);
-            const annualized = (Math.pow(latest.val / prior.val, 1 / years) - 1) * 100;
-
-            const growthEl = byId('world-credit-3y');
-            growthEl.textContent = `${annualized >= 0 ? '+' : ''}${annualized.toFixed(1)}%`;
-            growthEl.style.color = annualized >= 0 ? '#4ade80' : '#ef4444';
-
-            const roleEl = byId('world-credit-trend');
-            roleEl.textContent = annualized >= 5 ? 'Paper claims expanding' : 'Watch credit impulse';
-            roleEl.style.color = annualized >= 5 ? '#f97316' : '#60a5fa';
-
-            renderWorldCreditSparkline(obs.slice(-24));
-            byId('world-credit-info').innerHTML =
-                '📚 <strong>Book thesis:</strong> world credit growth is the cleaner paper-claims signal than U.S. M2.<br>' +
-                `${sourceLine('FRED Q5ACAMUSDA', latest.date, 90)}; 3Y baseline ${prior.date}. M2 remains secondary domestic context.`;
-        }
-
         async function init() {
             try {
                 [marketCache, fredCache] = await Promise.all([loadMarketCache(), loadFredCache()]);
-                await loadWatchlist();
                 const currentRatio = renderMarketData(marketCache);
                 try {
                     marketHistoryCache = await loadMarketHistoryCache();
@@ -991,11 +897,10 @@
                     byId('chart-info').textContent =
                         `Current ratio ${currentRatio.toFixed(1)} oz/BTC. Historical cache unavailable: ${historyError.message}`;
                 }
-                renderThesisBreak();
+                renderRegimeRiskWatch();
                 renderCreditStress();
                 renderMonetaryReset();
                 renderLiquidity();
-                renderWorldCredit();
                 byId('update-time').textContent =
                     `Local caches: market ${formatIsoDate(marketCache?.generated_at)} (${cacheAgeText(marketCache?.generated_at)}), history ${formatIsoDate(marketHistoryCache?.generated_at)} (${cacheAgeText(marketHistoryCache?.generated_at)}), FRED ${formatIsoDate(fredCache?.generated_at)} (${cacheAgeText(fredCache?.generated_at)}). Rendered ${new Date().toLocaleTimeString()}.`;
             } catch (error) {

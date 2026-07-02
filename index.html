@@ -327,6 +327,11 @@
       margin-bottom: 7px;
     }
 
+    .allocation-bar.completion {
+      position: relative;
+      overflow: visible;
+    }
+
     .allocation-fill {
       height: 100%;
       background: linear-gradient(90deg, var(--btc), var(--gold));
@@ -363,8 +368,20 @@
 
     .allocation-actual-fill {
       height: 100%;
-      background: linear-gradient(90deg, var(--blue), var(--btc));
+      background: linear-gradient(90deg, var(--blue), #7cc4ff);
       border-radius: 6px;
+    }
+
+    .allocation-overflow-marker {
+      position: absolute;
+      left: calc(100% + 3px);
+      top: 0;
+      height: 100%;
+      min-width: 4px;
+      max-width: 28px;
+      background: linear-gradient(90deg, var(--amber), var(--red));
+      border-radius: 6px;
+      box-shadow: 0 0 0 1px rgba(255,107,107,0.25);
     }
 
     .signal-list {
@@ -614,6 +631,13 @@
       return Math.max(0, Math.min(100, Math.round(number)));
     }
 
+    function formatPercent(value) {
+      const number = Number(value);
+      if (!Number.isFinite(number)) return "0%";
+      const rounded = Math.round(number * 10) / 10;
+      return `${Number.isInteger(rounded) ? rounded.toFixed(0) : rounded.toFixed(1)}%`;
+    }
+
     function slug(value) {
       return String(value || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
     }
@@ -840,15 +864,31 @@
       return new Map(actual.sleeves.map(item => [item.sleeve_key, item]));
     }
 
-    function renderActualAllocation(actual) {
-      const pct = clampScore(actual.actual_pct);
+    function renderActualAllocation(actual, targetPct = null) {
+      const actualPct = Number(actual.actual_pct);
+      const target = Number(targetPct);
+      const hasTarget = Number.isFinite(actualPct) && Number.isFinite(target) && target > 0;
+      // Completion bar is actualPct / target, not actualPct / total portfolio.
+      const fillPct = hasTarget ? Math.min(100, Math.max(0, Math.round((actualPct / target) * 100))) : clampScore(actual.actual_pct);
+      const completeness = hasTarget ? Math.round((actualPct / target) * 100) : null;
+      const overweightPts = hasTarget ? Math.round((actualPct - target) * 10) / 10 : 0;
+      const isOverweight = hasTarget && actualPct > target;
+      const overflowWidth = isOverweight ? Math.max(4, Math.min(28, Math.round((completeness - 100) / 2))) : 0;
+      const label = hasTarget
+        ? isOverweight
+          ? `${formatPercent(actualPct)} · ${completeness}% of target · +${formatPercent(overweightPts).replace("%", " pts")}`
+          : `${formatPercent(actualPct)} · ${completeness}% full`
+        : formatPercent(actual.actual_pct);
       return `
         <div class="allocation-actual">
           <div class="allocation-actual-head">
-            <span>Actual</span>
-            <span class="allocation-actual-pct">${pct}%</span>
+            <span>${hasTarget ? "Progress to target" : "Actual"}</span>
+            <span class="allocation-actual-pct">${escapeHtml(label)}</span>
           </div>
-          <div class="allocation-bar"><div class="allocation-actual-fill" style="width: ${pct}%"></div></div>
+          <div class="allocation-bar completion">
+            <div class="allocation-actual-fill" style="width: ${fillPct}%"></div>
+            ${isOverweight ? `<div class="allocation-overflow-marker" style="width: ${overflowWidth}px" aria-label="Over target"></div>` : ""}
+          </div>
         </div>
       `;
     }
@@ -862,18 +902,18 @@
           <div class="card-title">AIM-5 Allocation Frame</div>
           <div class="allocation-list">
             ${allocation.map(item => {
-              const pct = clampScore(item.target_pct);
+              const targetPct = Math.max(0, Math.min(100, Number(item.target_pct) || 0));
               const actual = actualBySleeve.get(sleeveKey(item.sleeve));
               return `
                 <div class="allocation-item">
                   <div class="allocation-head">
                     <div class="allocation-name">${escapeHtml(item.sleeve)}</div>
-                    <div class="allocation-pct">${pct}%</div>
+                    <div class="allocation-pct">${formatPercent(targetPct)}</div>
                   </div>
                   <div class="allocation-bar">
-                    <div class="allocation-fill" style="width: ${pct}%"></div>
+                    <div class="allocation-fill" style="width: ${targetPct}%"></div>
                   </div>
-                  ${actual ? renderActualAllocation(actual) : ""}
+                  ${actual ? renderActualAllocation(actual, targetPct) : ""}
                   <div class="allocation-role">${escapeHtml(item.role)}</div>
                 </div>
               `;
