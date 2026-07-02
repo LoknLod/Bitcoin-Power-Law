@@ -5,6 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW = ROOT / ".github" / "workflows" / "aim-cache-refresh.yml"
+PAGES_WORKFLOW = ROOT / ".github" / "workflows" / "deploy-pages.yml"
 
 
 class AimCacheRefreshWorkflowTests(unittest.TestCase):
@@ -36,6 +37,22 @@ class AimCacheRefreshWorkflowTests(unittest.TestCase):
 
         self.assertNotIn("private-contact@example.invalid", text)
         self.assertNotRegex(text, re.compile(r"(?i)(api[_-]?key\s*[:=]\s*['\"]?[A-Za-z0-9_\-]{8,}|bearer\s+[A-Za-z0-9_.\-]+)"))
+
+    def test_pages_deploy_workflow_uses_configurable_actions_deploy(self):
+        text = PAGES_WORKFLOW.read_text()
+
+        self.assertIn("push:", text)
+        self.assertIn("branches: [main]", text)
+        self.assertIn("workflow_dispatch:", text)
+        self.assertIn("pages: write", text)
+        self.assertIn("id-token: write", text)
+        self.assertIn("group: pages", text)
+        self.assertIn("cancel-in-progress: true", text)
+        self.assertIn("actions/jekyll-build-pages@v1", text)
+        self.assertIn("actions/upload-pages-artifact@v4", text)
+        self.assertIn("actions/deploy-pages@v5", text)
+        self.assertIn("timeout: 1800000", text)
+        self.assertIn("url: ${{ steps.deployment.outputs.page_url }}", text)
 
 
 if __name__ == "__main__":
