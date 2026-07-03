@@ -143,7 +143,7 @@ jobs:
     if: needs.refresh.outputs.cache_changed == 'true'
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment_primary.outputs.page_url || steps.deployment_retry.outputs.page_url }}
     concurrency:
       group: pages
       cancel-in-progress: true
@@ -168,8 +168,21 @@ jobs:
           path: ./_site
 
       - name: Deploy to GitHub Pages
-        id: deployment
+        id: deployment_primary
+        continue-on-error: true
         uses: actions/deploy-pages@v5
         with:
-          timeout: 1800000
+          timeout: 600000
+          reporting_interval: 10000
+
+      - name: Wait before retrying transient Pages failure
+        if: steps.deployment_primary.outcome == 'failure'
+        run: sleep 60
+
+      - name: Retry GitHub Pages deploy
+        if: steps.deployment_primary.outcome == 'failure'
+        id: deployment_retry
+        uses: actions/deploy-pages@v5
+        with:
+          timeout: 600000
           reporting_interval: 10000
