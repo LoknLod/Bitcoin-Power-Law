@@ -51,8 +51,12 @@ class AimCacheRefreshWorkflowTests(unittest.TestCase):
         self.assertIn("actions/jekyll-build-pages@v1", text)
         self.assertIn("actions/upload-pages-artifact@v4", text)
         self.assertIn("actions/deploy-pages@v5", text)
-        self.assertIn("timeout: 1800000", text)
-        self.assertIn("url: ${{ steps.deployment.outputs.page_url }}", text)
+        self.assertIn("id: deployment_primary", text)
+        self.assertIn("continue-on-error: true", text)
+        self.assertIn("Wait before retrying transient Pages failure", text)
+        self.assertIn("id: deployment_retry", text)
+        self.assertIn("timeout: 600000", text)
+        self.assertIn("url: ${{ steps.deployment_primary.outputs.page_url || steps.deployment_retry.outputs.page_url }}", text)
 
 
 if __name__ == "__main__":
