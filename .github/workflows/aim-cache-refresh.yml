@@ -9,6 +9,8 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 concurrency:
   group: aim-cache-refresh
@@ -18,6 +20,9 @@ jobs:
   refresh:
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    outputs:
+      cache_changed: ${{ steps.commit_caches.outputs.cache_changed }}
+      cache_commit: ${{ steps.commit_caches.outputs.cache_commit }}
     env:
       SEC_EDGAR_USER_AGENT: ${{ secrets.SEC_EDGAR_USER_AGENT }}
       ALPHA_VANTAGE_STOCK_API: ${{ secrets.ALPHA_VANTAGE_STOCK_API }}
@@ -102,22 +107,69 @@ jobs:
           PY
 
       - name: Commit refreshed public caches
+        id: commit_caches
         run: |
           set -euo pipefail
           if git diff --quiet -- aim-cache.json fred-cache.json market-cache.json market-history-cache.json; then
             echo "No public cache changes to commit."
+            echo "cache_changed=false" >> "$GITHUB_OUTPUT"
+            echo "cache_commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add aim-cache.json fred-cache.json market-cache.json market-history-cache.json
           git commit -m "chore: refresh AIM cache data"
+          new_commit="$(git rev-parse HEAD)"
           for attempt in 1 2 3; do
             if git push; then
+              echo "cache_changed=true" >> "$GITHUB_OUTPUT"
+              echo "cache_commit=${new_commit}" >> "$GITHUB_OUTPUT"
               exit 0
             fi
             echo "Push failed; rebasing onto latest origin/main before retry ${attempt}."
             git fetch origin main
             git rebase origin/main
+            new_commit="$(git rev-parse HEAD)"
           done
           git push
+          echo "cache_changed=true" >> "$GITHUB_OUTPUT"
+          echo "cache_commit=${new_commit}" >> "$GITHUB_OUTPUT"
+
+  deploy_pages_after_cache_refresh:
+    name: Deploy Pages after cache refresh
+    runs-on: ubuntu-latest
+    needs: refresh
+    if: needs.refresh.outputs.cache_changed == 'true'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: true
+    steps:
+      - name: Checkout refreshed cache commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.refresh.outputs.cache_commit }}
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./
+          destination: ./_site
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./_site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
+        with:
+          timeout: 1800000
+          reporting_interval: 10000
