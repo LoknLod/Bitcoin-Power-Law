@@ -186,7 +186,7 @@
       "direction": "below 200wMA = oversold (bullish for hard money); above = normal",
       "source": "coingecko bitcoin",
       "as_of": "2026-07-03",
-      "note": "BTC spot is $62,569 versus a 200-week MA of $62,243, a +0.5% deviation. Model-free long-term trend signal.",
+      "note": "BTC spot is $62,535 versus a 200-week MA of $62,243, a +0.5% deviation. Model-free long-term trend signal.",
       "freshness": "local_cache",
       "age_days": 0,
       "value_label": "+0.5%"
@@ -199,7 +199,7 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-07-03",
-      "note": "BTC spot is $62,569 versus a power-law anchor of $137,409, a -54.5% gap. Gap has been below -40% for 38 consecutive days.",
+      "note": "BTC spot is $62,535 versus a power-law anchor of $137,409, a -54.5% gap. Gap has been below -40% for 38 consecutive days.",
       "freshness": "local_cache",
       "age_days": 0,
       "value_label": "-54.5%"
@@ -439,7 +439,7 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-07-03",
-      "note": "BTC spot is $62,569 versus a power-law anchor of $137,409, a -54.5% gap. Gap has been below -40% for 38 consecutive days.",
+      "note": "BTC spot is $62,535 versus a power-law anchor of $137,409, a -54.5% gap. Gap has been below -40% for 38 consecutive days.",
       "freshness": "local_cache",
       "age_days": 0,
       "value_label": "-54.5%"
