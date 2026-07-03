@@ -28193,12 +28193,8 @@
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2",
       "fetched_at": "2026-07-03T00:00:00Z",
       "observation_count": 787,
-      "latest_date": "2026-07-01",
+      "latest_date": "2026-07-02",
       "observations": [
-        {
-          "date": "2023-07-03",
-          "value": "3.99"
-        },
         {
           "date": "2023-07-04",
           "value": "3.99"
@@ -31342,6 +31338,10 @@
         {
           "date": "2026-07-01",
           "value": "2.74"
+        },
+        {
+          "date": "2026-07-02",
+          "value": "2.75"
         }
       ]
     }
