@@ -186,7 +186,7 @@
       "direction": "below 200wMA = oversold (bullish for hard money); above = normal",
       "source": "coingecko bitcoin",
       "as_of": "2026-07-10",
-      "note": "BTC spot is $63,974 versus a 200-week MA of $62,243, a +2.8% deviation. Model-free long-term trend signal.",
+      "note": "BTC spot is $63,984 versus a 200-week MA of $62,243, a +2.8% deviation. Model-free long-term trend signal.",
       "freshness": "local_cache",
       "age_days": 0,
       "value_label": "+2.8%"
@@ -199,7 +199,7 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-07-10",
-      "note": "BTC spot is $63,974 versus a power-law anchor of $138,287, a -53.7% gap. Gap has been below -40% for 38 consecutive days.",
+      "note": "BTC spot is $63,984 versus a power-law anchor of $138,287, a -53.7% gap. Gap has been below -40% for 38 consecutive days.",
       "freshness": "local_cache",
       "age_days": 0,
       "value_label": "-53.7%"
@@ -225,10 +225,10 @@
       "direction": "higher means the gold shield is repricing in USD terms",
       "source": "pax-gold proxy",
       "as_of": "2026-07-10",
-      "note": "PAXG gold proxy is $4,095.",
+      "note": "PAXG gold proxy is $4,112.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "$4,095"
+      "value_label": "$4,112"
     },
     {
       "name": "U.S. M2 Liquidity Context",
@@ -263,11 +263,11 @@
       "weight": 0.22,
       "direction": "lower means less residual liquidity buffer",
       "source": "FRED RRPONTSYD",
-      "as_of": "2026-07-09",
-      "note": "Overnight reverse repo is $6B, a thin remaining buffer.",
+      "as_of": "2026-07-10",
+      "note": "Overnight reverse repo is $1B, a thin remaining buffer.",
       "freshness": "local_cache",
-      "age_days": 1,
-      "value_label": "$6B"
+      "age_days": 0,
+      "value_label": "$1B"
     },
     {
       "name": "Treasury General Account",
@@ -290,10 +290,10 @@
       "direction": "higher supports risk appetite; lower supports stress",
       "source": "FRED WALCL-RRPONTSYD-WTREGEN",
       "as_of": "2026-07-08",
-      "note": "Simple WALCL minus RRP minus TGA proxy is $5,956B; roughly 90d change is +0.2%.",
+      "note": "Simple WALCL minus RRP minus TGA proxy is $5,961B; roughly 90d change is +0.3%.",
       "freshness": "local_cache",
       "age_days": 2,
-      "value_label": "+0.2%"
+      "value_label": "+0.3%"
     },
     {
       "name": "World Credit Growth",
@@ -358,11 +358,11 @@
       "weight": 0.04,
       "direction": "higher yields tighten discount rates and debt-service conditions",
       "source": "FRED DGS10",
-      "as_of": "2026-07-08",
-      "note": "10Y Treasury yield is 4.56%.",
+      "as_of": "2026-07-09",
+      "note": "10Y Treasury yield is 4.54%.",
       "freshness": "local_cache",
-      "age_days": 2,
-      "value_label": "4.56%"
+      "age_days": 1,
+      "value_label": "4.54%"
     },
     {
       "name": "10Y Real Yield",
@@ -371,10 +371,10 @@
       "weight": 0.1,
       "direction": "higher real yields increase monetary and credit pressure",
       "source": "FRED DFII10",
-      "as_of": "2026-07-08",
+      "as_of": "2026-07-09",
       "note": "10Y real yield is 2.31%.",
       "freshness": "local_cache",
-      "age_days": 2,
+      "age_days": 1,
       "value_label": "2.31%"
     },
     {
@@ -384,11 +384,11 @@
       "weight": 0.04,
       "direction": "higher breakevens can signal inflation repricing pressure",
       "source": "FRED T10YIE",
-      "as_of": "2026-07-09",
-      "note": "10Y breakeven inflation is 2.23%.",
+      "as_of": "2026-07-10",
+      "note": "10Y breakeven inflation is 2.24%.",
       "freshness": "local_cache",
-      "age_days": 1,
-      "value_label": "2.23%"
+      "age_days": 0,
+      "value_label": "2.24%"
     },
     {
       "name": "High-Yield Option-Adjusted Spread",
@@ -397,10 +397,10 @@
       "weight": 0.12,
       "direction": "higher spreads mean credit stress is rising",
       "source": "FRED BAMLH0A0HYM2",
-      "as_of": "2026-07-08",
+      "as_of": "2026-07-09",
       "note": "High-yield option-adjusted spread is 2.70 percentage points.",
       "freshness": "local_cache",
-      "age_days": 2,
+      "age_days": 1,
       "value_label": "2.70%"
     }
   ],
@@ -439,7 +439,7 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-07-10",
-      "note": "BTC spot is $63,974 versus a power-law anchor of $138,287, a -53.7% gap. Gap has been below -40% for 38 consecutive days.",
+      "note": "BTC spot is $63,984 versus a power-law anchor of $138,287, a -53.7% gap. Gap has been below -40% for 38 consecutive days.",
       "freshness": "local_cache",
       "age_days": 0,
       "value_label": "-53.7%"
