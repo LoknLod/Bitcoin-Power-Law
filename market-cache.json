@@ -1,26 +1,26 @@
 {
   "schema_version": "market_cache.v0.1",
-  "generated_at": "2026-07-24T00:00:00Z",
+  "generated_at": "2026-07-27T00:00:00Z",
   "source": "coingecko_simple_price",
   "assets": {
     "btc_usd": {
-      "price": 64109.0,
+      "price": 64525.0,
       "source": "coingecko bitcoin",
       "label": "BTC/USD spot",
       "provider": "coingecko",
-      "as_of": "2026-07-24T22:13:00Z"
+      "as_of": "2026-07-27T15:47:30Z"
     },
     "gold_usd": {
-      "price": 4048.74,
+      "price": 4067.8,
       "source": "pax-gold proxy",
       "label": "pax-gold proxy",
       "provider": "coingecko",
-      "as_of": "2026-07-24T22:13:00Z"
+      "as_of": "2026-07-27T15:47:30Z"
     }
   },
   "errors": [],
   "metadata": {
-    "as_of": "2026-07-24",
+    "as_of": "2026-07-27",
     "updated_assets": 2,
     "preserved_assets": 0,
     "error_count": 0
