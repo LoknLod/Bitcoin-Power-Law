@@ -76,12 +76,12 @@
   },
   "scores": {
     "ai_productivity": {
-      "score": 64,
+      "score": 66,
       "confidence": "medium",
-      "interpretation": "Revenue growth, margins, free cash flow margin, R&D intensity, and optional SEC filing-language monetization evidence. Leaders: META, MSFT, GOOGL."
+      "interpretation": "Revenue growth, margins, free cash flow margin, R&D intensity, and optional SEC filing-language monetization evidence. Leaders: NVDA, META, MSFT."
     },
     "ai_bubble_risk": {
-      "score": 56,
+      "score": 54,
       "confidence": "medium",
       "interpretation": "Capex growth, capex/revenue, debt growth, depreciation growth, free-cash-flow pressure, and optional SEC filing-language risk evidence. Leaders: GOOGL, META, AMZN."
     },
@@ -142,20 +142,20 @@
     {
       "name": "AI Productivity Score",
       "regime": "ai_productivity",
-      "score": 64,
+      "score": 66,
       "weight": 0.35,
       "direction": "higher_is_better",
       "source": "alpha_vantage_cache+sec_edgar_cache",
       "as_of": "2026-06-30",
-      "note": "Revenue growth, margins, free cash flow margin, R&D intensity, and optional SEC filing-language monetization evidence. Leaders: META, MSFT, GOOGL.",
+      "note": "Revenue growth, margins, free cash flow margin, R&D intensity, and optional SEC filing-language monetization evidence. Leaders: NVDA, META, MSFT.",
       "freshness": "local_cache",
       "age_days": 38,
-      "value_label": "score 64/100"
+      "value_label": "score 66/100"
     },
     {
       "name": "AI Capex Bubble Risk",
       "regime": "ai_bubble_risk",
-      "score": 56,
+      "score": 54,
       "weight": 0.35,
       "direction": "higher_is_riskier",
       "source": "alpha_vantage_cache+sec_edgar_cache",
@@ -163,7 +163,7 @@
       "note": "Capex growth, capex/revenue, debt growth, depreciation growth, free-cash-flow pressure, and optional SEC filing-language risk evidence. Leaders: GOOGL, META, AMZN.",
       "freshness": "local_cache",
       "age_days": 38,
-      "value_label": "score 56/100"
+      "value_label": "score 54/100"
     },
     {
       "name": "Energy Bottleneck Score",
@@ -186,10 +186,10 @@
       "direction": "below 200wMA = oversold (bullish for hard money); above = normal",
       "source": "coingecko bitcoin",
       "as_of": "2026-08-07",
-      "note": "BTC spot is $64,263 versus a 200-week MA of $62,243, a +3.2% deviation. Model-free long-term trend signal.",
+      "note": "BTC spot is $64,795 versus a 200-week MA of $62,243, a +4.1% deviation. Model-free long-term trend signal.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "+3.2%"
+      "value_label": "+4.1%"
     },
     {
       "name": "BTC Power Law Fair Value Gap",
@@ -199,10 +199,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-08-07",
-      "note": "BTC spot is $64,263 versus a power-law anchor of $141,847, a -54.7% gap. Gap has been below -40% for 38 consecutive days.",
+      "note": "BTC spot is $64,795 versus a power-law anchor of $141,847, a -54.3% gap. Gap has been below -40% for 38 consecutive days.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-54.7%"
+      "value_label": "-54.3%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -212,10 +212,10 @@
       "direction": "higher means BTC is repricing versus the gold proxy",
       "source": "market_cache BTC/USD over PAXG/USD",
       "as_of": "2026-08-07",
-      "note": "BTC buys roughly 15.2 ounces of the PAXG gold proxy.",
+      "note": "BTC buys roughly 15.0 ounces of the PAXG gold proxy.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "15.2 oz"
+      "value_label": "15.0 oz"
     },
     {
       "name": "Gold Proxy Price",
@@ -225,10 +225,10 @@
       "direction": "higher means the gold shield is repricing in USD terms",
       "source": "pax-gold proxy",
       "as_of": "2026-08-07",
-      "note": "PAXG gold proxy is $4,226.",
+      "note": "PAXG gold proxy is $4,321.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "$4,226"
+      "value_label": "$4,321"
     },
     {
       "name": "U.S. M2 Liquidity Context",
@@ -408,20 +408,20 @@
     {
       "name": "AI Productivity Score",
       "regime": "ai_productivity",
-      "score": 64,
+      "score": 66,
       "weight": 0.35,
       "direction": "higher_is_better",
       "source": "alpha_vantage_cache+sec_edgar_cache",
       "as_of": "2026-06-30",
-      "note": "Revenue growth, margins, free cash flow margin, R&D intensity, and optional SEC filing-language monetization evidence. Leaders: META, MSFT, GOOGL.",
+      "note": "Revenue growth, margins, free cash flow margin, R&D intensity, and optional SEC filing-language monetization evidence. Leaders: NVDA, META, MSFT.",
       "freshness": "local_cache",
       "age_days": 38,
-      "value_label": "score 64/100"
+      "value_label": "score 66/100"
     },
     {
       "name": "AI Capex Bubble Risk",
       "regime": "ai_bubble_risk",
-      "score": 56,
+      "score": 54,
       "weight": 0.35,
       "direction": "higher_is_riskier",
       "source": "alpha_vantage_cache+sec_edgar_cache",
@@ -429,7 +429,7 @@
       "note": "Capex growth, capex/revenue, debt growth, depreciation growth, free-cash-flow pressure, and optional SEC filing-language risk evidence. Leaders: GOOGL, META, AMZN.",
       "freshness": "local_cache",
       "age_days": 38,
-      "value_label": "score 56/100"
+      "value_label": "score 54/100"
     },
     {
       "name": "BTC Power Law Fair Value Gap",
@@ -439,10 +439,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-08-07",
-      "note": "BTC spot is $64,263 versus a power-law anchor of $141,847, a -54.7% gap. Gap has been below -40% for 38 consecutive days.",
+      "note": "BTC spot is $64,795 versus a power-law anchor of $141,847, a -54.3% gap. Gap has been below -40% for 38 consecutive days.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-54.7%"
+      "value_label": "-54.3%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -452,10 +452,10 @@
       "direction": "higher means BTC is repricing versus the gold proxy",
       "source": "market_cache BTC/USD over PAXG/USD",
       "as_of": "2026-08-07",
-      "note": "BTC buys roughly 15.2 ounces of the PAXG gold proxy.",
+      "note": "BTC buys roughly 15.0 ounces of the PAXG gold proxy.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "15.2 oz"
+      "value_label": "15.0 oz"
     },
     {
       "name": "World Credit Growth",
