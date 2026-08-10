@@ -9,7 +9,7 @@
     "series_fetched": 12,
     "series_preserved": 0,
     "series_with_errors": 0,
-    "observation_count": 7804,
+    "observation_count": 7806,
     "endpoint": "https://fred.stlouisfed.org/graph/fredgraph.csv?id={series_id}"
   },
   "series": {
@@ -1280,8 +1280,8 @@
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=RRPONTSYD",
       "fetched_at": "2026-08-10T00:00:00Z",
-      "observation_count": 1496,
-      "latest_date": "2026-08-07",
+      "observation_count": 1497,
+      "latest_date": "2026-08-10",
       "observations": [
         {
           "date": "2020-08-10",
@@ -7266,6 +7266,10 @@
         {
           "date": "2026-08-07",
           "value": "1.45"
+        },
+        {
+          "date": "2026-08-10",
+          "value": "0.975"
         }
       ]
     },
@@ -10186,8 +10190,8 @@
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10",
       "fetched_at": "2026-08-10T00:00:00Z",
-      "observation_count": 1498,
-      "latest_date": "2026-08-06",
+      "observation_count": 1499,
+      "latest_date": "2026-08-07",
       "observations": [
         {
           "date": "2020-08-10",
@@ -16180,6 +16184,10 @@
         {
           "date": "2026-08-06",
           "value": "4.69"
+        },
+        {
+          "date": "2026-08-07",
+          "value": "4.65"
         }
       ]
     },
@@ -16188,8 +16196,8 @@
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFII10",
       "fetched_at": "2026-08-10T00:00:00Z",
-      "observation_count": 1498,
-      "latest_date": "2026-08-06",
+      "observation_count": 1499,
+      "latest_date": "2026-08-07",
       "observations": [
         {
           "date": "2020-08-10",
@@ -22182,6 +22190,10 @@
         {
           "date": "2026-08-06",
           "value": "2.43"
+        },
+        {
+          "date": "2026-08-07",
+          "value": "2.4"
         }
       ]
     },
@@ -22190,8 +22202,8 @@
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=T10YIE",
       "fetched_at": "2026-08-10T00:00:00Z",
-      "observation_count": 1499,
-      "latest_date": "2026-08-07",
+      "observation_count": 1500,
+      "latest_date": "2026-08-10",
       "observations": [
         {
           "date": "2020-08-10",
@@ -28188,6 +28200,10 @@
         {
           "date": "2026-08-07",
           "value": "2.25"
+        },
+        {
+          "date": "2026-08-10",
+          "value": "2.29"
         }
       ]
     },
@@ -28196,21 +28212,9 @@
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2",
       "fetched_at": "2026-08-10T00:00:00Z",
-      "observation_count": 787,
-      "latest_date": "2026-08-06",
+      "observation_count": 785,
+      "latest_date": "2026-08-07",
       "observations": [
-        {
-          "date": "2023-08-08",
-          "value": "4"
-        },
-        {
-          "date": "2023-08-09",
-          "value": "3.94"
-        },
-        {
-          "date": "2023-08-10",
-          "value": "3.83"
-        },
         {
           "date": "2023-08-11",
           "value": "3.83"
@@ -31346,6 +31350,10 @@
         {
           "date": "2026-08-06",
           "value": "2.71"
+        },
+        {
+          "date": "2026-08-07",
+          "value": "2.7"
         }
       ]
     }
