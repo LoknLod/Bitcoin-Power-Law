@@ -186,10 +186,10 @@
       "direction": "below 200wMA = oversold (bullish for hard money); above = normal",
       "source": "coingecko bitcoin",
       "as_of": "2026-08-11",
-      "note": "BTC spot is $64,166 versus a 200-week MA of $62,243, a +3.1% deviation. Model-free long-term trend signal.",
+      "note": "BTC spot is $63,619 versus a 200-week MA of $62,243, a +2.2% deviation. Model-free long-term trend signal.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "+3.1%"
+      "value_label": "+2.2%"
     },
     {
       "name": "BTC Power Law Fair Value Gap",
@@ -199,10 +199,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-08-11",
-      "note": "BTC spot is $64,166 versus a power-law anchor of $142,362, a -54.9% gap. Gap has been below -40% for 38 consecutive days.",
+      "note": "BTC spot is $63,619 versus a power-law anchor of $142,362, a -55.3% gap. Gap has been below -40% for 38 consecutive days.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-54.9%"
+      "value_label": "-55.3%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -225,10 +225,10 @@
       "direction": "higher means the gold shield is repricing in USD terms",
       "source": "pax-gold proxy",
       "as_of": "2026-08-11",
-      "note": "PAXG gold proxy is $4,382.",
+      "note": "PAXG gold proxy is $4,370.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "$4,382"
+      "value_label": "$4,370"
     },
     {
       "name": "U.S. M2 Liquidity Context",
@@ -263,10 +263,10 @@
       "weight": 0.22,
       "direction": "lower means less residual liquidity buffer",
       "source": "FRED RRPONTSYD",
-      "as_of": "2026-08-10",
+      "as_of": "2026-08-11",
       "note": "Overnight reverse repo is $1B, a thin remaining buffer.",
       "freshness": "local_cache",
-      "age_days": 1,
+      "age_days": 0,
       "value_label": "$1B"
     },
     {
@@ -358,11 +358,11 @@
       "weight": 0.04,
       "direction": "higher yields tighten discount rates and debt-service conditions",
       "source": "FRED DGS10",
-      "as_of": "2026-08-07",
-      "note": "10Y Treasury yield is 4.65%.",
+      "as_of": "2026-08-10",
+      "note": "10Y Treasury yield is 4.72%.",
       "freshness": "local_cache",
-      "age_days": 4,
-      "value_label": "4.65%"
+      "age_days": 1,
+      "value_label": "4.72%"
     },
     {
       "name": "10Y Real Yield",
@@ -371,11 +371,11 @@
       "weight": 0.1,
       "direction": "higher real yields increase monetary and credit pressure",
       "source": "FRED DFII10",
-      "as_of": "2026-08-07",
-      "note": "10Y real yield is 2.40%.",
+      "as_of": "2026-08-10",
+      "note": "10Y real yield is 2.43%.",
       "freshness": "local_cache",
-      "age_days": 4,
-      "value_label": "2.40%"
+      "age_days": 1,
+      "value_label": "2.43%"
     },
     {
       "name": "10Y Breakeven Inflation",
@@ -384,11 +384,11 @@
       "weight": 0.04,
       "direction": "higher breakevens can signal inflation repricing pressure",
       "source": "FRED T10YIE",
-      "as_of": "2026-08-10",
-      "note": "10Y breakeven inflation is 2.29%.",
+      "as_of": "2026-08-11",
+      "note": "10Y breakeven inflation is 2.27%.",
       "freshness": "local_cache",
-      "age_days": 1,
-      "value_label": "2.29%"
+      "age_days": 0,
+      "value_label": "2.27%"
     },
     {
       "name": "High-Yield Option-Adjusted Spread",
@@ -439,10 +439,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-08-11",
-      "note": "BTC spot is $64,166 versus a power-law anchor of $142,362, a -54.9% gap. Gap has been below -40% for 38 consecutive days.",
+      "note": "BTC spot is $63,619 versus a power-law anchor of $142,362, a -55.3% gap. Gap has been below -40% for 38 consecutive days.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-54.9%"
+      "value_label": "-55.3%"
     },
     {
       "name": "BTC/Gold Ratio",
