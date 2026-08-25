@@ -1,7 +1,7 @@
 {
   "schema_version": "market_history_cache.v0.1",
   "generated_at": "2026-08-25T00:00:00Z",
-  "source": "existing_market_history_cache",
+  "source": "coingecko_market_chart",
   "days": 365,
   "assets": {
     "btc_usd": {
@@ -14,12 +14,6 @@
     }
   },
   "ratio_series": [
-    {
-      "date": "2025-08-25",
-      "btc_usd": 113422.51,
-      "gold_usd": 3360.42,
-      "btc_gold_ratio": 33.7525
-    },
     {
       "date": "2025-08-26",
       "btc_usd": 110100.28,
@@ -2200,19 +2194,22 @@
     },
     {
       "date": "2026-08-24",
-      "btc_usd": 78921.32,
-      "gold_usd": 4646.31,
-      "btc_gold_ratio": 16.9858
+      "btc_usd": 77677.99,
+      "gold_usd": 4613.95,
+      "btc_gold_ratio": 16.8355
+    },
+    {
+      "date": "2026-08-25",
+      "btc_usd": 78413.67,
+      "gold_usd": 4651.51,
+      "btc_gold_ratio": 16.8577
     }
   ],
-  "errors": [
-    "CoinGecko pax-gold market_chart failed: HTTP Error 429: Too Many Requests",
-    "preserved existing ratio_series after refresh error"
-  ],
+  "errors": [],
   "metadata": {
     "as_of": "2026-08-25",
     "row_count": 365,
-    "preserved_existing": true,
-    "error_count": 2
+    "preserved_existing": false,
+    "error_count": 0
   }
 }
