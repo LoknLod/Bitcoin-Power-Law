@@ -1,6 +1,6 @@
 {
   "schema_version": "market_history_cache.v0.1",
-  "generated_at": "2026-08-31T00:00:00Z",
+  "generated_at": "2026-09-01T00:00:00Z",
   "source": "coingecko_market_chart",
   "days": 365,
   "assets": {
@@ -14,12 +14,6 @@
     }
   },
   "ratio_series": [
-    {
-      "date": "2025-09-01",
-      "btc_usd": 108225.66,
-      "gold_usd": 3459.85,
-      "btc_gold_ratio": 31.2804
-    },
     {
       "date": "2025-09-02",
       "btc_usd": 109229.01,
@@ -2200,14 +2194,20 @@
     },
     {
       "date": "2026-08-31",
-      "btc_usd": 79038.57,
-      "gold_usd": 4438.96,
-      "btc_gold_ratio": 17.8056
+      "btc_usd": 77658.23,
+      "gold_usd": 4453.41,
+      "btc_gold_ratio": 17.4379
+    },
+    {
+      "date": "2026-09-01",
+      "btc_usd": 78845.62,
+      "gold_usd": 4458.5,
+      "btc_gold_ratio": 17.6843
     }
   ],
   "errors": [],
   "metadata": {
-    "as_of": "2026-08-31",
+    "as_of": "2026-09-01",
     "row_count": 365,
     "preserved_existing": false,
     "error_count": 0
