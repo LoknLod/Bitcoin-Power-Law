@@ -76,12 +76,12 @@
   },
   "scores": {
     "ai_productivity": {
-      "score": 64,
+      "score": 66,
       "confidence": "medium",
-      "interpretation": "Revenue growth, margins, free cash flow margin, R&D intensity, and optional SEC filing-language monetization evidence. Leaders: META, MSFT, GOOGL."
+      "interpretation": "Revenue growth, margins, free cash flow margin, R&D intensity, and optional SEC filing-language monetization evidence. Leaders: NVDA, META, MSFT."
     },
     "ai_bubble_risk": {
-      "score": 57,
+      "score": 56,
       "confidence": "medium",
       "interpretation": "Capex growth, capex/revenue, debt growth, depreciation growth, free-cash-flow pressure, and optional SEC filing-language risk evidence. Leaders: GOOGL, META, AMZN."
     },
@@ -142,28 +142,28 @@
     {
       "name": "AI Productivity Score",
       "regime": "ai_productivity",
-      "score": 64,
+      "score": 66,
       "weight": 0.35,
       "direction": "higher_is_better",
       "source": "alpha_vantage_cache+sec_edgar_cache",
-      "as_of": "2026-06-30",
-      "note": "Revenue growth, margins, free cash flow margin, R&D intensity, and optional SEC filing-language monetization evidence. Leaders: META, MSFT, GOOGL.",
+      "as_of": "2026-07-31",
+      "note": "Revenue growth, margins, free cash flow margin, R&D intensity, and optional SEC filing-language monetization evidence. Leaders: NVDA, META, MSFT.",
       "freshness": "local_cache",
-      "age_days": 63,
-      "value_label": "score 64/100"
+      "age_days": 32,
+      "value_label": "score 66/100"
     },
     {
       "name": "AI Capex Bubble Risk",
       "regime": "ai_bubble_risk",
-      "score": 57,
+      "score": 56,
       "weight": 0.35,
       "direction": "higher_is_riskier",
       "source": "alpha_vantage_cache+sec_edgar_cache",
-      "as_of": "2026-06-30",
+      "as_of": "2026-07-31",
       "note": "Capex growth, capex/revenue, debt growth, depreciation growth, free-cash-flow pressure, and optional SEC filing-language risk evidence. Leaders: GOOGL, META, AMZN.",
       "freshness": "local_cache",
-      "age_days": 63,
-      "value_label": "score 57/100"
+      "age_days": 32,
+      "value_label": "score 56/100"
     },
     {
       "name": "Energy Bottleneck Score",
@@ -186,10 +186,10 @@
       "direction": "below 200wMA = oversold (bullish for hard money); above = normal",
       "source": "coingecko bitcoin",
       "as_of": "2026-09-01",
-      "note": "BTC spot is $77,465 versus a 200-week MA of $62,243, a +24.5% deviation. Model-free long-term trend signal.",
+      "note": "BTC spot is $77,255 versus a 200-week MA of $62,243, a +24.1% deviation. Model-free long-term trend signal.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "+24.5%"
+      "value_label": "+24.1%"
     },
     {
       "name": "BTC Power Law Fair Value Gap",
@@ -199,10 +199,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-09-01",
-      "note": "BTC spot is $77,465 versus a power-law anchor of $145,090, a -46.6% gap. Gap has been below -40% for 38 consecutive days.",
+      "note": "BTC spot is $77,255 versus a power-law anchor of $145,090, a -46.8% gap. Gap has been below -40% for 38 consecutive days.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-46.6%"
+      "value_label": "-46.8%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -225,10 +225,10 @@
       "direction": "higher means the gold shield is repricing in USD terms",
       "source": "pax-gold proxy",
       "as_of": "2026-09-01",
-      "note": "PAXG gold proxy is $4,355.",
+      "note": "PAXG gold proxy is $4,341.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "$4,355"
+      "value_label": "$4,341"
     },
     {
       "name": "U.S. M2 Liquidity Context",
@@ -263,11 +263,11 @@
       "weight": 0.22,
       "direction": "lower means less residual liquidity buffer",
       "source": "FRED RRPONTSYD",
-      "as_of": "2026-08-31",
-      "note": "Overnight reverse repo is $7B, a thin remaining buffer.",
+      "as_of": "2026-09-01",
+      "note": "Overnight reverse repo is $1B, a thin remaining buffer.",
       "freshness": "local_cache",
-      "age_days": 1,
-      "value_label": "$7B"
+      "age_days": 0,
+      "value_label": "$1B"
     },
     {
       "name": "Treasury General Account",
@@ -290,10 +290,10 @@
       "direction": "higher supports risk appetite; lower supports stress",
       "source": "FRED WALCL-RRPONTSYD-WTREGEN",
       "as_of": "2026-08-26",
-      "note": "Simple WALCL minus RRP minus TGA proxy is $5,773B; roughly 90d change is -1.7%.",
+      "note": "Simple WALCL minus RRP minus TGA proxy is $5,779B; roughly 90d change is -1.6%.",
       "freshness": "local_cache",
       "age_days": 6,
-      "value_label": "-1.7%"
+      "value_label": "-1.6%"
     },
     {
       "name": "World Credit Growth",
@@ -358,11 +358,11 @@
       "weight": 0.04,
       "direction": "higher yields tighten discount rates and debt-service conditions",
       "source": "FRED DGS10",
-      "as_of": "2026-08-28",
-      "note": "10Y Treasury yield is 4.73%.",
+      "as_of": "2026-08-31",
+      "note": "10Y Treasury yield is 4.75%.",
       "freshness": "local_cache",
-      "age_days": 4,
-      "value_label": "4.73%"
+      "age_days": 1,
+      "value_label": "4.75%"
     },
     {
       "name": "10Y Real Yield",
@@ -371,11 +371,11 @@
       "weight": 0.1,
       "direction": "higher real yields increase monetary and credit pressure",
       "source": "FRED DFII10",
-      "as_of": "2026-08-28",
-      "note": "10Y real yield is 2.42%.",
+      "as_of": "2026-08-31",
+      "note": "10Y real yield is 2.44%.",
       "freshness": "local_cache",
-      "age_days": 4,
-      "value_label": "2.42%"
+      "age_days": 1,
+      "value_label": "2.44%"
     },
     {
       "name": "10Y Breakeven Inflation",
@@ -384,11 +384,11 @@
       "weight": 0.04,
       "direction": "higher breakevens can signal inflation repricing pressure",
       "source": "FRED T10YIE",
-      "as_of": "2026-08-31",
-      "note": "10Y breakeven inflation is 2.31%.",
+      "as_of": "2026-09-01",
+      "note": "10Y breakeven inflation is 2.35%.",
       "freshness": "local_cache",
-      "age_days": 1,
-      "value_label": "2.31%"
+      "age_days": 0,
+      "value_label": "2.35%"
     },
     {
       "name": "High-Yield Option-Adjusted Spread",
@@ -408,28 +408,28 @@
     {
       "name": "AI Productivity Score",
       "regime": "ai_productivity",
-      "score": 64,
+      "score": 66,
       "weight": 0.35,
       "direction": "higher_is_better",
       "source": "alpha_vantage_cache+sec_edgar_cache",
-      "as_of": "2026-06-30",
-      "note": "Revenue growth, margins, free cash flow margin, R&D intensity, and optional SEC filing-language monetization evidence. Leaders: META, MSFT, GOOGL.",
+      "as_of": "2026-07-31",
+      "note": "Revenue growth, margins, free cash flow margin, R&D intensity, and optional SEC filing-language monetization evidence. Leaders: NVDA, META, MSFT.",
       "freshness": "local_cache",
-      "age_days": 63,
-      "value_label": "score 64/100"
+      "age_days": 32,
+      "value_label": "score 66/100"
     },
     {
       "name": "AI Capex Bubble Risk",
       "regime": "ai_bubble_risk",
-      "score": 57,
+      "score": 56,
       "weight": 0.35,
       "direction": "higher_is_riskier",
       "source": "alpha_vantage_cache+sec_edgar_cache",
-      "as_of": "2026-06-30",
+      "as_of": "2026-07-31",
       "note": "Capex growth, capex/revenue, debt growth, depreciation growth, free-cash-flow pressure, and optional SEC filing-language risk evidence. Leaders: GOOGL, META, AMZN.",
       "freshness": "local_cache",
-      "age_days": 63,
-      "value_label": "score 57/100"
+      "age_days": 32,
+      "value_label": "score 56/100"
     },
     {
       "name": "BTC Power Law Fair Value Gap",
@@ -439,10 +439,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-09-01",
-      "note": "BTC spot is $77,465 versus a power-law anchor of $145,090, a -46.6% gap. Gap has been below -40% for 38 consecutive days.",
+      "note": "BTC spot is $77,255 versus a power-law anchor of $145,090, a -46.8% gap. Gap has been below -40% for 38 consecutive days.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-46.6%"
+      "value_label": "-46.8%"
     },
     {
       "name": "BTC/Gold Ratio",
