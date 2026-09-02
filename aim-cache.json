@@ -186,7 +186,7 @@
       "direction": "below 200wMA = oversold (bullish for hard money); above = normal",
       "source": "coingecko bitcoin",
       "as_of": "2026-09-02",
-      "note": "BTC spot is $77,161 versus a 200-week MA of $62,243, a +24.0% deviation. Model-free long-term trend signal.",
+      "note": "BTC spot is $77,187 versus a 200-week MA of $62,243, a +24.0% deviation. Model-free long-term trend signal.",
       "freshness": "local_cache",
       "age_days": 0,
       "value_label": "+24.0%"
@@ -199,10 +199,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-09-02",
-      "note": "BTC spot is $77,161 versus a power-law anchor of $145,221, a -46.9% gap. Gap has been below -40% for 38 consecutive days.",
+      "note": "BTC spot is $77,187 versus a power-law anchor of $145,221, a -46.8% gap. Gap has been below -40% for 38 consecutive days.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-46.9%"
+      "value_label": "-46.8%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -225,10 +225,10 @@
       "direction": "higher means the gold shield is repricing in USD terms",
       "source": "pax-gold proxy",
       "as_of": "2026-09-02",
-      "note": "PAXG gold proxy is $4,378.",
+      "note": "PAXG gold proxy is $4,392.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "$4,378"
+      "value_label": "$4,392"
     },
     {
       "name": "U.S. M2 Liquidity Context",
@@ -263,10 +263,10 @@
       "weight": 0.22,
       "direction": "lower means less residual liquidity buffer",
       "source": "FRED RRPONTSYD",
-      "as_of": "2026-09-01",
+      "as_of": "2026-09-02",
       "note": "Overnight reverse repo is $1B, a thin remaining buffer.",
       "freshness": "local_cache",
-      "age_days": 1,
+      "age_days": 0,
       "value_label": "$1B"
     },
     {
@@ -290,7 +290,7 @@
       "direction": "higher supports risk appetite; lower supports stress",
       "source": "FRED WALCL-RRPONTSYD-WTREGEN",
       "as_of": "2026-08-26",
-      "note": "Simple WALCL minus RRP minus TGA proxy is $5,779B; roughly 90d change is -1.6%.",
+      "note": "Simple WALCL minus RRP minus TGA proxy is $5,780B; roughly 90d change is -1.6%.",
       "freshness": "local_cache",
       "age_days": 7,
       "value_label": "-1.6%"
@@ -358,11 +358,11 @@
       "weight": 0.04,
       "direction": "higher yields tighten discount rates and debt-service conditions",
       "source": "FRED DGS10",
-      "as_of": "2026-08-31",
-      "note": "10Y Treasury yield is 4.75%.",
+      "as_of": "2026-09-01",
+      "note": "10Y Treasury yield is 4.79%.",
       "freshness": "local_cache",
-      "age_days": 2,
-      "value_label": "4.75%"
+      "age_days": 1,
+      "value_label": "4.79%"
     },
     {
       "name": "10Y Real Yield",
@@ -371,10 +371,10 @@
       "weight": 0.1,
       "direction": "higher real yields increase monetary and credit pressure",
       "source": "FRED DFII10",
-      "as_of": "2026-08-31",
+      "as_of": "2026-09-01",
       "note": "10Y real yield is 2.44%.",
       "freshness": "local_cache",
-      "age_days": 2,
+      "age_days": 1,
       "value_label": "2.44%"
     },
     {
@@ -384,11 +384,11 @@
       "weight": 0.04,
       "direction": "higher breakevens can signal inflation repricing pressure",
       "source": "FRED T10YIE",
-      "as_of": "2026-09-01",
-      "note": "10Y breakeven inflation is 2.35%.",
+      "as_of": "2026-09-02",
+      "note": "10Y breakeven inflation is 2.34%.",
       "freshness": "local_cache",
-      "age_days": 1,
-      "value_label": "2.35%"
+      "age_days": 0,
+      "value_label": "2.34%"
     },
     {
       "name": "High-Yield Option-Adjusted Spread",
@@ -439,10 +439,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-09-02",
-      "note": "BTC spot is $77,161 versus a power-law anchor of $145,221, a -46.9% gap. Gap has been below -40% for 38 consecutive days.",
+      "note": "BTC spot is $77,187 versus a power-law anchor of $145,221, a -46.8% gap. Gap has been below -40% for 38 consecutive days.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-46.9%"
+      "value_label": "-46.8%"
     },
     {
       "name": "BTC/Gold Ratio",
