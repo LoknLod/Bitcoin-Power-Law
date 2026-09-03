@@ -3,11 +3,11 @@
   "scoring_version": "aim_macro_scoring.v0.4",
   "aim_schema_version": "aim_macro_cache.v0.1",
   "aim_scoring_version": "aim_macro_scoring.v0.4",
-  "generated_at": "2026-09-02T00:00:00Z",
+  "generated_at": "2026-09-03T00:00:00Z",
   "source": "local_fred_and_market_cache",
   "freshness": "local_cache",
   "freshness_detail": {
-    "as_of": "2026-09-02",
+    "as_of": "2026-09-03",
     "aim_cache": "local_cache",
     "monetary_regime": "local_cache",
     "market_inputs": "local_cache",
@@ -27,8 +27,8 @@
             "weight": 0.28,
             "as_of": "2025-10-01",
             "impact": "weighted_score_input",
-            "age_days": 336,
-            "note": "FRED observation is 336 days old as of 2026-09-02; treat this score as directional only until the series refreshes."
+            "age_days": 337,
+            "note": "FRED observation is 337 days old as of 2026-09-03; treat this score as directional only until the series refreshes."
           },
           {
             "name": "Federal Debt Growth",
@@ -37,8 +37,8 @@
             "weight": 0.12,
             "as_of": "2026-01-01",
             "impact": "weighted_score_input",
-            "age_days": 244,
-            "note": "FRED observation is 244 days old as of 2026-09-02; treat this score as directional only until the series refreshes."
+            "age_days": 245,
+            "note": "FRED observation is 245 days old as of 2026-09-03; treat this score as directional only until the series refreshes."
           },
           {
             "name": "Federal Interest Payments Growth",
@@ -47,8 +47,8 @@
             "weight": 0.12,
             "as_of": "2026-04-01",
             "impact": "weighted_score_input",
-            "age_days": 154,
-            "note": "FRED observation is 154 days old as of 2026-09-02; treat this score as directional only until the series refreshes."
+            "age_days": 155,
+            "note": "FRED observation is 155 days old as of 2026-09-03; treat this score as directional only until the series refreshes."
           },
           {
             "name": "U.S. Credit Growth",
@@ -57,8 +57,8 @@
             "weight": 0.08,
             "as_of": "2025-10-01",
             "impact": "weighted_score_input",
-            "age_days": 336,
-            "note": "FRED observation is 336 days old as of 2026-09-02; treat this score as directional only until the series refreshes."
+            "age_days": 337,
+            "note": "FRED observation is 337 days old as of 2026-09-03; treat this score as directional only until the series refreshes."
           }
         ]
       },
@@ -88,7 +88,7 @@
     "monetary_reset": {
       "score": 61,
       "confidence": "low",
-      "interpretation": "One or more weighted FRED macro/credit inputs are older than 90 days as of 2026-09-02 (World Credit Growth, U.S. Credit Growth, Federal Debt Growth, Federal Interest Payments Growth; oldest 336 days); score is directional only."
+      "interpretation": "One or more weighted FRED macro/credit inputs are older than 90 days as of 2026-09-03 (World Credit Growth, U.S. Credit Growth, Federal Debt Growth, Federal Interest Payments Growth; oldest 337 days); score is directional only."
     },
     "energy_bottleneck": {
       "score": 53,
@@ -96,7 +96,7 @@
       "interpretation": "EIA retail electricity data: commercial electricity price +4.8% YoY; commercial electricity sales +3.4% YoY; industrial electricity price +3.0% YoY. First-pass proxy for AI/data-center energy bottleneck pressure."
     },
     "hard_money_repricing": {
-      "score": 53,
+      "score": 52,
       "confidence": "medium",
       "interpretation": "Local BTC and PAXG gold-proxy prices are available; hard-money repricing score includes 200-week MA (primary), power-law gap (secondary), BTC/gold ratio, and gold proxy."
     }
@@ -149,7 +149,7 @@
       "as_of": "2026-07-31",
       "note": "Revenue growth, margins, free cash flow margin, R&D intensity, and optional SEC filing-language monetization evidence. Leaders: NVDA, META, MSFT.",
       "freshness": "local_cache",
-      "age_days": 33,
+      "age_days": 34,
       "value_label": "score 66/100"
     },
     {
@@ -162,7 +162,7 @@
       "as_of": "2026-07-31",
       "note": "Capex growth, capex/revenue, debt growth, depreciation growth, free-cash-flow pressure, and optional SEC filing-language risk evidence. Leaders: GOOGL, META, AMZN.",
       "freshness": "local_cache",
-      "age_days": 33,
+      "age_days": 34,
       "value_label": "score 56/100"
     },
     {
@@ -175,21 +175,21 @@
       "as_of": "2026-06-01",
       "note": "EIA retail electricity data: commercial electricity price +4.8% YoY; commercial electricity sales +3.4% YoY; industrial electricity price +3.0% YoY. First-pass proxy for AI/data-center energy bottleneck pressure.",
       "freshness": "local_cache",
-      "age_days": 93,
+      "age_days": 94,
       "value_label": "commercial electricity price +4.8% YoY; commercial electricity sales +3.4% YoY; industrial electricity price +3.0% YoY"
     },
     {
       "name": "BTC 200-Week Moving Average",
       "regime": "hard_money_repricing",
-      "score": 50,
+      "score": 45,
       "weight": 0.35,
       "direction": "below 200wMA = oversold (bullish for hard money); above = normal",
       "source": "coingecko bitcoin",
-      "as_of": "2026-09-02",
-      "note": "BTC spot is $77,187 versus a 200-week MA of $62,243, a +24.0% deviation. Model-free long-term trend signal.",
+      "as_of": "2026-09-03",
+      "note": "BTC spot is $80,956 versus a 200-week MA of $62,243, a +30.1% deviation. Model-free long-term trend signal.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "+24.0%"
+      "value_label": "+30.1%"
     },
     {
       "name": "BTC Power Law Fair Value Gap",
@@ -198,11 +198,11 @@
       "weight": 0.25,
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
-      "as_of": "2026-09-02",
-      "note": "BTC spot is $77,187 versus a power-law anchor of $145,221, a -46.8% gap. Gap has been below -40% for 38 consecutive days.",
+      "as_of": "2026-09-03",
+      "note": "BTC spot is $80,956 versus a power-law anchor of $145,352, a -44.3% gap. Gap has been below -40% for 38 consecutive days.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-46.8%"
+      "value_label": "-44.3%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -211,11 +211,11 @@
       "weight": 0.25,
       "direction": "higher means BTC is repricing versus the gold proxy",
       "source": "market_cache BTC/USD over PAXG/USD",
-      "as_of": "2026-09-02",
-      "note": "BTC buys roughly 17.6 ounces of the PAXG gold proxy.",
+      "as_of": "2026-09-03",
+      "note": "BTC buys roughly 18.0 ounces of the PAXG gold proxy.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "17.6 oz"
+      "value_label": "18.0 oz"
     },
     {
       "name": "Gold Proxy Price",
@@ -224,11 +224,11 @@
       "weight": 0.15,
       "direction": "higher means the gold shield is repricing in USD terms",
       "source": "pax-gold proxy",
-      "as_of": "2026-09-02",
-      "note": "PAXG gold proxy is $4,392.",
+      "as_of": "2026-09-03",
+      "note": "PAXG gold proxy is $4,487.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "$4,392"
+      "value_label": "$4,487"
     },
     {
       "name": "U.S. M2 Liquidity Context",
@@ -240,7 +240,7 @@
       "as_of": "2026-08-03",
       "note": "US M2 is +6.0% YoY at $23,208B; useful context, but world credit is the monetary reset anchor.",
       "freshness": "local_cache",
-      "age_days": 30,
+      "age_days": 31,
       "value_label": "+6.0%"
     },
     {
@@ -253,7 +253,7 @@
       "as_of": "2026-08-26",
       "note": "Fed assets are +1.7% YoY at $6,731B.",
       "freshness": "local_cache",
-      "age_days": 7,
+      "age_days": 8,
       "value_label": "+1.7%"
     },
     {
@@ -266,7 +266,7 @@
       "as_of": "2026-09-02",
       "note": "Overnight reverse repo is $1B, a thin remaining buffer.",
       "freshness": "local_cache",
-      "age_days": 0,
+      "age_days": 1,
       "value_label": "$1B"
     },
     {
@@ -279,7 +279,7 @@
       "as_of": "2026-08-26",
       "note": "TGA is $951B, which keeps liquidity conditions tighter.",
       "freshness": "local_cache",
-      "age_days": 7,
+      "age_days": 8,
       "value_label": "$951B"
     },
     {
@@ -292,7 +292,7 @@
       "as_of": "2026-08-26",
       "note": "Simple WALCL minus RRP minus TGA proxy is $5,780B; roughly 90d change is -1.6%.",
       "freshness": "local_cache",
-      "age_days": 7,
+      "age_days": 8,
       "value_label": "-1.6%"
     },
     {
@@ -305,9 +305,9 @@
       "as_of": "2025-10-01",
       "note": "Total reporting countries credit to the non-financial sector is +5.7% 3Y annualized at 262,666.1; this is the core monetary reset signal, with U.S. M2 demoted to context.",
       "freshness": "local_cache",
-      "age_days": 336,
+      "age_days": 337,
       "value_label": "+5.7% 3Y annualized",
-      "staleness_warning": "FRED observation is 336 days old as of 2026-09-02; treat this score as directional only until the series refreshes."
+      "staleness_warning": "FRED observation is 337 days old as of 2026-09-03; treat this score as directional only until the series refreshes."
     },
     {
       "name": "U.S. Credit Growth",
@@ -319,9 +319,9 @@
       "as_of": "2025-10-01",
       "note": "U.S. total credit to the non-financial sector is +6.0% YoY at 77,279.7.",
       "freshness": "local_cache",
-      "age_days": 336,
+      "age_days": 337,
       "value_label": "+6.0% YoY",
-      "staleness_warning": "FRED observation is 336 days old as of 2026-09-02; treat this score as directional only until the series refreshes."
+      "staleness_warning": "FRED observation is 337 days old as of 2026-09-03; treat this score as directional only until the series refreshes."
     },
     {
       "name": "Federal Debt Growth",
@@ -333,9 +333,9 @@
       "as_of": "2026-01-01",
       "note": "Federal debt is +7.9% YoY at 39,065,421.0.",
       "freshness": "local_cache",
-      "age_days": 244,
+      "age_days": 245,
       "value_label": "+7.9% YoY",
-      "staleness_warning": "FRED observation is 244 days old as of 2026-09-02; treat this score as directional only until the series refreshes."
+      "staleness_warning": "FRED observation is 245 days old as of 2026-09-03; treat this score as directional only until the series refreshes."
     },
     {
       "name": "Federal Interest Payments Growth",
@@ -347,9 +347,9 @@
       "as_of": "2026-04-01",
       "note": "Federal government interest payments is +7.4% YoY at 1,247.0.",
       "freshness": "local_cache",
-      "age_days": 154,
+      "age_days": 155,
       "value_label": "+7.4% YoY",
-      "staleness_warning": "FRED observation is 154 days old as of 2026-09-02; treat this score as directional only until the series refreshes."
+      "staleness_warning": "FRED observation is 155 days old as of 2026-09-03; treat this score as directional only until the series refreshes."
     },
     {
       "name": "10Y Treasury Yield",
@@ -361,7 +361,7 @@
       "as_of": "2026-09-01",
       "note": "10Y Treasury yield is 4.79%.",
       "freshness": "local_cache",
-      "age_days": 1,
+      "age_days": 2,
       "value_label": "4.79%"
     },
     {
@@ -374,7 +374,7 @@
       "as_of": "2026-09-01",
       "note": "10Y real yield is 2.44%.",
       "freshness": "local_cache",
-      "age_days": 1,
+      "age_days": 2,
       "value_label": "2.44%"
     },
     {
@@ -387,7 +387,7 @@
       "as_of": "2026-09-02",
       "note": "10Y breakeven inflation is 2.34%.",
       "freshness": "local_cache",
-      "age_days": 0,
+      "age_days": 1,
       "value_label": "2.34%"
     },
     {
@@ -397,11 +397,11 @@
       "weight": 0.12,
       "direction": "higher spreads mean credit stress is rising",
       "source": "FRED BAMLH0A0HYM2",
-      "as_of": "2026-09-01",
-      "note": "High-yield option-adjusted spread is 2.65 percentage points.",
+      "as_of": "2026-09-02",
+      "note": "High-yield option-adjusted spread is 2.66 percentage points.",
       "freshness": "local_cache",
       "age_days": 1,
-      "value_label": "2.65%"
+      "value_label": "2.66%"
     }
   ],
   "dashboard_signals": [
@@ -415,7 +415,7 @@
       "as_of": "2026-07-31",
       "note": "Revenue growth, margins, free cash flow margin, R&D intensity, and optional SEC filing-language monetization evidence. Leaders: NVDA, META, MSFT.",
       "freshness": "local_cache",
-      "age_days": 33,
+      "age_days": 34,
       "value_label": "score 66/100"
     },
     {
@@ -428,7 +428,7 @@
       "as_of": "2026-07-31",
       "note": "Capex growth, capex/revenue, debt growth, depreciation growth, free-cash-flow pressure, and optional SEC filing-language risk evidence. Leaders: GOOGL, META, AMZN.",
       "freshness": "local_cache",
-      "age_days": 33,
+      "age_days": 34,
       "value_label": "score 56/100"
     },
     {
@@ -438,11 +438,11 @@
       "weight": 0.25,
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
-      "as_of": "2026-09-02",
-      "note": "BTC spot is $77,187 versus a power-law anchor of $145,221, a -46.8% gap. Gap has been below -40% for 38 consecutive days.",
+      "as_of": "2026-09-03",
+      "note": "BTC spot is $80,956 versus a power-law anchor of $145,352, a -44.3% gap. Gap has been below -40% for 38 consecutive days.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-46.8%"
+      "value_label": "-44.3%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -451,11 +451,11 @@
       "weight": 0.25,
       "direction": "higher means BTC is repricing versus the gold proxy",
       "source": "market_cache BTC/USD over PAXG/USD",
-      "as_of": "2026-09-02",
-      "note": "BTC buys roughly 17.6 ounces of the PAXG gold proxy.",
+      "as_of": "2026-09-03",
+      "note": "BTC buys roughly 18.0 ounces of the PAXG gold proxy.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "17.6 oz"
+      "value_label": "18.0 oz"
     },
     {
       "name": "World Credit Growth",
@@ -467,9 +467,9 @@
       "as_of": "2025-10-01",
       "note": "Total reporting countries credit to the non-financial sector is +5.7% 3Y annualized at 262,666.1; this is the core monetary reset signal, with U.S. M2 demoted to context.",
       "freshness": "local_cache",
-      "age_days": 336,
+      "age_days": 337,
       "value_label": "+5.7% 3Y annualized",
-      "staleness_warning": "FRED observation is 336 days old as of 2026-09-02; treat this score as directional only until the series refreshes."
+      "staleness_warning": "FRED observation is 337 days old as of 2026-09-03; treat this score as directional only until the series refreshes."
     }
   ],
   "debate_question": "Is AI producing real productivity faster than credit/fiscal stress is degrading money?"
