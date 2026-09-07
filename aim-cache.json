@@ -186,10 +186,10 @@
       "direction": "below 200wMA = oversold (bullish for hard money); above = normal",
       "source": "coingecko bitcoin",
       "as_of": "2026-09-07",
-      "note": "BTC spot is $79,178 versus a 200-week MA of $62,243, a +27.2% deviation. Model-free long-term trend signal.",
+      "note": "BTC spot is $78,995 versus a 200-week MA of $62,243, a +26.9% deviation. Model-free long-term trend signal.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "+27.2%"
+      "value_label": "+26.9%"
     },
     {
       "name": "BTC Power Law Fair Value Gap",
@@ -199,10 +199,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-09-07",
-      "note": "BTC spot is $79,178 versus a power-law anchor of $145,877, a -45.7% gap. Gap has been below -40% for 38 consecutive days.",
+      "note": "BTC spot is $78,995 versus a power-law anchor of $145,877, a -45.8% gap. Gap has been below -40% for 38 consecutive days.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-45.7%"
+      "value_label": "-45.8%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -212,10 +212,10 @@
       "direction": "higher means BTC is repricing versus the gold proxy",
       "source": "market_cache BTC/USD over PAXG/USD",
       "as_of": "2026-09-07",
-      "note": "BTC buys roughly 18.0 ounces of the PAXG gold proxy.",
+      "note": "BTC buys roughly 17.9 ounces of the PAXG gold proxy.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "18.0 oz"
+      "value_label": "17.9 oz"
     },
     {
       "name": "Gold Proxy Price",
@@ -225,10 +225,10 @@
       "direction": "higher means the gold shield is repricing in USD terms",
       "source": "pax-gold proxy",
       "as_of": "2026-09-07",
-      "note": "PAXG gold proxy is $4,409.",
+      "note": "PAXG gold proxy is $4,411.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "$4,409"
+      "value_label": "$4,411"
     },
     {
       "name": "U.S. M2 Liquidity Context",
@@ -439,10 +439,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-09-07",
-      "note": "BTC spot is $79,178 versus a power-law anchor of $145,877, a -45.7% gap. Gap has been below -40% for 38 consecutive days.",
+      "note": "BTC spot is $78,995 versus a power-law anchor of $145,877, a -45.8% gap. Gap has been below -40% for 38 consecutive days.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-45.7%"
+      "value_label": "-45.8%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -452,10 +452,10 @@
       "direction": "higher means BTC is repricing versus the gold proxy",
       "source": "market_cache BTC/USD over PAXG/USD",
       "as_of": "2026-09-07",
-      "note": "BTC buys roughly 18.0 ounces of the PAXG gold proxy.",
+      "note": "BTC buys roughly 17.9 ounces of the PAXG gold proxy.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "18.0 oz"
+      "value_label": "17.9 oz"
     },
     {
       "name": "World Credit Growth",
