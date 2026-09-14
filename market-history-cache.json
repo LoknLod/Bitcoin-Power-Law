@@ -1,6 +1,6 @@
 {
   "schema_version": "market_history_cache.v0.1",
-  "generated_at": "2026-09-11T00:00:00Z",
+  "generated_at": "2026-09-14T00:00:00Z",
   "source": "coingecko_market_chart",
   "days": 365,
   "assets": {
@@ -14,24 +14,6 @@
     }
   },
   "ratio_series": [
-    {
-      "date": "2025-09-12",
-      "btc_usd": 115553.49,
-      "gold_usd": 3633.13,
-      "btc_gold_ratio": 31.8055
-    },
-    {
-      "date": "2025-09-13",
-      "btc_usd": 116091.81,
-      "gold_usd": 3643.71,
-      "btc_gold_ratio": 31.8609
-    },
-    {
-      "date": "2025-09-14",
-      "btc_usd": 115974.89,
-      "gold_usd": 3639.45,
-      "btc_gold_ratio": 31.8661
-    },
     {
       "date": "2025-09-15",
       "btc_usd": 115278.55,
@@ -2200,14 +2182,32 @@
     },
     {
       "date": "2026-09-11",
-      "btc_usd": 77167.63,
-      "gold_usd": 4353.72,
-      "btc_gold_ratio": 17.7245
+      "btc_usd": 76554.99,
+      "gold_usd": 4318.14,
+      "btc_gold_ratio": 17.7287
+    },
+    {
+      "date": "2026-09-12",
+      "btc_usd": 77203.53,
+      "gold_usd": 4355.02,
+      "btc_gold_ratio": 17.7275
+    },
+    {
+      "date": "2026-09-13",
+      "btc_usd": 77261.63,
+      "gold_usd": 4354.72,
+      "btc_gold_ratio": 17.7421
+    },
+    {
+      "date": "2026-09-14",
+      "btc_usd": 79127.46,
+      "gold_usd": 4314.06,
+      "btc_gold_ratio": 18.3417
     }
   ],
   "errors": [],
   "metadata": {
-    "as_of": "2026-09-11",
+    "as_of": "2026-09-14",
     "row_count": 365,
     "preserved_existing": false,
     "error_count": 0
