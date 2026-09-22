@@ -15,12 +15,6 @@
   },
   "ratio_series": [
     {
-      "date": "2025-09-22",
-      "btc_usd": 115255.85,
-      "gold_usd": 3693.51,
-      "btc_gold_ratio": 31.2049
-    },
-    {
       "date": "2025-09-23",
       "btc_usd": 112692.5,
       "gold_usd": 3759.73,
@@ -2200,9 +2194,15 @@
     },
     {
       "date": "2026-09-21",
-      "btc_usd": 86602.99,
-      "gold_usd": 4364.73,
-      "btc_gold_ratio": 19.8416
+      "btc_usd": 81169.04,
+      "gold_usd": 4362.97,
+      "btc_gold_ratio": 18.6041
+    },
+    {
+      "date": "2026-09-22",
+      "btc_usd": 86597.68,
+      "gold_usd": 4335.8,
+      "btc_gold_ratio": 19.9727
     }
   ],
   "errors": [],
