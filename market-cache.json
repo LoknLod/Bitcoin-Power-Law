@@ -1,28 +1,30 @@
 {
   "schema_version": "market_cache.v0.1",
   "generated_at": "2026-09-29T00:00:00Z",
-  "source": "coingecko_simple_price",
+  "source": "coinbase_spot",
   "assets": {
     "btc_usd": {
-      "price": 83251.0,
-      "source": "coingecko bitcoin",
+      "price": 83516.525,
+      "source": "coinbase BTC-USD spot",
       "label": "BTC/USD spot",
-      "provider": "coingecko",
-      "as_of": "2026-09-29T00:55:00Z"
+      "provider": "coinbase",
+      "as_of": "2026-09-29T00:00:00Z"
     },
     "gold_usd": {
-      "price": 4129.1,
+      "price": 4167.775,
       "source": "pax-gold proxy",
-      "label": "pax-gold proxy",
-      "provider": "coingecko",
-      "as_of": "2026-09-29T00:55:20Z"
+      "label": "PAXG/USD spot proxy",
+      "provider": "coinbase",
+      "as_of": "2026-09-29T00:00:00Z"
     }
   },
-  "errors": [],
+  "errors": [
+    "CoinGecko refresh failed: HTTP Error 403: Forbidden"
+  ],
   "metadata": {
     "as_of": "2026-09-29",
     "updated_assets": 2,
     "preserved_assets": 0,
-    "error_count": 0
+    "error_count": 1
   }
 }
