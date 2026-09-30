@@ -9,7 +9,7 @@
     "series_fetched": 12,
     "series_preserved": 0,
     "series_with_errors": 0,
-    "observation_count": 7802,
+    "observation_count": 7803,
     "endpoint": "https://fred.stlouisfed.org/graph/fredgraph.csv?id={series_id}"
   },
   "series": {
@@ -1280,8 +1280,8 @@
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=RRPONTSYD",
       "fetched_at": "2026-09-30T00:00:00Z",
-      "observation_count": 1496,
-      "latest_date": "2026-09-29",
+      "observation_count": 1497,
+      "latest_date": "2026-09-30",
       "observations": [
         {
           "date": "2020-09-30",
@@ -7266,6 +7266,10 @@
         {
           "date": "2026-09-29",
           "value": "11.446"
+        },
+        {
+          "date": "2026-09-30",
+          "value": "11.539"
         }
       ]
     },
@@ -10093,91 +10097,91 @@
         },
         {
           "date": "2021-01-01",
-          "value": "533.518"
+          "value": "532.362"
         },
         {
           "date": "2021-04-01",
-          "value": "560.634"
+          "value": "559.508"
         },
         {
           "date": "2021-07-01",
-          "value": "587.92"
+          "value": "586.694"
         },
         {
           "date": "2021-10-01",
-          "value": "612.282"
+          "value": "610.825"
         },
         {
           "date": "2022-01-01",
-          "value": "636.968"
+          "value": "635.216"
         },
         {
           "date": "2022-04-01",
-          "value": "684.758"
+          "value": "683.051"
         },
         {
           "date": "2022-07-01",
-          "value": "752.081"
+          "value": "750.826"
         },
         {
           "date": "2022-10-01",
-          "value": "823.106"
+          "value": "822.708"
         },
         {
           "date": "2023-01-01",
-          "value": "861.267"
+          "value": "861.849"
         },
         {
           "date": "2023-04-01",
-          "value": "894.106"
+          "value": "894.443"
         },
         {
           "date": "2023-07-01",
-          "value": "966.899"
+          "value": "965.482"
         },
         {
           "date": "2023-10-01",
-          "value": "1031.478"
+          "value": "1026.798"
         },
         {
           "date": "2024-01-01",
-          "value": "1071.174"
+          "value": "1062.76"
         },
         {
           "date": "2024-04-01",
-          "value": "1103.565"
+          "value": "1095.97"
         },
         {
           "date": "2024-07-01",
-          "value": "1146.182"
+          "value": "1145.002"
         },
         {
           "date": "2024-10-01",
-          "value": "1155.616"
+          "value": "1166.444"
         },
         {
           "date": "2025-01-01",
-          "value": "1144.212"
+          "value": "1170.484"
         },
         {
           "date": "2025-04-01",
-          "value": "1160.9"
+          "value": "1197.132"
         },
         {
           "date": "2025-07-01",
-          "value": "1199.189"
+          "value": "1238.252"
         },
         {
           "date": "2025-10-01",
-          "value": "1227.495"
+          "value": "1265.05"
         },
         {
           "date": "2026-01-01",
-          "value": "1218.938"
+          "value": "1252.858"
         },
         {
           "date": "2026-04-01",
-          "value": "1247.033"
+          "value": "1279.734"
         }
       ]
     },
@@ -28197,12 +28201,8 @@
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2",
       "fetched_at": "2026-09-30T00:00:00Z",
       "observation_count": 785,
-      "latest_date": "2026-09-28",
+      "latest_date": "2026-09-29",
       "observations": [
-        {
-          "date": "2023-09-30",
-          "value": "4.03"
-        },
         {
           "date": "2023-10-02",
           "value": "4.11"
@@ -31338,6 +31338,10 @@
         {
           "date": "2026-09-28",
           "value": "3.02"
+        },
+        {
+          "date": "2026-09-29",
+          "value": "3.08"
         }
       ]
     }
