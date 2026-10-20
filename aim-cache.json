@@ -100,9 +100,9 @@
       "interpretation": "One or more weighted FRED macro/credit inputs are older than 90 days as of 2026-10-20 (World Credit Growth, U.S. Credit Growth, Federal Debt Growth, Federal Interest Payments Growth; oldest 384 days); score is directional only."
     },
     "energy_bottleneck": {
-      "score": 53,
+      "score": 51,
       "confidence": "medium",
-      "interpretation": "EIA retail electricity data: commercial electricity price +3.4% YoY; commercial electricity sales +4.3% YoY; industrial electricity price +4.7% YoY. First-pass proxy for AI/data-center energy bottleneck pressure."
+      "interpretation": "EIA retail electricity data: commercial electricity price +3.4% YoY; commercial electricity sales +4.3% YoY. First-pass proxy for AI/data-center energy bottleneck pressure."
     },
     "hard_money_repricing": {
       "score": 52,
@@ -177,15 +177,15 @@
     {
       "name": "Energy Bottleneck Score",
       "regime": "energy_bottleneck",
-      "score": 53,
+      "score": 51,
       "weight": 0.3,
       "direction": "higher means power-cost/load pressure is rising",
       "source": "eia_energy_cache",
       "as_of": "2026-07-01",
-      "note": "EIA retail electricity data: commercial electricity price +3.4% YoY; commercial electricity sales +4.3% YoY; industrial electricity price +4.7% YoY. First-pass proxy for AI/data-center energy bottleneck pressure.",
+      "note": "EIA retail electricity data: commercial electricity price +3.4% YoY; commercial electricity sales +4.3% YoY. First-pass proxy for AI/data-center energy bottleneck pressure.",
       "freshness": "local_cache",
       "age_days": 111,
-      "value_label": "commercial electricity price +3.4% YoY; commercial electricity sales +4.3% YoY; industrial electricity price +4.7% YoY"
+      "value_label": "commercial electricity price +3.4% YoY; commercial electricity sales +4.3% YoY"
     },
     {
       "name": "BTC 200-Week Moving Average",
@@ -195,10 +195,10 @@
       "direction": "below 200wMA = oversold (bullish for hard money); above = normal",
       "source": "coingecko bitcoin",
       "as_of": "2026-10-20",
-      "note": "BTC spot is $82,790 versus a 200-week MA of $62,243, a +33.0% deviation. Model-free long-term trend signal.",
+      "note": "BTC spot is $82,958 versus a 200-week MA of $62,243, a +33.3% deviation. Model-free long-term trend signal.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "+33.0%"
+      "value_label": "+33.3%"
     },
     {
       "name": "BTC Power Law Fair Value Gap",
@@ -208,10 +208,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-10-20",
-      "note": "BTC spot is $82,790 versus a power-law anchor of $151,624, a -45.4% gap. Gap has been below -40% for 38 consecutive days.",
+      "note": "BTC spot is $82,958 versus a power-law anchor of $151,624, a -45.3% gap. Gap has been below -40% for 38 consecutive days.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-45.4%"
+      "value_label": "-45.3%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -234,10 +234,10 @@
       "direction": "higher means the gold shield is repricing in USD terms",
       "source": "pax-gold proxy",
       "as_of": "2026-10-20",
-      "note": "PAXG gold proxy is $4,126.",
+      "note": "PAXG gold proxy is $4,120.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "$4,126"
+      "value_label": "$4,120"
     },
     {
       "name": "U.S. M2 Liquidity Context",
@@ -272,10 +272,10 @@
       "weight": 0.22,
       "direction": "lower means less residual liquidity buffer",
       "source": "FRED RRPONTSYD",
-      "as_of": "2026-10-19",
+      "as_of": "2026-10-20",
       "note": "Overnight reverse repo is $0B, a thin remaining buffer.",
       "freshness": "local_cache",
-      "age_days": 1,
+      "age_days": 0,
       "value_label": "$0B"
     },
     {
@@ -367,11 +367,11 @@
       "weight": 0.04,
       "direction": "higher yields tighten discount rates and debt-service conditions",
       "source": "FRED DGS10",
-      "as_of": "2026-10-16",
-      "note": "10Y Treasury yield is 5.09%.",
+      "as_of": "2026-10-19",
+      "note": "10Y Treasury yield is 5.15%.",
       "freshness": "local_cache",
-      "age_days": 4,
-      "value_label": "5.09%"
+      "age_days": 1,
+      "value_label": "5.15%"
     },
     {
       "name": "10Y Real Yield",
@@ -380,11 +380,11 @@
       "weight": 0.1,
       "direction": "higher real yields increase monetary and credit pressure",
       "source": "FRED DFII10",
-      "as_of": "2026-10-16",
-      "note": "10Y real yield is 2.74%.",
+      "as_of": "2026-10-19",
+      "note": "10Y real yield is 2.80%.",
       "freshness": "local_cache",
-      "age_days": 4,
-      "value_label": "2.74%"
+      "age_days": 1,
+      "value_label": "2.80%"
     },
     {
       "name": "10Y Breakeven Inflation",
@@ -393,10 +393,10 @@
       "weight": 0.04,
       "direction": "higher breakevens can signal inflation repricing pressure",
       "source": "FRED T10YIE",
-      "as_of": "2026-10-19",
+      "as_of": "2026-10-20",
       "note": "10Y breakeven inflation is 2.35%.",
       "freshness": "local_cache",
-      "age_days": 1,
+      "age_days": 0,
       "value_label": "2.35%"
     },
     {
@@ -448,10 +448,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-10-20",
-      "note": "BTC spot is $82,790 versus a power-law anchor of $151,624, a -45.4% gap. Gap has been below -40% for 38 consecutive days.",
+      "note": "BTC spot is $82,958 versus a power-law anchor of $151,624, a -45.3% gap. Gap has been below -40% for 38 consecutive days.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-45.4%"
+      "value_label": "-45.3%"
     },
     {
       "name": "BTC/Gold Ratio",
