@@ -100,9 +100,9 @@
       "interpretation": "One or more weighted FRED macro/credit inputs are older than 90 days as of 2026-10-21 (World Credit Growth, U.S. Credit Growth, Federal Debt Growth, Federal Interest Payments Growth; oldest 385 days); score is directional only."
     },
     "energy_bottleneck": {
-      "score": 53,
+      "score": 51,
       "confidence": "medium",
-      "interpretation": "EIA retail electricity data: commercial electricity price +3.4% YoY; commercial electricity sales +4.3% YoY; industrial electricity price +4.7% YoY. First-pass proxy for AI/data-center energy bottleneck pressure."
+      "interpretation": "EIA retail electricity data: commercial electricity price +3.4% YoY; commercial electricity sales +4.3% YoY. First-pass proxy for AI/data-center energy bottleneck pressure."
     },
     "hard_money_repricing": {
       "score": 52,
@@ -177,15 +177,15 @@
     {
       "name": "Energy Bottleneck Score",
       "regime": "energy_bottleneck",
-      "score": 53,
+      "score": 51,
       "weight": 0.3,
       "direction": "higher means power-cost/load pressure is rising",
       "source": "eia_energy_cache",
       "as_of": "2026-07-01",
-      "note": "EIA retail electricity data: commercial electricity price +3.4% YoY; commercial electricity sales +4.3% YoY; industrial electricity price +4.7% YoY. First-pass proxy for AI/data-center energy bottleneck pressure.",
+      "note": "EIA retail electricity data: commercial electricity price +3.4% YoY; commercial electricity sales +4.3% YoY. First-pass proxy for AI/data-center energy bottleneck pressure.",
       "freshness": "local_cache",
       "age_days": 112,
-      "value_label": "commercial electricity price +3.4% YoY; commercial electricity sales +4.3% YoY; industrial electricity price +4.7% YoY"
+      "value_label": "commercial electricity price +3.4% YoY; commercial electricity sales +4.3% YoY"
     },
     {
       "name": "BTC 200-Week Moving Average",
@@ -195,10 +195,10 @@
       "direction": "below 200wMA = oversold (bullish for hard money); above = normal",
       "source": "coingecko bitcoin",
       "as_of": "2026-10-21",
-      "note": "BTC spot is $84,626 versus a 200-week MA of $62,243, a +36.0% deviation. Model-free long-term trend signal.",
+      "note": "BTC spot is $84,081 versus a 200-week MA of $62,243, a +35.1% deviation. Model-free long-term trend signal.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "+36.0%"
+      "value_label": "+35.1%"
     },
     {
       "name": "BTC Power Law Fair Value Gap",
@@ -208,10 +208,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-10-21",
-      "note": "BTC spot is $84,626 versus a power-law anchor of $151,759, a -44.2% gap. Gap has been below -40% for 38 consecutive days.",
+      "note": "BTC spot is $84,081 versus a power-law anchor of $151,759, a -44.6% gap. Gap has been below -40% for 38 consecutive days.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-44.2%"
+      "value_label": "-44.6%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -221,10 +221,10 @@
       "direction": "higher means BTC is repricing versus the gold proxy",
       "source": "market_cache BTC/USD over PAXG/USD",
       "as_of": "2026-10-21",
-      "note": "BTC buys roughly 20.5 ounces of the PAXG gold proxy.",
+      "note": "BTC buys roughly 20.4 ounces of the PAXG gold proxy.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "20.5 oz"
+      "value_label": "20.4 oz"
     },
     {
       "name": "Gold Proxy Price",
@@ -234,10 +234,10 @@
       "direction": "higher means the gold shield is repricing in USD terms",
       "source": "pax-gold proxy",
       "as_of": "2026-10-21",
-      "note": "PAXG gold proxy is $4,137.",
+      "note": "PAXG gold proxy is $4,126.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "$4,137"
+      "value_label": "$4,126"
     },
     {
       "name": "U.S. M2 Liquidity Context",
@@ -448,10 +448,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-10-21",
-      "note": "BTC spot is $84,626 versus a power-law anchor of $151,759, a -44.2% gap. Gap has been below -40% for 38 consecutive days.",
+      "note": "BTC spot is $84,081 versus a power-law anchor of $151,759, a -44.6% gap. Gap has been below -40% for 38 consecutive days.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-44.2%"
+      "value_label": "-44.6%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -461,10 +461,10 @@
       "direction": "higher means BTC is repricing versus the gold proxy",
       "source": "market_cache BTC/USD over PAXG/USD",
       "as_of": "2026-10-21",
-      "note": "BTC buys roughly 20.5 ounces of the PAXG gold proxy.",
+      "note": "BTC buys roughly 20.4 ounces of the PAXG gold proxy.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "20.5 oz"
+      "value_label": "20.4 oz"
     },
     {
       "name": "World Credit Growth",
