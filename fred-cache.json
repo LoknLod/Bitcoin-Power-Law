@@ -1,30 +1,26 @@
 {
   "schema_version": "fred_cache.v0.1",
-  "generated": "2026-10-21T00:00:00Z",
-  "generated_at": "2026-10-21T00:00:00Z",
+  "generated": "2026-10-22T00:00:00Z",
+  "generated_at": "2026-10-22T00:00:00Z",
   "source": "fred_graph_csv",
   "metadata": {
-    "as_of": "2026-10-21",
+    "as_of": "2026-10-22",
     "series_requested": 12,
-    "series_fetched": 0,
-    "series_preserved": 12,
-    "series_with_errors": 12,
-    "observation_count": 7799,
+    "series_fetched": 12,
+    "series_preserved": 0,
+    "series_with_errors": 0,
+    "observation_count": 7795,
     "endpoint": "https://fred.stlouisfed.org/graph/fredgraph.csv?id={series_id}"
   },
   "series": {
     "WALCL": {
       "desc": "Fed Balance Sheet (Weekly, millions USD)",
-      "source": "existing_cache_after_refresh_error",
+      "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=WALCL",
-      "fetched_at": "2026-10-21T00:00:00Z",
-      "observation_count": 313,
+      "fetched_at": "2026-10-22T00:00:00Z",
+      "observation_count": 312,
       "latest_date": "2026-10-14",
       "observations": [
-        {
-          "date": "2020-10-21",
-          "value": "7177265"
-        },
         {
           "date": "2020-10-28",
           "value": "7146306"
@@ -1273,25 +1269,16 @@
           "date": "2026-10-14",
           "value": "6755639"
         }
-      ],
-      "error": "refresh failed: WALCL: CSV has no date column"
+      ]
     },
     "RRPONTSYD": {
       "desc": "Overnight Reverse Repo (Daily, billions USD)",
-      "source": "existing_cache_after_refresh_error",
+      "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=RRPONTSYD",
-      "fetched_at": "2026-10-21T00:00:00Z",
-      "observation_count": 1497,
-      "latest_date": "2026-10-20",
+      "fetched_at": "2026-10-22T00:00:00Z",
+      "observation_count": 1496,
+      "latest_date": "2026-10-21",
       "observations": [
-        {
-          "date": "2020-10-20",
-          "value": "0.007"
-        },
-        {
-          "date": "2020-10-21",
-          "value": "0"
-        },
         {
           "date": "2020-10-22",
           "value": "0.001"
@@ -7271,22 +7258,21 @@
         {
           "date": "2026-10-20",
           "value": "0.227"
+        },
+        {
+          "date": "2026-10-21",
+          "value": "0.237"
         }
-      ],
-      "error": "refresh failed: RRPONTSYD: CSV has no date column"
+      ]
     },
     "WTREGEN": {
       "desc": "Treasury General Account (Weekly, millions USD)",
-      "source": "existing_cache_after_refresh_error",
+      "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=WTREGEN",
-      "fetched_at": "2026-10-21T00:00:00Z",
-      "observation_count": 313,
+      "fetched_at": "2026-10-22T00:00:00Z",
+      "observation_count": 312,
       "latest_date": "2026-10-14",
       "observations": [
-        {
-          "date": "2020-10-21",
-          "value": "1724792"
-        },
         {
           "date": "2020-10-28",
           "value": "1680933"
@@ -8535,14 +8521,13 @@
           "date": "2026-10-14",
           "value": "883373"
         }
-      ],
-      "error": "refresh failed: WTREGEN: CSV has no date column"
+      ]
     },
     "WM2NS": {
       "desc": "M2 Money Stock (Weekly, billions USD)",
-      "source": "existing_cache_after_refresh_error",
+      "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=WM2NS",
-      "fetched_at": "2026-10-21T00:00:00Z",
+      "fetched_at": "2026-10-22T00:00:00Z",
       "observation_count": 306,
       "latest_date": "2026-08-31",
       "observations": [
@@ -9770,14 +9755,13 @@
           "date": "2026-08-31",
           "value": "23305.5"
         }
-      ],
-      "error": "refresh failed: WM2NS: CSV has no date column"
+      ]
     },
     "QUSCAMUSDA": {
       "desc": "U.S. total credit to non-financial sector, adjusted for breaks",
-      "source": "existing_cache_after_refresh_error",
+      "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=QUSCAMUSDA",
-      "fetched_at": "2026-10-21T00:00:00Z",
+      "fetched_at": "2026-10-22T00:00:00Z",
       "observation_count": 21,
       "latest_date": "2025-10-01",
       "observations": [
@@ -9865,14 +9849,13 @@
           "date": "2025-10-01",
           "value": "77279.663"
         }
-      ],
-      "error": "refresh failed: QUSCAMUSDA: CSV has no date column"
+      ]
     },
     "Q5ACAMUSDA": {
       "desc": "Total reporting countries total credit to non-financial sector, adjusted for breaks",
-      "source": "existing_cache_after_refresh_error",
+      "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=Q5ACAMUSDA",
-      "fetched_at": "2026-10-21T00:00:00Z",
+      "fetched_at": "2026-10-22T00:00:00Z",
       "observation_count": 21,
       "latest_date": "2025-10-01",
       "observations": [
@@ -9960,14 +9943,13 @@
           "date": "2025-10-01",
           "value": "262666.113000000012"
         }
-      ],
-      "error": "refresh failed: Q5ACAMUSDA: CSV has no date column"
+      ]
     },
     "GFDEBTN": {
       "desc": "Federal Debt: Total Public Debt",
-      "source": "existing_cache_after_refresh_error",
+      "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=GFDEBTN",
-      "fetched_at": "2026-10-21T00:00:00Z",
+      "fetched_at": "2026-10-22T00:00:00Z",
       "observation_count": 23,
       "latest_date": "2026-04-01",
       "observations": [
@@ -10063,14 +10045,13 @@
           "date": "2026-04-01",
           "value": "39462398"
         }
-      ],
-      "error": "refresh failed: GFDEBTN: CSV has no date column"
+      ]
     },
     "A091RC1Q027SBEA": {
       "desc": "Federal government current expenditures: interest payments",
-      "source": "existing_cache_after_refresh_error",
+      "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=A091RC1Q027SBEA",
-      "fetched_at": "2026-10-21T00:00:00Z",
+      "fetched_at": "2026-10-22T00:00:00Z",
       "observation_count": 23,
       "latest_date": "2026-04-01",
       "observations": [
@@ -10166,25 +10147,16 @@
           "date": "2026-04-01",
           "value": "1279.734"
         }
-      ],
-      "error": "refresh failed: A091RC1Q027SBEA: CSV has no date column"
+      ]
     },
     "DGS10": {
       "desc": "10-Year Treasury Constant Maturity Rate",
-      "source": "existing_cache_after_refresh_error",
+      "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10",
-      "fetched_at": "2026-10-21T00:00:00Z",
-      "observation_count": 1499,
-      "latest_date": "2026-10-19",
+      "fetched_at": "2026-10-22T00:00:00Z",
+      "observation_count": 1498,
+      "latest_date": "2026-10-20",
       "observations": [
-        {
-          "date": "2020-10-20",
-          "value": "0.81"
-        },
-        {
-          "date": "2020-10-21",
-          "value": "0.83"
-        },
         {
           "date": "2020-10-22",
           "value": "0.87"
@@ -16172,26 +16144,21 @@
         {
           "date": "2026-10-19",
           "value": "5.15"
+        },
+        {
+          "date": "2026-10-20",
+          "value": "5.12"
         }
-      ],
-      "error": "refresh failed: DGS10: CSV has no date column"
+      ]
     },
     "DFII10": {
       "desc": "10-Year Treasury Inflation-Indexed Constant Maturity Rate",
-      "source": "existing_cache_after_refresh_error",
+      "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFII10",
-      "fetched_at": "2026-10-21T00:00:00Z",
-      "observation_count": 1499,
-      "latest_date": "2026-10-19",
+      "fetched_at": "2026-10-22T00:00:00Z",
+      "observation_count": 1498,
+      "latest_date": "2026-10-20",
       "observations": [
-        {
-          "date": "2020-10-20",
-          "value": "-0.91"
-        },
-        {
-          "date": "2020-10-21",
-          "value": "-0.91"
-        },
         {
           "date": "2020-10-22",
           "value": "-0.89"
@@ -22179,26 +22146,21 @@
         {
           "date": "2026-10-19",
           "value": "2.8"
+        },
+        {
+          "date": "2026-10-20",
+          "value": "2.77"
         }
-      ],
-      "error": "refresh failed: DFII10: CSV has no date column"
+      ]
     },
     "T10YIE": {
       "desc": "10-Year Breakeven Inflation Rate",
-      "source": "existing_cache_after_refresh_error",
+      "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=T10YIE",
-      "fetched_at": "2026-10-21T00:00:00Z",
-      "observation_count": 1500,
-      "latest_date": "2026-10-20",
+      "fetched_at": "2026-10-22T00:00:00Z",
+      "observation_count": 1499,
+      "latest_date": "2026-10-21",
       "observations": [
-        {
-          "date": "2020-10-20",
-          "value": "1.72"
-        },
-        {
-          "date": "2020-10-21",
-          "value": "1.74"
-        },
         {
           "date": "2020-10-22",
           "value": "1.76"
@@ -28190,17 +28152,20 @@
         {
           "date": "2026-10-20",
           "value": "2.35"
+        },
+        {
+          "date": "2026-10-21",
+          "value": "2.37"
         }
-      ],
-      "error": "refresh failed: T10YIE: CSV has no date column"
+      ]
     },
     "BAMLH0A0HYM2": {
       "desc": "ICE BofA US High Yield Index Option-Adjusted Spread",
-      "source": "existing_cache_after_refresh_error",
+      "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2",
-      "fetched_at": "2026-10-21T00:00:00Z",
-      "observation_count": 784,
-      "latest_date": "2026-10-19",
+      "fetched_at": "2026-10-22T00:00:00Z",
+      "observation_count": 786,
+      "latest_date": "2026-10-21",
       "observations": [
         {
           "date": "2023-10-23",
@@ -31337,59 +31302,17 @@
         {
           "date": "2026-10-19",
           "value": "3.29"
+        },
+        {
+          "date": "2026-10-20",
+          "value": "3.33"
+        },
+        {
+          "date": "2026-10-21",
+          "value": "3.27"
         }
-      ],
-      "error": "refresh failed: BAMLH0A0HYM2: CSV has no date column"
+      ]
     }
   },
-  "errors": [
-    {
-      "series": "WALCL",
-      "error": "refresh failed: WALCL: CSV has no date column"
-    },
-    {
-      "series": "RRPONTSYD",
-      "error": "refresh failed: RRPONTSYD: CSV has no date column"
-    },
-    {
-      "series": "WTREGEN",
-      "error": "refresh failed: WTREGEN: CSV has no date column"
-    },
-    {
-      "series": "WM2NS",
-      "error": "refresh failed: WM2NS: CSV has no date column"
-    },
-    {
-      "series": "QUSCAMUSDA",
-      "error": "refresh failed: QUSCAMUSDA: CSV has no date column"
-    },
-    {
-      "series": "Q5ACAMUSDA",
-      "error": "refresh failed: Q5ACAMUSDA: CSV has no date column"
-    },
-    {
-      "series": "GFDEBTN",
-      "error": "refresh failed: GFDEBTN: CSV has no date column"
-    },
-    {
-      "series": "A091RC1Q027SBEA",
-      "error": "refresh failed: A091RC1Q027SBEA: CSV has no date column"
-    },
-    {
-      "series": "DGS10",
-      "error": "refresh failed: DGS10: CSV has no date column"
-    },
-    {
-      "series": "DFII10",
-      "error": "refresh failed: DFII10: CSV has no date column"
-    },
-    {
-      "series": "T10YIE",
-      "error": "refresh failed: T10YIE: CSV has no date column"
-    },
-    {
-      "series": "BAMLH0A0HYM2",
-      "error": "refresh failed: BAMLH0A0HYM2: CSV has no date column"
-    }
-  ]
+  "errors": []
 }
