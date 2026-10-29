@@ -45,10 +45,10 @@
             "source": "FRED A091RC1Q027SBEA",
             "freshness": "local_cache",
             "weight": 0.12,
-            "as_of": "2026-04-01",
+            "as_of": "2026-07-01",
             "impact": "weighted_score_input",
-            "age_days": 211,
-            "note": "FRED observation is 211 days old as of 2026-10-29; treat this score as directional only until the series refreshes."
+            "age_days": 120,
+            "note": "FRED observation is 120 days old as of 2026-10-29; treat this score as directional only until the series refreshes."
           },
           {
             "name": "U.S. Credit Growth",
@@ -96,7 +96,7 @@
       "interpretation": "EIA retail electricity data: commercial electricity price +4.3% YoY; commercial electricity sales +5.1% YoY; industrial electricity price +7.3% YoY. First-pass proxy for AI/data-center energy bottleneck pressure."
     },
     "hard_money_repricing": {
-      "score": 52,
+      "score": 53,
       "confidence": "medium",
       "interpretation": "Local BTC and PAXG gold-proxy prices are available; hard-money repricing score includes 200-week MA (primary), power-law gap (secondary), BTC/gold ratio, and gold proxy."
     }
@@ -181,15 +181,15 @@
     {
       "name": "BTC 200-Week Moving Average",
       "regime": "hard_money_repricing",
-      "score": 45,
+      "score": 50,
       "weight": 0.35,
       "direction": "below 200wMA = oversold (bullish for hard money); above = normal",
       "source": "coingecko bitcoin",
       "as_of": "2026-10-29",
-      "note": "BTC spot is $81,088 versus a 200-week MA of $62,243, a +30.3% deviation. Model-free long-term trend signal.",
+      "note": "BTC spot is $80,784 versus a 200-week MA of $62,243, a +29.8% deviation. Model-free long-term trend signal.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "+30.3%"
+      "value_label": "+29.8%"
     },
     {
       "name": "BTC Power Law Fair Value Gap",
@@ -199,10 +199,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-10-29",
-      "note": "BTC spot is $81,088 versus a power-law anchor of $152,850, a -46.9% gap. Gap has been below -40% for 38 consecutive days.",
+      "note": "BTC spot is $80,784 versus a power-law anchor of $152,850, a -47.1% gap. Gap has been below -40% for 38 consecutive days.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-46.9%"
+      "value_label": "-47.1%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -225,10 +225,10 @@
       "direction": "higher means the gold shield is repricing in USD terms",
       "source": "pax-gold proxy",
       "as_of": "2026-10-29",
-      "note": "PAXG gold proxy is $4,037.",
+      "note": "PAXG gold proxy is $4,015.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "$4,037"
+      "value_label": "$4,015"
     },
     {
       "name": "U.S. M2 Liquidity Context",
@@ -263,10 +263,10 @@
       "weight": 0.22,
       "direction": "lower means less residual liquidity buffer",
       "source": "FRED RRPONTSYD",
-      "as_of": "2026-10-28",
+      "as_of": "2026-10-29",
       "note": "Overnight reverse repo is $0B, a thin remaining buffer.",
       "freshness": "local_cache",
-      "age_days": 1,
+      "age_days": 0,
       "value_label": "$0B"
     },
     {
@@ -344,12 +344,12 @@
       "weight": 0.12,
       "direction": "higher means fiscal interest expense pressure is rising",
       "source": "FRED A091RC1Q027SBEA",
-      "as_of": "2026-04-01",
-      "note": "Federal government interest payments is +6.9% YoY at 1,279.7.",
+      "as_of": "2026-07-01",
+      "note": "Federal government interest payments is +7.3% YoY at 1,328.8.",
       "freshness": "local_cache",
-      "age_days": 211,
-      "value_label": "+6.9% YoY",
-      "staleness_warning": "FRED observation is 211 days old as of 2026-10-29; treat this score as directional only until the series refreshes."
+      "age_days": 120,
+      "value_label": "+7.3% YoY",
+      "staleness_warning": "FRED observation is 120 days old as of 2026-10-29; treat this score as directional only until the series refreshes."
     },
     {
       "name": "10Y Treasury Yield",
@@ -397,11 +397,11 @@
       "weight": 0.12,
       "direction": "higher spreads mean credit stress is rising",
       "source": "FRED BAMLH0A0HYM2",
-      "as_of": "2026-10-27",
-      "note": "High-yield option-adjusted spread is 3.18 percentage points.",
+      "as_of": "2026-10-28",
+      "note": "High-yield option-adjusted spread is 3.14 percentage points.",
       "freshness": "local_cache",
-      "age_days": 2,
-      "value_label": "3.18%"
+      "age_days": 1,
+      "value_label": "3.14%"
     }
   ],
   "dashboard_signals": [
@@ -439,10 +439,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-10-29",
-      "note": "BTC spot is $81,088 versus a power-law anchor of $152,850, a -46.9% gap. Gap has been below -40% for 38 consecutive days.",
+      "note": "BTC spot is $80,784 versus a power-law anchor of $152,850, a -47.1% gap. Gap has been below -40% for 38 consecutive days.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-46.9%"
+      "value_label": "-47.1%"
     },
     {
       "name": "BTC/Gold Ratio",
