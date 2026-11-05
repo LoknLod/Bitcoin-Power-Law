@@ -76,9 +76,9 @@
   },
   "scores": {
     "ai_productivity": {
-      "score": 69,
+      "score": 70,
       "confidence": "medium",
-      "interpretation": "Revenue growth, margins, free cash flow margin, R&D intensity, and optional SEC filing-language monetization evidence. Leaders: AVGO, NVDA, MSFT."
+      "interpretation": "Revenue growth, margins, free cash flow margin, R&D intensity, and optional SEC filing-language monetization evidence. Leaders: AVGO, NVDA, AMD."
     },
     "ai_bubble_risk": {
       "score": 56,
@@ -142,15 +142,15 @@
     {
       "name": "AI Productivity Score",
       "regime": "ai_productivity",
-      "score": 69,
+      "score": 70,
       "weight": 0.35,
       "direction": "higher_is_better",
       "source": "alpha_vantage_cache+sec_edgar_cache",
       "as_of": "2026-09-30",
-      "note": "Revenue growth, margins, free cash flow margin, R&D intensity, and optional SEC filing-language monetization evidence. Leaders: AVGO, NVDA, MSFT.",
+      "note": "Revenue growth, margins, free cash flow margin, R&D intensity, and optional SEC filing-language monetization evidence. Leaders: AVGO, NVDA, AMD.",
       "freshness": "local_cache",
       "age_days": 36,
-      "value_label": "score 69/100"
+      "value_label": "score 70/100"
     },
     {
       "name": "AI Capex Bubble Risk",
@@ -186,10 +186,10 @@
       "direction": "below 200wMA = oversold (bullish for hard money); above = normal",
       "source": "coingecko bitcoin",
       "as_of": "2026-11-05",
-      "note": "BTC spot is $80,330 versus a 200-week MA of $62,243, a +29.1% deviation. Model-free long-term trend signal.",
+      "note": "BTC spot is $76,042 versus a 200-week MA of $62,243, a +22.2% deviation. Model-free long-term trend signal.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "+29.1%"
+      "value_label": "+22.2%"
     },
     {
       "name": "BTC Power Law Fair Value Gap",
@@ -199,10 +199,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-11-05",
-      "note": "BTC spot is $80,330 versus a power-law anchor of $153,809, a -47.8% gap. Gap has been below -40% for 38 consecutive days.",
+      "note": "BTC spot is $76,042 versus a power-law anchor of $153,809, a -50.6% gap. Gap has been below -40% for 38 consecutive days.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-47.8%"
+      "value_label": "-50.6%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -212,10 +212,10 @@
       "direction": "higher means BTC is repricing versus the gold proxy",
       "source": "market_cache BTC/USD over PAXG/USD",
       "as_of": "2026-11-05",
-      "note": "BTC buys roughly 19.6 ounces of the PAXG gold proxy.",
+      "note": "BTC buys roughly 18.6 ounces of the PAXG gold proxy.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "19.6 oz"
+      "value_label": "18.6 oz"
     },
     {
       "name": "Gold Proxy Price",
@@ -225,10 +225,10 @@
       "direction": "higher means the gold shield is repricing in USD terms",
       "source": "pax-gold proxy",
       "as_of": "2026-11-05",
-      "note": "PAXG gold proxy is $4,106.",
+      "note": "PAXG gold proxy is $4,096.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "$4,106"
+      "value_label": "$4,096"
     },
     {
       "name": "U.S. M2 Liquidity Context",
@@ -263,10 +263,10 @@
       "weight": 0.22,
       "direction": "lower means less residual liquidity buffer",
       "source": "FRED RRPONTSYD",
-      "as_of": "2026-11-04",
+      "as_of": "2026-11-05",
       "note": "Overnight reverse repo is $0B, a thin remaining buffer.",
       "freshness": "local_cache",
-      "age_days": 1,
+      "age_days": 0,
       "value_label": "$0B"
     },
     {
@@ -397,26 +397,26 @@
       "weight": 0.12,
       "direction": "higher spreads mean credit stress is rising",
       "source": "FRED BAMLH0A0HYM2",
-      "as_of": "2026-11-03",
-      "note": "High-yield option-adjusted spread is 3.40 percentage points.",
+      "as_of": "2026-11-04",
+      "note": "High-yield option-adjusted spread is 3.32 percentage points.",
       "freshness": "local_cache",
-      "age_days": 2,
-      "value_label": "3.40%"
+      "age_days": 1,
+      "value_label": "3.32%"
     }
   ],
   "dashboard_signals": [
     {
       "name": "AI Productivity Score",
       "regime": "ai_productivity",
-      "score": 69,
+      "score": 70,
       "weight": 0.35,
       "direction": "higher_is_better",
       "source": "alpha_vantage_cache+sec_edgar_cache",
       "as_of": "2026-09-30",
-      "note": "Revenue growth, margins, free cash flow margin, R&D intensity, and optional SEC filing-language monetization evidence. Leaders: AVGO, NVDA, MSFT.",
+      "note": "Revenue growth, margins, free cash flow margin, R&D intensity, and optional SEC filing-language monetization evidence. Leaders: AVGO, NVDA, AMD.",
       "freshness": "local_cache",
       "age_days": 36,
-      "value_label": "score 69/100"
+      "value_label": "score 70/100"
     },
     {
       "name": "AI Capex Bubble Risk",
@@ -439,10 +439,10 @@
       "direction": "higher means BTC is repricing above the time-based power-law anchor",
       "source": "coingecko bitcoin",
       "as_of": "2026-11-05",
-      "note": "BTC spot is $80,330 versus a power-law anchor of $153,809, a -47.8% gap. Gap has been below -40% for 38 consecutive days.",
+      "note": "BTC spot is $76,042 versus a power-law anchor of $153,809, a -50.6% gap. Gap has been below -40% for 38 consecutive days.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "-47.8%"
+      "value_label": "-50.6%"
     },
     {
       "name": "BTC/Gold Ratio",
@@ -452,10 +452,10 @@
       "direction": "higher means BTC is repricing versus the gold proxy",
       "source": "market_cache BTC/USD over PAXG/USD",
       "as_of": "2026-11-05",
-      "note": "BTC buys roughly 19.6 ounces of the PAXG gold proxy.",
+      "note": "BTC buys roughly 18.6 ounces of the PAXG gold proxy.",
       "freshness": "local_cache",
       "age_days": 0,
-      "value_label": "19.6 oz"
+      "value_label": "18.6 oz"
     },
     {
       "name": "World Credit Growth",
