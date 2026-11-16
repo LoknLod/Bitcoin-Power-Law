@@ -1,15 +1,15 @@
 {
   "schema_version": "fred_cache.v0.1",
-  "generated": "2026-11-14T00:00:00Z",
-  "generated_at": "2026-11-14T00:00:00Z",
+  "generated": "2026-11-16T00:00:00Z",
+  "generated_at": "2026-11-16T00:00:00Z",
   "source": "fred_graph_csv",
   "metadata": {
-    "as_of": "2026-11-14",
+    "as_of": "2026-11-16",
     "series_requested": 12,
     "series_fetched": 12,
     "series_preserved": 0,
     "series_with_errors": 0,
-    "observation_count": 7799,
+    "observation_count": 7804,
     "endpoint": "https://fred.stlouisfed.org/graph/fredgraph.csv?id={series_id}"
   },
   "series": {
@@ -17,7 +17,7 @@
       "desc": "Fed Balance Sheet (Weekly, millions USD)",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=WALCL",
-      "fetched_at": "2026-11-14T00:00:00Z",
+      "fetched_at": "2026-11-16T00:00:00Z",
       "observation_count": 313,
       "latest_date": "2026-11-11",
       "observations": [
@@ -1279,9 +1279,9 @@
       "desc": "Overnight Reverse Repo (Daily, billions USD)",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=RRPONTSYD",
-      "fetched_at": "2026-11-14T00:00:00Z",
-      "observation_count": 1496,
-      "latest_date": "2026-11-13",
+      "fetched_at": "2026-11-16T00:00:00Z",
+      "observation_count": 1497,
+      "latest_date": "2026-11-16",
       "observations": [
         {
           "date": "2020-11-16",
@@ -7266,6 +7266,10 @@
         {
           "date": "2026-11-13",
           "value": "0.325"
+        },
+        {
+          "date": "2026-11-16",
+          "value": "0.182"
         }
       ]
     },
@@ -7273,7 +7277,7 @@
       "desc": "Treasury General Account (Weekly, millions USD)",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=WTREGEN",
-      "fetched_at": "2026-11-14T00:00:00Z",
+      "fetched_at": "2026-11-16T00:00:00Z",
       "observation_count": 313,
       "latest_date": "2026-11-11",
       "observations": [
@@ -8535,7 +8539,7 @@
       "desc": "M2 Money Stock (Weekly, billions USD)",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=WM2NS",
-      "fetched_at": "2026-11-14T00:00:00Z",
+      "fetched_at": "2026-11-16T00:00:00Z",
       "observation_count": 308,
       "latest_date": "2026-10-05",
       "observations": [
@@ -9777,93 +9781,97 @@
       "desc": "U.S. total credit to non-financial sector, adjusted for breaks",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=QUSCAMUSDA",
-      "fetched_at": "2026-11-14T00:00:00Z",
-      "observation_count": 21,
-      "latest_date": "2025-10-01",
+      "fetched_at": "2026-11-16T00:00:00Z",
+      "observation_count": 22,
+      "latest_date": "2026-01-01",
       "observations": [
         {
           "date": "2020-10-01",
-          "value": "62709.057999999997"
+          "value": "62709.821000000004"
         },
         {
           "date": "2021-01-01",
-          "value": "62611.779999999999"
+          "value": "62612.637999999999"
         },
         {
           "date": "2021-04-01",
-          "value": "63890.256999999998"
+          "value": "63891.406000000003"
         },
         {
           "date": "2021-07-01",
-          "value": "64494.440000000002"
+          "value": "64495.635000000002"
         },
         {
           "date": "2021-10-01",
-          "value": "66022.163"
+          "value": "66023.157000000007"
         },
         {
           "date": "2022-01-01",
-          "value": "66230.400999999998"
+          "value": "66231.403000000006"
         },
         {
           "date": "2022-04-01",
-          "value": "65871.876000000004"
+          "value": "65872.956999999995"
         },
         {
           "date": "2022-07-01",
-          "value": "65708.376999999993"
+          "value": "65709.485000000001"
         },
         {
           "date": "2022-10-01",
-          "value": "66413.764999999999"
+          "value": "66414.942999999999"
         },
         {
           "date": "2023-01-01",
-          "value": "67592.676000000007"
+          "value": "67593.638999999996"
         },
         {
           "date": "2023-04-01",
-          "value": "67861.679000000004"
+          "value": "67863.498000000007"
         },
         {
           "date": "2023-07-01",
-          "value": "68337.606"
+          "value": "68340.896999999997"
         },
         {
           "date": "2023-10-01",
-          "value": "70225.399000000005"
+          "value": "70229.697"
         },
         {
           "date": "2024-01-01",
-          "value": "70797.819000000003"
+          "value": "70802.203999999998"
         },
         {
           "date": "2024-04-01",
-          "value": "71100.441000000006"
+          "value": "71105.337"
         },
         {
           "date": "2024-07-01",
-          "value": "73017.197"
+          "value": "73021.710000000006"
         },
         {
           "date": "2024-10-01",
-          "value": "72880.274999999994"
+          "value": "72883.413"
         },
         {
           "date": "2025-01-01",
-          "value": "73841.577000000005"
+          "value": "73877.104999999996"
         },
         {
           "date": "2025-04-01",
-          "value": "74143.975999999995"
+          "value": "74122.630999999994"
         },
         {
           "date": "2025-07-01",
-          "value": "76001.008000000002"
+          "value": "76001.058999999994"
         },
         {
           "date": "2025-10-01",
-          "value": "77279.663"
+          "value": "77260.062000000005"
+        },
+        {
+          "date": "2026-01-01",
+          "value": "78195.202000000005"
         }
       ]
     },
@@ -9871,93 +9879,97 @@
       "desc": "Total reporting countries total credit to non-financial sector, adjusted for breaks",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=Q5ACAMUSDA",
-      "fetched_at": "2026-11-14T00:00:00Z",
-      "observation_count": 21,
-      "latest_date": "2025-10-01",
+      "fetched_at": "2026-11-16T00:00:00Z",
+      "observation_count": 22,
+      "latest_date": "2026-01-01",
       "observations": [
         {
           "date": "2020-10-01",
-          "value": "222037.170000000013"
+          "value": "222008.622999999992"
         },
         {
           "date": "2021-01-01",
-          "value": "219668.978000000003"
+          "value": "219712.964999999997"
         },
         {
           "date": "2021-04-01",
-          "value": "225570.250999999989"
+          "value": "225609.630000000005"
         },
         {
           "date": "2021-07-01",
-          "value": "225532.269"
+          "value": "225578.048999999999"
         },
         {
           "date": "2021-10-01",
-          "value": "228289.527999999991"
+          "value": "228323.565999999992"
         },
         {
           "date": "2022-01-01",
-          "value": "228754.915000000008"
+          "value": "228808.72099999999"
         },
         {
           "date": "2022-04-01",
-          "value": "220417.714000000007"
+          "value": "220475.097000000009"
         },
         {
           "date": "2022-07-01",
-          "value": "212546.399000000005"
+          "value": "212598.633999999991"
         },
         {
           "date": "2022-10-01",
-          "value": "222587.494999999995"
+          "value": "222644.146000000008"
         },
         {
           "date": "2023-01-01",
-          "value": "227913.926000000007"
+          "value": "227966.556000000011"
         },
         {
           "date": "2023-04-01",
-          "value": "225661.587999999989"
+          "value": "225720.481999999989"
         },
         {
           "date": "2023-07-01",
-          "value": "224564.690000000002"
+          "value": "224619.644"
         },
         {
           "date": "2023-10-01",
-          "value": "234883.901000000013"
+          "value": "234945.41399999999"
         },
         {
           "date": "2024-01-01",
-          "value": "233982.763000000006"
+          "value": "234054.515000000014"
         },
         {
           "date": "2024-04-01",
-          "value": "234281.736999999994"
+          "value": "234368.750999999989"
         },
         {
           "date": "2024-07-01",
-          "value": "245892.946999999986"
+          "value": "245976.676000000007"
         },
         {
           "date": "2024-10-01",
-          "value": "236903.15400000001"
+          "value": "236996.660999999993"
         },
         {
           "date": "2025-01-01",
-          "value": "244695.606"
+          "value": "244802.282000000007"
         },
         {
           "date": "2025-04-01",
-          "value": "254986.798999999999"
+          "value": "255024.872000000003"
         },
         {
           "date": "2025-07-01",
-          "value": "258520.728000000003"
+          "value": "258520.113000000012"
         },
         {
           "date": "2025-10-01",
-          "value": "262666.113000000012"
+          "value": "262669.387999999977"
+        },
+        {
+          "date": "2026-01-01",
+          "value": "265611.329000000027"
         }
       ]
     },
@@ -9965,7 +9977,7 @@
       "desc": "Federal Debt: Total Public Debt",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=GFDEBTN",
-      "fetched_at": "2026-11-14T00:00:00Z",
+      "fetched_at": "2026-11-16T00:00:00Z",
       "observation_count": 23,
       "latest_date": "2026-04-01",
       "observations": [
@@ -10067,7 +10079,7 @@
       "desc": "Federal government current expenditures: interest payments",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=A091RC1Q027SBEA",
-      "fetched_at": "2026-11-14T00:00:00Z",
+      "fetched_at": "2026-11-16T00:00:00Z",
       "observation_count": 24,
       "latest_date": "2026-07-01",
       "observations": [
@@ -10173,9 +10185,9 @@
       "desc": "10-Year Treasury Constant Maturity Rate",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10",
-      "fetched_at": "2026-11-14T00:00:00Z",
-      "observation_count": 1498,
-      "latest_date": "2026-11-12",
+      "fetched_at": "2026-11-16T00:00:00Z",
+      "observation_count": 1499,
+      "latest_date": "2026-11-13",
       "observations": [
         {
           "date": "2020-11-16",
@@ -16168,6 +16180,10 @@
         {
           "date": "2026-11-12",
           "value": "5.1"
+        },
+        {
+          "date": "2026-11-13",
+          "value": "5.15"
         }
       ]
     },
@@ -16175,9 +16191,9 @@
       "desc": "10-Year Treasury Inflation-Indexed Constant Maturity Rate",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFII10",
-      "fetched_at": "2026-11-14T00:00:00Z",
-      "observation_count": 1498,
-      "latest_date": "2026-11-12",
+      "fetched_at": "2026-11-16T00:00:00Z",
+      "observation_count": 1499,
+      "latest_date": "2026-11-13",
       "observations": [
         {
           "date": "2020-11-16",
@@ -22170,6 +22186,10 @@
         {
           "date": "2026-11-12",
           "value": "2.86"
+        },
+        {
+          "date": "2026-11-13",
+          "value": "2.91"
         }
       ]
     },
@@ -22177,9 +22197,9 @@
       "desc": "10-Year Breakeven Inflation Rate",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=T10YIE",
-      "fetched_at": "2026-11-14T00:00:00Z",
-      "observation_count": 1499,
-      "latest_date": "2026-11-13",
+      "fetched_at": "2026-11-16T00:00:00Z",
+      "observation_count": 1500,
+      "latest_date": "2026-11-16",
       "observations": [
         {
           "date": "2020-11-16",
@@ -28176,6 +28196,10 @@
         {
           "date": "2026-11-13",
           "value": "2.24"
+        },
+        {
+          "date": "2026-11-16",
+          "value": "2.2"
         }
       ]
     },
@@ -28183,22 +28207,10 @@
       "desc": "ICE BofA US High Yield Index Option-Adjusted Spread",
       "source": "fred_graph_csv",
       "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2",
-      "fetched_at": "2026-11-14T00:00:00Z",
-      "observation_count": 785,
-      "latest_date": "2026-11-12",
+      "fetched_at": "2026-11-16T00:00:00Z",
+      "observation_count": 784,
+      "latest_date": "2026-11-13",
       "observations": [
-        {
-          "date": "2023-11-14",
-          "value": "3.92"
-        },
-        {
-          "date": "2023-11-15",
-          "value": "3.89"
-        },
-        {
-          "date": "2023-11-16",
-          "value": "4.02"
-        },
         {
           "date": "2023-11-17",
           "value": "3.99"
@@ -31320,12 +31332,20 @@
           "value": "3.34"
         },
         {
+          "date": "2026-11-10",
+          "value": "3.3"
+        },
+        {
           "date": "2026-11-11",
           "value": "3.3"
         },
         {
           "date": "2026-11-12",
           "value": "3.2"
+        },
+        {
+          "date": "2026-11-13",
+          "value": "3.23"
         }
       ]
     }
